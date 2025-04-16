@@ -22,7 +22,7 @@ if (!i18n.isInitialized) {
         caches: ["cookie"],
       },
       react: {
-        useSuspense: false,
+        useSuspense: true,
       },
     });
 }

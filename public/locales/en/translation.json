@@ -1,4 +1,20 @@
 {
-  "greeting": "Hello!",
-  "description": "Welcome to our site."
+  "articleDetailsPage": {
+    "publishedOn": "Published on",
+    "readTime": "min read",
+    "share": "Share",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied!",
+    "bookmark": "Bookmark",
+    "bookmarked": "Bookmarked",
+    "comments": "Comments",
+    "leaveComment": "Leave a comment",
+    "yourName": "Your name",
+    "yourEmail": "Your email",
+    "yourComment": "Your comment",
+    "submit": "Submit",
+    "relatedArticles": "Related Articles",
+    "views": "Views",
+    "likes": "Likes"
+  }
 }

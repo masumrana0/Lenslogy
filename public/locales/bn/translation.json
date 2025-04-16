@@ -1,4 +1,20 @@
 {
-  "greeting": "হ্যালো!"
-   
+  "articleDetailsPage": {
+    "publishedOn": "প্রকাশিত হয়েছে",
+    "readTime": "মিনিট পড়া",
+    "share": "শেয়ার করুন",
+    "copyLink": "লিঙ্ক কপি করুন",
+    "linkCopied": "লিঙ্ক কপি করা হয়েছে!",
+    "bookmark": "বুকমার্ক করুন",
+    "bookmarked": "বুকমার্ক করা হয়েছে",
+    "comments": "মন্তব্য",
+    "leaveComment": "মন্তব্য করুন",
+    "yourName": "আপনার নাম",
+    "yourEmail": "আপনার ইমেইল",
+    "yourComment": "আপনার মন্তব্য",
+    "submit": "জমা দিন",
+    "relatedArticles": "সম্পর্কিত প্রবন্ধ",
+    "views": "ভিউ",
+    "likes": "লাইক"
+  }
 }

@@ -1,49 +1,105 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const reviews = [
-  {
-    id: 19,
-    title: "Sony WH-1000XM5 Review: Still the Noise-Cancelling King?",
-    excerpt:
-      "We put Sony's flagship headphones to the test against the latest competitors.",
-    image: "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
-    category: "Audio",
-    rating: 9.3,
-    date: "May 28, 2023",
-  },
-  {
-    id: 20,
-    title: "MacBook Pro M3 Max Review: Apple's Most Powerful Laptop Yet",
-    excerpt:
-      "A comprehensive review of Apple's latest pro-level laptop with benchmark tests.",
-    image: "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
-    category: "Laptops",
-    rating: 9.5,
-    date: "May 27, 2023",
-  },
-  {
-    id: 21,
-    title: "Samsung S24 Ultra Camera Review: A Photographer's Perspective",
-    excerpt:
-      "Does the S24 Ultra live up to the hype? A professional photographer weighs in.",
-    image: "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
-    category: "Smartphones",
-    rating: 9.0,
-    date: "May 26, 2023",
-  },
-  {
-    id: 22,
-    title: "Asus ROG Ally X Review: The Steam Deck Killer?",
-    excerpt: "Can Asus dethrone Valve in the handheld gaming PC market?",
-    image: "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
-    category: "Gaming",
-    rating: 8.7,
-    date: "May 25, 2023",
-  },
-];
+const reviewsCore = {
+  en: [
+    {
+      id: 19,
+      title: "Sony WH-1000XM5 Review: Still the Noise-Cancelling King?",
+      excerpt:
+        "We put Sony's flagship headphones to the test against the latest competitors.",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
+      category: "Audio",
+      rating: 9.3,
+      date: "May 28, 2023",
+    },
+    {
+      id: 20,
+      title: "MacBook Pro M3 Max Review: Apple's Most Powerful Laptop Yet",
+      excerpt:
+        "A comprehensive review of Apple's latest pro-level laptop with benchmark tests.",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "Laptops",
+      rating: 9.5,
+      date: "May 27, 2023",
+    },
+    {
+      id: 21,
+      title: "Samsung S24 Ultra Camera Review: A Photographer's Perspective",
+      excerpt:
+        "Does the S24 Ultra live up to the hype? A professional photographer weighs in.",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "Smartphones",
+      rating: 9.0,
+      date: "May 26, 2023",
+    },
+    {
+      id: 22,
+      title: "Asus ROG Ally X Review: The Steam Deck Killer?",
+      excerpt: "Can Asus dethrone Valve in the handheld gaming PC market?",
+      image:
+        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
+      category: "Gaming",
+      rating: 8.7,
+      date: "May 25, 2023",
+    },
+  ],
 
-export default function ReviewsSection() {
+  bn: [
+    {
+      id: 19,
+      title: "Sony WH-1000XM5 রিভিউ: এখনো কি নয়েজ-ক্যান্সেলিংয়ের রাজা?",
+      excerpt:
+        "সনি’র ফ্ল্যাগশিপ হেডফোন প্রতিদ্বন্দ্বীদের বিপরীতে কেমন পারফর্ম করে তা বিশ্লেষণ করা হয়েছে।",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
+      category: "অডিও",
+      rating: 9.3,
+      date: "২৮ মে, ২০২৩",
+    },
+    {
+      id: 20,
+      title:
+        "MacBook Pro M3 Max রিভিউ: অ্যাপলের সবচেয়ে শক্তিশালী ল্যাপটপ এখনো",
+      excerpt:
+        "অ্যাপলের নতুন প্রো-লেভেল ল্যাপটপের বিস্তৃত রিভিউ এবং বেঞ্চমার্ক টেস্ট।",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "ল্যাপটপ",
+      rating: 9.5,
+      date: "২৭ মে, ২০২৩",
+    },
+    {
+      id: 21,
+      title: "Samsung S24 Ultra ক্যামেরা রিভিউ: একজন ফটোগ্রাফারের দৃষ্টিকোণ",
+      excerpt:
+        "S24 Ultra কি তার প্রত্যাশা পূরণ করেছে? একজন পেশাদার ফটোগ্রাফার মতামত দিয়েছেন।",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "স্মার্টফোন",
+      rating: 9.0,
+      date: "২৬ মে, ২০২৩",
+    },
+    {
+      id: 22,
+      title: "Asus ROG Ally X রিভিউ: স্টিম ডেকের প্রতিদ্বন্দ্বী?",
+      excerpt:
+        "হ্যান্ডহেল্ড গেমিং পিসি বাজারে কি আসুস ভ্যালভকে ছাড়িয়ে যেতে পারবে?",
+      image:
+        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
+      category: "গেমিং",
+      rating: 8.7,
+      date: "২৫ মে, ২০২৩",
+    },
+  ],
+};
+
+const ReviewsSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
+  const reviews = reviewsCore[lang];
+  console.log(reviews);
   return (
     <section className="py-8 border-t">
       <div className="flex items-center justify-between mb-6">
@@ -91,4 +147,6 @@ export default function ReviewsSection() {
       </div>
     </section>
   );
-}
+};
+
+export default ReviewsSection;

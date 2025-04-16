@@ -1,58 +1,125 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const popularArticles = [
-  {
-    id: 8,
-    title: "Why Everyone Is Talking About the RTX 4080 Super",
-    image: "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
-    category: "Gaming",
-    date: "June 8, 2023",
-    readTime: "4 min read",
-  },
-  {
-    id: 9,
-    title: "The Privacy Paradox: How Tech Giants Are Using Your Data",
-    image: "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
-    category: "Privacy",
-    date: "June 7, 2023",
-    readTime: "6 min read",
-  },
-  {
-    id: 10,
-    title: "Best True Wireless Earbuds Under $100",
-    image: "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
-    category: "Audio",
-    date: "June 6, 2023",
-    readTime: "5 min read",
-  },
-  {
-    id: 11,
-    title: "Can Quantum Computing Change Cybersecurity Forever?",
-    image: "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
-    category: "Security",
-    date: "June 5, 2023",
-    readTime: "7 min read",
-  },
-  {
-    id: 12,
-    title: "5G Technology: The Impact on Rural Communities",
-    image: "https://www.linuxinsider.com/wp-content/uploads/sites/2/2022/03/server-admins.jpg",
-    category: "Connectivity",
-    date: "June 4, 2023",
-    readTime: "5 min read",
-  },
-  {
-    id: 13,
-    title: "Are Electric Vehicles Finally Ready for Mass Adoption?",
-    image: "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
-    category: "Transportation",
-    date: "June 3, 2023",
-    readTime: "6 min read",
-  },
-];
+const popularArticlesCore = {
+  en: [
+    {
+      id: 8,
+      title: "Why Everyone Is Talking About the RTX 4080 Super",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "Gaming",
+      date: "June 8, 2023",
+      readTime: "4 min read",
+    },
+    {
+      id: 9,
+      title: "The Privacy Paradox: How Tech Giants Are Using Your Data",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "Privacy",
+      date: "June 7, 2023",
+      readTime: "6 min read",
+    },
+    {
+      id: 10,
+      title: "Best True Wireless Earbuds Under $100",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
+      category: "Audio",
+      date: "June 6, 2023",
+      readTime: "5 min read",
+    },
+    {
+      id: 11,
+      title: "Can Quantum Computing Change Cybersecurity Forever?",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "Security",
+      date: "June 5, 2023",
+      readTime: "7 min read",
+    },
+    {
+      id: 12,
+      title: "5G Technology: The Impact on Rural Communities",
+      image:
+        "https://www.linuxinsider.com/wp-content/uploads/sites/2/2022/03/server-admins.jpg",
+      category: "Connectivity",
+      date: "June 4, 2023",
+      readTime: "5 min read",
+    },
+    {
+      id: 13,
+      title: "Are Electric Vehicles Finally Ready for Mass Adoption?",
+      image:
+        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
+      category: "Transportation",
+      date: "June 3, 2023",
+      readTime: "6 min read",
+    },
+  ],
 
-const PopularSection = () => {
+  bn: [
+    {
+      id: 8,
+      title: "সবার আলোচনার কেন্দ্রে কেন RTX 4080 সুপার?",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "গেমিং",
+      date: "৮ জুন, ২০২৩",
+      readTime: "৪ মিনিট পড়া",
+    },
+    {
+      id: 9,
+      title:
+        "গোপনীয়তার দ্বন্দ্ব: টেক জায়ান্টরা কীভাবে আপনার ডেটা ব্যবহার করছে",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "গোপনীয়তা",
+      date: "৭ জুন, ২০২৩",
+      readTime: "৬ মিনিট পড়া",
+    },
+    {
+      id: 10,
+      title: "১০০ ডলারের নিচে সেরা ট্রু ওয়্যারলেস ইয়ারবাড",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
+      category: "অডিও",
+      date: "৬ জুন, ২০২৩",
+      readTime: "৫ মিনিট পড়া",
+    },
+    {
+      id: 11,
+      title: "কোয়ান্টাম কম্পিউটিং কি সাইবার সিকিউরিটিকে চিরতরে বদলে দেবে?",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
+      category: "নিরাপত্তা",
+      date: "৫ জুন, ২০২৩",
+      readTime: "৭ মিনিট পড়া",
+    },
+    {
+      id: 12,
+      title: "৫জি প্রযুক্তি: গ্রামীণ এলাকায় প্রভাব",
+      image:
+        "https://www.linuxinsider.com/wp-content/uploads/sites/2/2022/03/server-admins.jpg",
+      category: "সংযোগ",
+      date: "৪ জুন, ২০২৩",
+      readTime: "৫ মিনিট পড়া",
+    },
+    {
+      id: 13,
+      title: "ইলেকট্রিক গাড়ি কি এখন গণস্বীকৃতির জন্য প্রস্তুত?",
+      image:
+        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
+      category: "পরিবহন",
+      date: "৩ জুন, ২০২৩",
+      readTime: "৬ মিনিট পড়া",
+    },
+  ],
+};
+
+const PopularSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
+  const popularArticles = popularArticlesCore[lang];
   return (
     <section className="py-8">
       <div className="flex items-center justify-between mb-6">

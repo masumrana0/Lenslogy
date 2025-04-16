@@ -1,17 +1,19 @@
+import React from "react";
 import Footer from "@/components/shared/footer";
 import Navbar from "@/components/shared/navbar";
-import React from "react";
 
 const PublicLayout = ({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: { locale: "en" | "bn" };
 }>) => {
   return (
     <main className="min-h-screen">
       <Navbar />
       <div className="container mx-auto px-4 pb-12">{children}</div>
-      <Footer />
+      <Footer lang={params.locale} />
     </main>
   );
 };

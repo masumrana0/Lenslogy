@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { INavDropdown } from "./interface";
+import { INavDropdown } from "../interface";
 
 const DeskNavDropdown: React.FC<{ menu: INavDropdown; lang: "en" | "bn" }> = ({
   menu,

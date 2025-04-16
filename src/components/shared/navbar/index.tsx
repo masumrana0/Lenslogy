@@ -7,10 +7,8 @@ import NavSearchBar from "./search";
 import LanguageSwitcher from "./switch-lang";
 import Theme from "./theme";
 import NavMobileToggle from "./mobile/mob-nav-toggle";
-import { IParamsProps } from "@/interface/common";
 
-const Navbar: React.FC<IParamsProps> = async () => {
-  
+const Navbar = () => {
   return (
     <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors duration-200">
       <div className="container mx-auto px-4">

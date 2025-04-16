@@ -1,40 +1,72 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const heroArticles = [
-  {
-    id: 1,
-    title: "Meta's Quest 3 Headset: Review & Feature Breakdown",
-    excerpt:
-      "A deep dive into Meta's latest VR technology with our comprehensive hands-on review.",
-    image:
-      "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/04/Lip-Bu-Tan.jpg",
-    category: "VR & AR",
-    date: "June 15, 2023",
-  },
-  {
-    id: 2,
-    title:
-      "Google's AI-Powered Search Overhaul Aims to Enhance User Experience",
-    image:
-      "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/03/smartphone-security.jpg",
-    category: "AI",
-    date: "June 14, 2023",
-  },
-  {
-    id: 3,
-    title:
-      "Apple's WWDC 2023: Everything Announced for Developers and Consumers",
-    image:
-      "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
-    category: "Apple",
-    date: "June 13, 2023",
-  },
-];
+const heroArticles = {
+  en: [
+    {
+      id: 1,
+      title: "Meta's Quest 3 Headset: Review & Feature Breakdown",
+      excerpt:
+        "A deep dive into Meta's latest VR technology with our comprehensive hands-on review.",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/04/Lip-Bu-Tan.jpg",
+      category: "VR & AR",
+      date: "June 15, 2023",
+    },
+    {
+      id: 2,
+      title:
+        "Google's AI-Powered Search Overhaul Aims to Enhance User Experience",
+      image:
+        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/03/smartphone-security.jpg",
+      category: "AI",
+      date: "June 14, 2023",
+    },
+    {
+      id: 3,
+      title:
+        "Apple's WWDC 2023: Everything Announced for Developers and Consumers",
+      image:
+        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
+      category: "Apple",
+      date: "June 13, 2023",
+    },
+  ],
+  bn: [
+    {
+      id: 1,
+      title: "মেটার কোয়েস্ট ৩ হেডসেট: রিভিউ ও ফিচার বিশ্লেষণ",
+      excerpt:
+        "মেটার সর্বশেষ ভার্চুয়াল রিয়েলিটি প্রযুক্তি নিয়ে আমাদের বিস্তারিত হ্যান্ডস-অন রিভিউ।",
+      image:
+        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/04/Lip-Bu-Tan.jpg",
+      category: "ভিআর ও এআর",
+      date: "১৫ জুন, ২০২৩",
+    },
+    {
+      id: 2,
+      title:
+        "গুগলের এআই চালিত সার্চ সংস্কার ব্যবহারকারীদের অভিজ্ঞতা উন্নত করবে",
+      image:
+        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/03/smartphone-security.jpg",
+      category: "এআই",
+      date: "১৪ জুন, ২০২৩",
+    },
+    {
+      id: 3,
+      title: "অ্যাপলের WWDC ২০২৩: ডেভেলপার ও ব্যবহারকারীদের জন্য ঘোষিত সবকিছু",
+      image:
+        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
+      category: "অ্যাপল",
+      date: "১৩ জুন, ২০২৩",
+    },
+  ],
+};
 
-const HeroSection = () => {
-  const mainArticle = heroArticles[0];
-  const sideArticles = heroArticles.slice(1);
+const HeroSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
+  const articles = heroArticles[lang];
+  const mainArticle = articles[0];
+  const sideArticles = articles.slice(1);
 
   return (
     <section className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 pb-10">
@@ -57,9 +89,11 @@ const HeroSection = () => {
           <h2 className="text-2xl md:text-3xl font-bold mb-2 group-hover:text-red-400 transition-colors">
             <Link href={`/article/${mainArticle.id}`}>{mainArticle.title}</Link>
           </h2>
-          <p className="text-gray-200 mb-2 line-clamp-2">
-            {mainArticle.excerpt}
-          </p>
+          {mainArticle.excerpt && (
+            <p className="text-gray-200 mb-2 line-clamp-2">
+              {mainArticle.excerpt}
+            </p>
+          )}
           <span className="text-sm text-gray-300">{mainArticle.date}</span>
         </div>
       </div>
