@@ -1,4 +1,47 @@
 {
+  "common": {
+    "backToHome": "Back to Home",
+    "filterBy": "Filter by",
+    "sortBy": "Sort by",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "mostPopular": "Most Popular",
+    "highestRated": "Highest Rated",
+    "allCategories": "All Categories",
+    "noArticlesFound": "No articles found matching your criteria"
+  },
+
+  "homePage": {
+    "featuredStories": "Featured Stories",
+    "popularThisWeek": "Popular This Week",
+    "latestNews": "Latest News",
+    "latestReviews": "Latest Reviews",
+    "viewAllFeatured": "View All Featured",
+    "viewAllPopular": "View All Popular",
+    "viewAllLatest": "View All Latest",
+    "viewAllReviews": "View All Reviews"
+  },
+
+  "featuredPage": {
+    "title": "Featured Stories",
+    "description": "Discover our handpicked selection of the most interesting and innovative tech stories."
+  },
+
+  "popularPage": {
+    "title": "Popular This Week",
+    "description": "The most read and shared articles from our tech community this week."
+  },
+
+  "latestPage": {
+    "title": "Latest News",
+    "description": "Stay up-to-date with the most recent developments in the tech world."
+  },
+
+  "reviewsPage": {
+    "title": "Latest Reviews",
+    "description": "In-depth analysis and hands-on testing of the latest tech products."
+  },
+
   "articleDetailsPage": {
     "publishedOn": "Published on",
     "readTime": "min read",

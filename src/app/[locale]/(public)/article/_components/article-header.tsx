@@ -54,14 +54,15 @@ const ArticleHeader: React.FC<{
         <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-1">
             <Eye size={16} className="mr-1" />
-            <span>{translateNumber(article.views)}</span>
+            <span>{translateNumber(article.views, lang)}</span>{" "}
             {t("articleDetailsPage.views")}
           </div>
           <span>•</span>
           <div className="flex items-center">
             <ThumbsUp size={16} className="mr-1" />
             <span>
-              {translateNumber(article.likes)} {t("articleDetailsPage.likes")}
+              {translateNumber(article.likes, lang)}{" "}
+              {t("articleDetailsPage.likes")}
             </span>
           </div>
         </div>

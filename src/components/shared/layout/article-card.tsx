@@ -1,34 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clock } from "lucide-react";
-import { ArticlePreview } from "./type";
-import { getLocalizedContent } from "@/lib/utils";
+import { IArticle } from "@/app/[locale]/(public)/article/_interface/interface";
 
 interface ArticleCardProps {
-  article: ArticlePreview;
+  article: IArticle;
   lang: "en" | "bn";
   variant?: "default" | "featured" | "compact" | "horizontal";
   showCategory?: boolean;
   showExcerpt?: boolean;
-  showReadTime?: boolean;
 }
 
 export default function ArticleCard({
   article,
-  lang = "en",
   variant = "default",
   showCategory = true,
   showExcerpt = true,
-  showReadTime = true,
 }: ArticleCardProps) {
-  const title = getLocalizedContent(article.title, lang);
-  const excerpt = article.excerpt
-    ? getLocalizedContent(article.excerpt, lang)
-    : null;
-  const category = article.category
-    ? getLocalizedContent(article.category, lang)
-    : null;
-
+  const { title, category, date, excerpt, image, id } = article;
   // Different layouts based on variant
   if (variant === "compact") {
     return (
@@ -38,7 +26,7 @@ export default function ArticleCard({
       >
         <div className="relative w-20 h-16 flex-shrink-0 overflow-hidden">
           <Image
-            src={article.image || "/placeholder.svg"}
+            src={image || "/placeholder.svg"}
             fill
             alt={title}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -54,14 +42,7 @@ export default function ArticleCard({
             {title}
           </h3>
           <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-            <span>{article.date}</span>
-            {showReadTime && article.readTime && (
-              <>
-                <span className="mx-1">•</span>
-                <Clock size={12} className="mr-1" />
-                <span>{article.readTime} min read</span>
-              </>
-            )}
+            <span>{date}</span>
           </div>
         </div>
       </Link>
@@ -71,12 +52,12 @@ export default function ArticleCard({
   if (variant === "horizontal") {
     return (
       <Link
-        href={`/article/${article.id}`}
+        href={`/article/${id}`}
         className="group flex items-start space-x-4"
       >
         <div className="relative w-32 h-24 flex-shrink-0 overflow-hidden">
           <Image
-            src={article.image || "/placeholder.svg"}
+            src={image || "/placeholder.svg"}
             fill
             alt={title}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -97,7 +78,7 @@ export default function ArticleCard({
             </p>
           )}
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            {article.date}
+            {date}
           </span>
         </div>
       </Link>
@@ -129,14 +110,7 @@ export default function ArticleCard({
           <p className="text-gray-600 dark:text-gray-300 mb-3">{excerpt}</p>
         )}
         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-          <span>{article.date}</span>
-          {showReadTime && article.readTime && (
-            <>
-              <span className="mx-1">•</span>
-              <Clock size={14} className="mr-1" />
-              <span>{article.readTime} min read</span>
-            </>
-          )}
+          <span>{date}</span>
         </div>
       </Link>
     );
@@ -144,12 +118,12 @@ export default function ArticleCard({
 
   // Default card
   return (
-    <Link href={`/article/${article.id}`} className="group block">
+    <Link href={`/article/${id}`} className="group block">
       <div className="relative h-48 mb-3 overflow-hidden">
         <Image
           src={article.image || "/placeholder.svg"}
           fill
-          alt={title}
+          alt={article.title}
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {showCategory && category && (
@@ -161,7 +135,7 @@ export default function ArticleCard({
         )}
       </div>
       <h3 className="font-bold text-lg mb-2 group-hover:text-red-500 dark:text-white dark:group-hover:text-red-400 transition-colors line-clamp-2">
-        {title}
+        {article.title}
       </h3>
       {showExcerpt && excerpt && (
         <p className="text-gray-600 dark:text-gray-300 text-sm mb-2 line-clamp-2">
@@ -169,14 +143,7 @@ export default function ArticleCard({
         </p>
       )}
       <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-        <span>{article.date}</span>
-        {showReadTime && article.readTime && (
-          <>
-            <span className="mx-1">•</span>
-            <Clock size={12} className="mr-1" />
-            <span>{article.readTime} min read</span>
-          </>
-        )}
+        <span>{date}</span>
       </div>
     </Link>
   );

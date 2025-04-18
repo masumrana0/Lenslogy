@@ -1,3 +1,4 @@
+import { IArticle } from "./interface";
 export type IPageProps = {
   params: Promise<{ locale: "bn" | "en"; id: string }>;
 };
@@ -15,9 +16,16 @@ export interface IArticle {
   content?: string;
   image: string;
   category: string;
-  author: Author;
+  author?: Author;
   date: string;
   tags?: string[];
-  views: number;
-  likes: number;
+  views?: number;
+  likes?: number;
+}
+
+interface IUser {
+  name: string;
+  designation: string;
+  role: "super-admin" | "admin" | "author";
+  avatar?: string;
 }
