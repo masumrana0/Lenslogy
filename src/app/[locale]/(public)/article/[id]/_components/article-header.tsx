@@ -1,16 +1,16 @@
 import React from "react";
-
 import Image from "next/image";
 import { Eye, ThumbsUp } from "lucide-react";
 import { getServerTranslation } from "@/lib/i18n/i18n.server";
-import { IArticle } from "../_interface/interface";
 import { translateNumber } from "@/lib/translator";
+import { IArticle } from "../../_interface/interface";
 
 const ArticleHeader: React.FC<{
   article: IArticle;
   lang: "en" | "bn";
 }> = async ({ article, lang = "en" }) => {
   const { t } = await getServerTranslation(lang);
+
   return (
     <header className="mb-8">
       <div className="flex items-center space-x-2 mb-4">
@@ -35,18 +35,18 @@ const ArticleHeader: React.FC<{
         <div className="flex items-center space-x-4">
           <div className="relative w-12 h-12 rounded-full overflow-hidden">
             <Image
-              src={article.author.image || "/placeholder.svg"}
-              alt={article.author.name}
+              src={article.author?.avatar || "/placeholder.svg"}
+              alt={article.author?.name as string}
               fill
               className="object-cover"
             />
           </div>
           <div>
             <h3 className="font-medium dark:text-white">
-              {article.author.name}
+              {article.author?.name}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {article.author.role}
+              {article.author?.designation}
             </p>
           </div>
         </div>
@@ -54,14 +54,16 @@ const ArticleHeader: React.FC<{
         <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-1">
             <Eye size={16} className="mr-1" />
-            <span>{translateNumber(article.views, lang)}</span>{" "}
+            <span>
+              {translateNumber(article.articleAttachment.views, lang)}
+            </span>{" "}
             {t("articleDetailsPage.views")}
           </div>
           <span>•</span>
           <div className="flex items-center">
             <ThumbsUp size={16} className="mr-1" />
             <span>
-              {translateNumber(article.likes, lang)}{" "}
+              {translateNumber(article.articleAttachment.likes, lang)}{" "}
               {t("articleDetailsPage.likes")}
             </span>
           </div>

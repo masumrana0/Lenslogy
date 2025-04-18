@@ -1,108 +1,137 @@
-// "use client";
-// import { useState, useEffect } from "react";
-// import { latestNewsData } from "@/lib/data";
-// import { ArticlePreview } from "@/components/shared/layout/type";
-// import ViewAllLayout from "@/components/shared/layout/view-all-layout";
+import type { Metadata } from "next";
+import { IArticleForCard } from "../_interface/interface";
+import ArticlesPageLayout from "../_components/page-layout/page-layout";
 
-// export default function LatestNewsPage() {
-//   const language: "en" | "bn" = "en";
-//   const [articles, setArticles] = useState<ArticlePreview[]>([]);
-//   const [filteredArticles, setFilteredArticles] = useState<ArticlePreview[]>(
-//     []
-//   );
-//   const [categories, setCategories] = useState<string[]>([]);
+export const metadata: Metadata = {
+  title: "Latest This Week | WiRE Technology Blog",
+  description:
+    "The most read and shared articles from our tech community this week.",
+  openGraph: {
+    title: "Popular This Week | WiRE Technology Blog",
+    description:
+      "The most read and shared articles from our tech community this week.",
+    type: "website",
+    url: "https://wire-tech.com/popular",
+    images: [
+      {
+        url: "https://wire-tech.com/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "WiRE Technology Blog",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Popular This Week | WiRE Technology Blog",
+    description:
+      "The most read and shared articles from our tech community this week.",
+    images: ["https://wire-tech.com/og-image.jpg"],
+  },
+};
 
-//   // Initialize articles and categories
-//   useEffect(() => {
-//     const articlesData = latestNewsData[language];
+export const articles: IArticleForCard[] = [
+  {
+    id: "1",
+    title: "The Rise of Artificial Intelligence",
+    excerpt:
+      "Explore how AI is transforming industries and shaping our future.",
+    image:
+      "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
+    category: "Technology",
+    date: "2025-04-15",
+  },
+  {
+    id: "2",
+    title: "Mastering Remote Work in 2025",
+    excerpt: "Tips and tools to stay productive while working from anywhere.",
+    image:
+      "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
+    category: "Productivity",
+    date: "2025-04-10",
+  },
+  {
+    id: "3",
+    title: "Top 10 Travel Destinations This Year",
+    excerpt: "Discover breathtaking places to visit around the world in 2025.",
+    image:
+      "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
+    category: "Travel",
+    date: "2025-03-28",
+  },
+  {
+    id: "4",
+    title: "The Future of Green Energy",
+    excerpt: "How renewable energy is shaping a sustainable tomorrow.",
+    image:
+      "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
+    category: "Environment",
+    date: "2025-03-20",
+  },
+  {
+    id: "5",
+    title: "Investing in the Stock Market for Beginners",
+    excerpt:
+      "A beginner’s guide to understanding and entering the stock market.",
+    image:
+      "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
+    category: "Finance",
+    date: "2025-02-25",
+  },
+];
 
-//     // Convert to ArticlePreview format
-//     const formattedArticles: ArticlePreview[] = articlesData.map((article) => ({
-//       id: article.id.toString(),
-//       title: {
-//         en: language === "en" ? article.title : "",
-//         bn: article.title,
-//       },
-//       excerpt: {
-//         en: language === "en" ? article.excerpt : "",
-//         bn: article.excerpt,
-//       },
-//       image: article.image,
-//       category: {
-//         en: language === "en" ? article.category : "",
-//         bn: article.category,
-//       },
-//       date: article.date,
-//     }));
+const LatestPage = ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  // Default to English, but in a real app this would come from cookies or user preferences
+  const lang = "bn";
 
-//     setArticles(formattedArticles);
-//     setFilteredArticles(formattedArticles);
+  // Get the category and sort parameters from the URL
+  const categoryParam = searchParams.category as string | undefined;
+  const sortParam = searchParams.sort as string | undefined;
+  const categories: string[] = [
+    "Technology",
+    "Artificial Intelligence",
+    "Software Development",
+    "Design",
+    "Business",
+    "Health",
+    "Science",
+    "Education",
+    "Travel",
+    "Lifestyle",
+    "Finance",
+    "Marketing",
+    "Productivity",
+    "Startups",
+    "Gaming",
+    "Culture",
+    "Photography",
+    "Food",
+    "Environment",
+    "Politics",
+  ];
 
-//     // Extract unique categories
-//     const uniqueCategories = Array.from(
-//       new Set(articlesData.map((article) => article.category))
-//     );
-//     setCategories(uniqueCategories);
-//   }, [language]);
+  // Handle category filter
 
-//   // Handle category filter
-//   const handleCategoryChange = (category: string) => {
-//     if (category === "all") {
-//       setFilteredArticles(articles);
-//     } else {
-//       const filtered = articles.filter(
-//         (article) =>
-//           article.category &&
-//           (article.category.en === category || article.category.bn === category)
-//       );
-//       setFilteredArticles(filtered);
-//     }
-//   };
+  // Fetch data
+  // const articlesData = await getPopularArticles(language);
+  // const categories = await getCategories("popular", language);
 
-//   // Handle sort
-//   const handleSortChange = (sort: string) => {
-//     const sorted = [...filteredArticles];
-
-//     switch (sort) {
-//       case "newest":
-//         sorted.sort(
-//           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-//         );
-//         break;
-//       case "oldest":
-//         sorted.sort(
-//           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-//         );
-//         break;
-//     }
-
-//     setFilteredArticles(sorted);
-//   };
-
-//   return (
-//     <ViewAllLayout
-//       title={"latestNews"}
-//       lang={language}
-//       articles={filteredArticles}
-//       categories={categories}
-//       onCategoryChange={handleCategoryChange}
-//       onSortChange={handleSortChange}
-//       columns={2}
-//       variant="horizontal"
-//       showCategory={true}
-//       showExcerpt={true}
-//     />
-//   );
-// }
-
-import React from "react";
-
-const LatestArticle = () => {
   return (
-    <div>
-      <h3>Latest Article page</h3>
-    </div>
+    <ArticlesPageLayout
+      title={"latestPage"}
+      lang={lang}
+      articles={articles}
+      categories={categories}
+      columns={2}
+      variant="horizontal"
+      showCategory={true}
+      showExcerpt={true}
+    />
   );
 };
 
-export default LatestArticle;
+export default LatestPage;

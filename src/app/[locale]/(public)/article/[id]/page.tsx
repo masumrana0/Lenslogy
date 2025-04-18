@@ -1,17 +1,17 @@
 import Image from "next/image";
 import React from "react";
-import ArticleHeader from "../_components/article-header";
-import ArticleCommentSection from "../_components/comment-section";
-import { IPageProps } from "../_interface/interface";
-import RelatedArticles from "../_components/related-articles";
 import ArticleSideBar from "../_components/sidebar/sidebar";
+import { IArticle, IPageProps } from "../_interface/interface";
+import ArticleHeader from "./_components/article-header";
+import ArticleCommentSection from "./_components/comment-section";
+import RelatedArticles from "./_components/related-articles";
 
 const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
   const resolvedParams = await params;
   const language = resolvedParams.locale;
 
   // Find the article based on the ID from the URL
-  const article = {
+  const article: IArticle = {
     id: "1",
     title: "Understanding the Future of AI",
     excerpt:
@@ -66,14 +66,18 @@ const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
     category: "Technology",
     author: {
       name: "Jane Doe",
-      image:
+      designation: "Software Engineer",
+      avatar:
         "https://media.licdn.com/dms/image/v2/D5603AQH5knHodXbHIA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1710602305413?e=1750291200&v=beta&t=CE0p0_psVHuk0MDSpo4w38OIlYKWmDsWsRTnNTR_dL4 ",
       role: "Tech Journalist",
     },
     date: "2025-04-15",
     tags: ["AI", "Future", "Technology"],
-    views: 1350,
-    likes: 220,
+    articleAttachment: {
+      articleId: "1",
+      views: "1350",
+      likes: "220",
+    },
   };
 
   return (
@@ -95,8 +99,10 @@ const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
 
         {/* Article content */}
         <div className="flex flex-col md:flex-row gap-8">
+          {/* article left side bar  */}
           <ArticleSideBar />
 
+          {/* article main content  */}
           <div className="md:flex-1 order-1 md:order-2">
             <div
               className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-a:text-red-500 dark:prose-a:text-red-400 prose-a:no-underline hover:prose-a:underline"
@@ -125,7 +131,11 @@ const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
       </article>
 
       {/* Related articles */}
-      <RelatedArticles language={language} title={"relatedArticles"} />
+      <RelatedArticles
+        lang={language}
+        title={"relatedArticles"}
+        category={article.category}
+      />
     </main>
   );
 };

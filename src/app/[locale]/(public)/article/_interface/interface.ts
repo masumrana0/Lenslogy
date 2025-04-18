@@ -4,25 +4,60 @@ export type IPageProps = {
 
 interface Author {
   name: string;
-  image: string;
+  designation: string;
+  avatar: string;
   role: string;
+}
+
+interface IArticleAttachment {
+  views: string;
+  likes: string;
+  articleId: string;
 }
 
 export interface IArticle {
   id: string;
   title: string;
   excerpt: string;
-  content?: string;
+  content: string;
   image: string;
   category: string;
-  author?: Author;
+  author: Author;
   date: string;
   tags?: string[];
-  views?: number;
-  likes?: number;
+  articleAttachment: IArticleAttachment;
 }
+
+export interface RelatedArticlesProps {
+  lang: "en" | "bn";
+  title: string;
+  category: string;
+}
+
+// for Card
+
+export interface IArticleForCard {
+  id: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  category: string;
+  date: string;
+}
+
+export interface ArticlesPageLayoutProps {
+  title: string;
+  articles: IArticleForCard[];
+  categories: string[];
+  columns?: 1 | 2 | 3 | 4;
+  variant?: "default" | "featured" | "compact" | "horizontal";
+  lang: "en" | "bn";
+  showCategory?: boolean;
+  showExcerpt?: boolean;
+}
+
 export interface ArticleGridProps {
-  articles: IArticle[];
+  articles: IArticleForCard[];
   columns?: 1 | 2 | 3 | 4;
   variant?: "default" | "featured" | "compact" | "horizontal";
   showCategory?: boolean;
@@ -30,14 +65,14 @@ export interface ArticleGridProps {
 }
 
 export interface ArticleCardProps {
-  article: IArticle;
+  article: IArticleForCard;
   variant?: "default" | "featured" | "compact" | "horizontal";
   showCategory?: boolean;
   showExcerpt?: boolean;
 }
 
 export interface IArticleVariantCardProps {
-  article: IArticle;
+  article: IArticleForCard;
   showCategory?: boolean;
   showExcerpt?: boolean;
 }

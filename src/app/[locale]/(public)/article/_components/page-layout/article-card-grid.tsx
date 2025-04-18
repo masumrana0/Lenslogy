@@ -1,5 +1,5 @@
 import { ArticleGridProps } from "@/app/[locale]/(public)/article/_interface/interface";
-import ArticleCard from ".";
+import ArticleCard from "../article-card";
 
 const ArticleGrid = ({
   articles,

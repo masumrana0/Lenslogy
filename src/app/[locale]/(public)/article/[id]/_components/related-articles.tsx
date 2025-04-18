@@ -1,12 +1,10 @@
-import Image from "next/image";
-import Link from "next/link";
+import DefaultArticleCard from "../../_components/article-card/default-card";
+import {
+  IArticleForCard,
+  RelatedArticlesProps,
+} from "../../_interface/interface";
 
-interface RelatedArticlesProps {
-  language: "en" | "bn";
-  title: string;
-}
-
-const relatedArticles = [
+const relatedArticles: IArticleForCard[] = [
   {
     id: "1",
     title: "অ্যাপলের ভিশন প্রো: এটি কীভাবে মেটা কোয়েস্ট ৩ এর সাথে তুলনা করে",
@@ -36,10 +34,11 @@ const relatedArticles = [
   },
 ];
 
-export default function RelatedArticles({
-  language,
+const RelatedArticles = ({
+  lang = "en",
   title,
-}: RelatedArticlesProps) {
+  category,
+}: RelatedArticlesProps) => {
   const articles = relatedArticles;
 
   return (
@@ -51,44 +50,17 @@ export default function RelatedArticles({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
-            <Link
+            <DefaultArticleCard
+              article={article}
               key={article.id}
-              href={`/article/${article.id}`}
-              className="group"
-            >
-              <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={article.image || "/placeholder.svg"}
-                    alt={article.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute top-2 left-2">
-                    <span className="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-sm">
-                      {article.category}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-2 group-hover:text-red-500 dark:text-white dark:group-hover:text-red-400 transition-colors line-clamp-2">
-                    {article.title}
-                  </h3>
-
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2">
-                    {article.excerpt}
-                  </p>
-
-                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                    <span>{article.date}</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
+              showCategory
+              showExcerpt
+            />
           ))}
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default RelatedArticles;

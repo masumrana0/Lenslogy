@@ -126,7 +126,10 @@ const PopularSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
         <h2 className="text-xl font-bold relative pl-3 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
           Popular This Week
         </h2>
-        <Link href="/popular" className="text-sm text-red-500 hover:underline">
+        <Link
+          href="/article/popular"
+          className="text-sm text-red-500 hover:underline"
+        >
           View All
         </Link>
       </div>

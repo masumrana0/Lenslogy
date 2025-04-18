@@ -1,6 +1,6 @@
-import ViewAllLayout from "@/components/shared/layout/view-all-layout";
 import type { Metadata } from "next";
 import { IArticle } from "../_interface/interface";
+import ArticlesPageLayout from "../_components/page-layout/page-layout";
 
 export const metadata: Metadata = {
   title: "Popular This Week | WiRE Technology Blog",
@@ -80,11 +80,11 @@ export const articles: IArticle[] = [
   },
 ];
 
-export default async function PopularPage({
+const PopularPage = ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
-}) {
+}) => {
   // Default to English, but in a real app this would come from cookies or user preferences
   const language = "en";
 
@@ -115,17 +115,13 @@ export default async function PopularPage({
   ];
 
   // Handle category filter
-  const handleCategoryChange = (category: string) => {};
-
-  // Handle sort
-  const handleSortChange = (sort: string) => {};
 
   // Fetch data
   // const articlesData = await getPopularArticles(language);
   // const categories = await getCategories("popular", language);
 
   return (
-    <ViewAllLayout
+    <ArticlesPageLayout
       title={"popularPage"}
       lang="en"
       articles={articles}
@@ -136,4 +132,6 @@ export default async function PopularPage({
       showExcerpt={true}
     />
   );
-}
+};
+
+export default PopularPage;
