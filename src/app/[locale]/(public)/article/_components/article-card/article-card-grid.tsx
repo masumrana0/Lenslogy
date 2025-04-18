@@ -1,24 +1,13 @@
-import { IArticle } from "@/app/[locale]/(public)/article/_interface/interface";
-import ArticleCard from "./article-card";
+import { ArticleGridProps } from "@/app/[locale]/(public)/article/_interface/interface";
+import ArticleCard from ".";
 
-interface ArticleGridProps {
-  articles: IArticle[];
-  language: "en" | "bn";
-  columns?: 1 | 2 | 3 | 4;
-  variant?: "default" | "featured" | "compact" | "horizontal";
-  showCategory?: boolean;
-  showExcerpt?: boolean;
-  showReadTime?: boolean;
-}
-
-export default function ArticleGrid({
+const ArticleGrid = ({
   articles,
-  language,
   columns = 3,
   variant = "default",
   showCategory = true,
   showExcerpt = true,
-}: ArticleGridProps) {
+}: ArticleGridProps) => {
   const gridCols = {
     1: "grid-cols-1",
     2: "grid-cols-1 md:grid-cols-2",
@@ -32,7 +21,6 @@ export default function ArticleGrid({
         <ArticleCard
           key={article.id}
           article={article}
-          lang={language}
           variant={variant}
           showCategory={showCategory}
           showExcerpt={showExcerpt}
@@ -40,4 +28,6 @@ export default function ArticleGrid({
       ))}
     </div>
   );
-}
+};
+
+export default ArticleGrid;

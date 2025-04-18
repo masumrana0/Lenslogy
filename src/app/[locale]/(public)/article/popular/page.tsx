@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import ViewAllLayout from "@/components/shared/layout/view-all-layout";
-import { IArticle } from "../article/_interface/interface";
+import type { Metadata } from "next";
+import { IArticle } from "../_interface/interface";
 
 export const metadata: Metadata = {
   title: "Popular This Week | WiRE Technology Blog",
@@ -126,12 +126,10 @@ export default async function PopularPage({
 
   return (
     <ViewAllLayout
-      title={"latestNews"}
+      title={"popularPage"}
       lang="en"
       articles={articles}
       categories={categories}
-      onCategoryChange={handleCategoryChange}
-      onSortChange={handleSortChange}
       columns={2}
       variant="horizontal"
       showCategory={true}

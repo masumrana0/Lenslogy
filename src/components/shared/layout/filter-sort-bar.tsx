@@ -1,41 +1,62 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import { Filter, SortDesc } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
-import "@/lib/i18n/i18n.client";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
-interface FilterSortBarProps {
-  lang?: "en" | "bn";
-  categories: string[];
-}
-
-const FilterSortBar = ({ categories }: FilterSortBarProps) => {
+const FilterSortBar = ({ categories }: { categories: string[] }) => {
   const { t } = useTranslation();
   const router = useRouter();
-
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const hasMounted = useRef(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedSort, setSelectedSort] = useState("newest");
 
-  // Update the URL when filters change
+  // Sync state from URL on mount
   useEffect(() => {
-    const params = new URLSearchParams();
+    const category = searchParams.get("category") || "all";
+    const sort = searchParams.get("sort") || "newest";
 
-    if (selectedCategory !== "all") {
+    setSelectedCategory(category);
+    setSelectedSort(sort);
+  }, []);
+
+  // Update query only after first mount
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedCategory === "all") {
+      params.delete("category");
+    } else {
       params.set("category", selectedCategory);
     }
-    params.set("sort", selectedSort);
 
-    router.push(`/?${params.toString()}`);
-  }, [router, selectedCategory, selectedSort]);
+    if (selectedSort === "newest") {
+      params.delete("sort");
+    } else {
+      params.set("sort", selectedSort);
+    }
+
+    router.push(`${pathname}?${params.toString()}`);
+  }, [pathname, router, searchParams, selectedCategory, selectedSort]);
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-      <div className="flex items-center gap-2">
-        <Filter size={18} className="text-gray-500 dark:text-gray-400" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t("common.filterBy")}
-        </span>
+    <div className="flex flex-col md:flex-row justify-between items-start   mb-8 gap-4">
+      {/* Category Filter */}
+      <div className="flex   gap-2">
+        <div className="flex  gap-2">
+          <Filter size={18} className="text-gray-500 dark:text-gray-400" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 text-nowrap ">
+            {t("common.filterBy")}
+          </span>
+        </div>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedCategory("all")}
@@ -63,11 +84,14 @@ const FilterSortBar = ({ categories }: FilterSortBarProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <SortDesc size={18} className="text-gray-500 dark:text-gray-400" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t("common.sortBy")}
-        </span>
+      {/* Sort Dropdown */}
+      <div className="flex  items-center gap-2">
+        <div className="flex gap-2">
+          <SortDesc size={18} className="text-gray-500 dark:text-gray-400" />
+          <span className="text-sm text-nowrap font-medium text-gray-700 dark:text-gray-300">
+            {t("common.sortBy")}
+          </span>
+        </div>
         <select
           value={selectedSort}
           onChange={(e) => setSelectedSort(e.target.value)}

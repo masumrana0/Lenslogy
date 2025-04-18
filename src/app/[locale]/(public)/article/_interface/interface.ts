@@ -1,4 +1,3 @@
-import { IArticle } from "./interface";
 export type IPageProps = {
   params: Promise<{ locale: "bn" | "en"; id: string }>;
 };
@@ -22,10 +21,23 @@ export interface IArticle {
   views?: number;
   likes?: number;
 }
+export interface ArticleGridProps {
+  articles: IArticle[];
+  columns?: 1 | 2 | 3 | 4;
+  variant?: "default" | "featured" | "compact" | "horizontal";
+  showCategory?: boolean;
+  showExcerpt?: boolean;
+}
 
-interface IUser {
-  name: string;
-  designation: string;
-  role: "super-admin" | "admin" | "author";
-  avatar?: string;
+export interface ArticleCardProps {
+  article: IArticle;
+  variant?: "default" | "featured" | "compact" | "horizontal";
+  showCategory?: boolean;
+  showExcerpt?: boolean;
+}
+
+export interface IArticleVariantCardProps {
+  article: IArticle;
+  showCategory?: boolean;
+  showExcerpt?: boolean;
 }
