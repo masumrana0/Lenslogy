@@ -69,7 +69,7 @@ const HeroSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
   const sideArticles = articles.slice(1);
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 pb-10">
+    <section className="grid items-center grid-cols-1 md:grid-cols-3 gap-4 pt-6 pb-10">
       {/* Main featured article */}
       <div className="md:col-span-2 relative group">
         <div className="relative h-[400px] overflow-hidden">
@@ -101,8 +101,8 @@ const HeroSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
       {/* Side articles */}
       <div className="space-y-4">
         {sideArticles.map((article) => (
-          <div key={article.id} className="relative group">
-            <div className="relative h-[180px] overflow-hidden">
+          <div key={article.id} className="relative h-[193px] group">
+            <div className="relative h-full overflow-hidden">
               <Image
                 src={article.image || "/placeholder.svg"}
                 fill

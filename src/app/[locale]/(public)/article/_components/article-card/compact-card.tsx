@@ -5,6 +5,7 @@ import Link from "next/link";
 const CompactArticleCard = ({
   article,
   showCategory = true,
+  showExcerpt = false,
 }: IArticleVariantCardProps) => {
   const { title, category, date, image, id } = article;
 
@@ -27,6 +28,12 @@ const CompactArticleCard = ({
         <h3 className="font-medium text-sm leading-tight mb-1 group-hover:text-red-500 dark:text-gray-200 dark:group-hover:text-red-400 transition-colors line-clamp-2">
           {title}
         </h3>
+        {showExcerpt && (
+          <p className="text-gray-600 dark:text-gray-300 text-sm mb-1 line-clamp-2">
+            {article.excerpt}
+          </p>
+        )}
+
         <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
           <span>{date}</span>
         </div>

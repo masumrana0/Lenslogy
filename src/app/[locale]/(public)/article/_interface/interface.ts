@@ -16,7 +16,7 @@ interface IArticleAttachment {
 }
 
 export interface IArticle {
-  id: string;
+  id: string | number;
   title: string;
   excerpt: string;
   content: string;
@@ -37,7 +37,7 @@ export interface RelatedArticlesProps {
 // for Card
 
 export interface IArticleForCard {
-  id: string;
+  id: string | number;
   title: string;
   excerpt: string;
   image: string;

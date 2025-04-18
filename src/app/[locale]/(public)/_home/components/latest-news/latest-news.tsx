@@ -1,5 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
+import CompactArticleCard from "../../../article/_components/article-card/compact-card";
+import ViewAll from "../vew-all";
+import DefaultArticleCard from "../../../article/_components/article-card/default-card";
 
 const latestArticles = {
   en: [
@@ -120,67 +121,21 @@ const LatestNews = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
 
   return (
     <section className="py-8 border-t">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold relative pl-3 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
-          Latest News
-        </h2>
-        <Link href="/latest" className="text-sm text-red-500 hover:underline">
-          View All
-        </Link>
-      </div>
+      <ViewAll href="latest" title="Latest News" />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Featured latest article */}
-        <div className="group">
-          <div className="relative h-64 mb-4 overflow-hidden">
-            <Image
-              src={mainArticle.image || "/placeholder.svg"}
-              fill
-              alt={mainArticle.title}
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-            <div className="absolute top-3 left-3">
-              <span className="inline-block bg-red-500 text-white text-xs px-2 py-1">
-                {mainArticle.category}
-              </span>
-            </div>
-          </div>
-
-          <h3 className="text-xl font-bold mb-3 group-hover:text-red-500 transition-colors">
-            <Link href={`/article/${mainArticle.id}`}>{mainArticle.title}</Link>
-          </h3>
-
-          <p className="text-gray-600 mb-3">{mainArticle.excerpt}</p>
-
-          <span className="text-sm text-gray-500">{mainArticle.date}</span>
-        </div>
+        {/*  latest article */}
+        <DefaultArticleCard article={mainArticle} showCategory showExcerpt />
 
         {/* Other latest articles */}
         <div className="space-y-6">
           {otherArticles.map((article) => (
-            <div key={article.id} className="flex group">
-              <div className="relative w-32 h-24 flex-shrink-0 overflow-hidden">
-                <Image
-                  src={article.image || "/placeholder.svg"}
-                  fill
-                  alt={article.title}
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-
-              <div className="ml-4 flex-1">
-                <span className="text-xs text-red-500 block mb-1">
-                  {article.category}
-                </span>
-                <h3 className="font-bold text-base leading-tight mb-2 group-hover:text-red-500 transition-colors line-clamp-2">
-                  <Link href={`/article/${article.id}`}>{article.title}</Link>
-                </h3>
-                <p className="text-gray-600 text-sm mb-1 line-clamp-2">
-                  {article.excerpt}
-                </p>
-                <span className="text-xs text-gray-500">{article.date}</span>
-              </div>
-            </div>
+            <CompactArticleCard
+              article={article}
+              key={article.id}
+              showCategory
+              showExcerpt
+            />
           ))}
         </div>
       </div>

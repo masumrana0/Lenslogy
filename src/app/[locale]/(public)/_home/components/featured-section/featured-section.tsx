@@ -1,6 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
 import React from "react";
+import ViewAll from "../vew-all";
+import { IArticleForCard } from "../../../article/_interface/interface";
+import DefaultArticleCard from "../../../article/_components/article-card/default-card";
+ 
 
 const featuredArticleCore = {
   en: [
@@ -91,45 +93,16 @@ const FeaturedSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
   const featuredArticles = featuredArticleCore[lang];
   return (
     <section className="py-8 border-t border-b">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold relative pl-3 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-red-500">
-          Featured Stories
-        </h2>
-        <Link
-          href="/article/featured"
-          className="text-sm text-red-500 hover:underline"
-        >
-          View All
-        </Link>
-      </div>
+      <ViewAll title="Featured Blog" href="featured" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {featuredArticles.map((article) => (
-          <div key={article.id} className="group">
-            <div className="relative h-48 mb-3 overflow-hidden">
-              <Image
-                src={article.image || "/placeholder.svg"}
-                fill
-                alt={article.title}
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute top-2 left-2">
-                <span className="inline-block bg-red-500 text-white text-xs px-2 py-1">
-                  {article.category}
-                </span>
-              </div>
-            </div>
-
-            <h3 className="font-bold text-lg mb-2 group-hover:text-red-500 transition-colors line-clamp-2">
-              <Link href={`/article/${article.id}`}>{article.title}</Link>
-            </h3>
-
-            <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-              {article.excerpt}
-            </p>
-
-            <span className="text-xs text-gray-500">{article.date}</span>
-          </div>
+        {featuredArticles.map((article: IArticleForCard) => (
+          <DefaultArticleCard
+            article={article}
+            key={article.id}
+            showCategory
+            showExcerpt
+          />
         ))}
       </div>
     </section>
