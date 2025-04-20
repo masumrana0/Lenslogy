@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { translateContent } from "@/lib/ai/openai";
 
 export async function GET(
   req: NextRequest,
@@ -11,29 +12,11 @@ export async function GET(
     const { slug } = params;
 
     // Get query parameters
-    const url = new URL(req.url);
-    const language = url.searchParams.get("language") || "en";
-
-    // Get client IP for view tracking
-    const ip = req.headers.get("x-forwarded-for") || "unknown";
 
     // Get article
     const article = await prisma.article.findUnique({
       where: {
-        slug,
-        published: true,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            designation: true,
-            avatar: true,
-          },
-        },
-        category: true,
-        tags: true,
+        id: slug,
       },
     });
 
@@ -41,50 +24,8 @@ export async function GET(
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
-    // Increment view count (only count unique IPs)
-    await prisma.article.update({
-      where: {
-        id: article.id,
-      },
-      data: {
-        views: article.views + 1,
-      },
-    });
-
     // Format response based on language
     let formattedArticle;
-
-    if (language === "bn") {
-      formattedArticle = {
-        id: article.id,
-        title: article.bnTitle || article.enTitle,
-        excerpt: article.bnExcerpt || article.enExcerpt,
-        content: article.bnContent || article.enContent,
-        image: article.bnImage || article.enImage,
-        category: article.category.bnName || article.category.enName,
-        author: article.author,
-        date: article.createdAt.toISOString(),
-        tags: article.tags.map((tag) => tag.bnName || tag.enName),
-        views: article.views,
-        likes: article.likes,
-        slug: article.slug,
-      };
-    } else {
-      formattedArticle = {
-        id: article.id,
-        title: article.enTitle,
-        excerpt: article.enExcerpt,
-        content: article.enContent,
-        image: article.enImage,
-        category: article.category.enName,
-        author: article.author,
-        date: article.createdAt.toISOString(),
-        tags: article.tags.map((tag) => tag.enName),
-        views: article.views,
-        likes: article.likes,
-        slug: article.slug,
-      };
-    }
 
     return NextResponse.json(formattedArticle);
   } catch (error) {
@@ -103,28 +44,21 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions);
 
-    // Check if user is authenticated
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { slug } = params;
 
-    // Get article
     const article = await prisma.article.findUnique({
-      where: {
-        slug,
-      },
-      include: {
-        author: true,
-      },
+      where: { id: slug },
+      include: { author: true },
     });
 
     if (!article) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
-    // Check if user is the author or has admin/super-admin role
     const userRole = session.user.role;
     const isAuthor = article.authorId === session.user.id;
 
@@ -135,30 +69,41 @@ export async function PUT(
       );
     }
 
-    const { title, excerpt, content, image, categoryId, tags, published } =
-      await req.json();
+    const payload = await req.json();
+    const { title, excerpt, content, image, category, tags } = payload;
 
-    // Update article
-    const updatedArticle = await prisma.article.update({
-      where: {
-        id: article.id,
-      },
-      data: {
-        enTitle: title,
-        enExcerpt: excerpt,
-        enContent: content,
-        enImage: image,
-        published,
-        category: {
-          connect: {
-            id: categoryId,
-          },
-        },
-        tags: {
-          set: [],
-          connect: tags.map((tagId: string) => ({ id: tagId })),
-        },
-      },
+    const englishUpdateData: Record<string, any> = {};
+    const shouldTranslate: Record<string, string> = {};
+
+    // Check for content fields (translation needed)
+    if (title) {
+      englishUpdateData.title = title;
+      shouldTranslate.title = title;
+    }
+    if (excerpt) {
+      englishUpdateData.excerpt = excerpt;
+      shouldTranslate.excerpt = excerpt;
+    }
+    if (content) {
+      englishUpdateData.content = content;
+      shouldTranslate.content = content;
+    }
+
+    // Check for non-translatable shared fields
+    if (image) englishUpdateData.image = image;
+    if (category) englishUpdateData.category = category;
+    if (tags) englishUpdateData.tags = tags;
+
+    // Translate only if necessary
+    let bnTranslated = null;
+    if (Object.keys(shouldTranslate).length > 0) {
+      bnTranslated = await translateContent(shouldTranslate);
+    }
+
+    // Update English article
+    const updatedEnglish = await prisma.article.update({
+      where: { id: article.id },
+      data: englishUpdateData,
       include: {
         author: {
           select: {
@@ -168,12 +113,41 @@ export async function PUT(
             avatar: true,
           },
         },
-        category: true,
-        tags: true,
       },
     });
 
-    return NextResponse.json(updatedArticle);
+    // Update Bangla article if it exists (linked via baseId)
+    const banglaArticle = await prisma.article.findFirst({
+      where: {
+        baseId: article.lang === "en" ? article.id : article.baseId!,
+        lang: "bn",
+      },
+    });
+
+    if (banglaArticle) {
+      const banglaUpdateData: Record<string, any> = {};
+
+      // Add translated content if present
+      if (bnTranslated?.bnTitle) banglaUpdateData.title = bnTranslated.bnTitle;
+      if (bnTranslated?.bnExcerpt)
+        banglaUpdateData.excerpt = bnTranslated.bnExcerpt;
+      if (bnTranslated?.bnContent)
+        banglaUpdateData.content = bnTranslated.bnContent;
+
+      // Add non-translatable shared fields (if updated)
+      if (image) banglaUpdateData.image = image;
+      if (category) banglaUpdateData.category = category;
+      if (tags) banglaUpdateData.tags = tags;
+
+      if (Object.keys(banglaUpdateData).length > 0) {
+        await prisma.article.update({
+          where: { id: banglaArticle.id },
+          data: banglaUpdateData,
+        });
+      }
+    }
+
+    return NextResponse.json(updatedEnglish);
   } catch (error) {
     console.error("Error updating article:", error);
     return NextResponse.json(
@@ -200,10 +174,7 @@ export async function DELETE(
     // Get article
     const article = await prisma.article.findUnique({
       where: {
-        slug,
-      },
-      include: {
-        author: true,
+        id: slug,
       },
     });
 

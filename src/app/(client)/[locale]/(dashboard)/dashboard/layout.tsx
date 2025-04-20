@@ -21,9 +21,9 @@ export default async function DashboardLayout({
     };
   };
 
-  // if (!session) {
-  //   redirect("/auth/login");
-  // }
+  if (!session) {
+    redirect("/auth/login");
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -35,7 +35,7 @@ export default async function DashboardLayout({
       </header>
       <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr] lg:grid-cols-[240px_1fr]">
         <aside className="hidden w-[200px] flex-col md:flex lg:w-[240px] border-r py-6 pr-6">
-          {session.user && <DashboardNav role={session.user.role as string} />}
+          {<DashboardNav role={"SUPER_ADMIN"} />}
         </aside>
         <main className="flex w-full flex-1 flex-col overflow-hidden py-6">
           {children}

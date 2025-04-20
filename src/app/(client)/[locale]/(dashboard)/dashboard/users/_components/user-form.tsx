@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+
+// UI components
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -15,7 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -23,68 +25,50 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+// Utils & Schemas
 import { toast } from "@/components/ui/toast";
+import { userSchema } from "@/schama";
+import { availableRoles } from "../_utils";
+import { IRole } from "../_interface/user.interface";
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters",
-  }),
-  role: z.enum(["SUPER_ADMIN", "ADMIN", "AUTHOR"]),
-  designation: z.string().optional(),
-  avatar: z.string().url().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof userSchema>;
 
 interface UserFormProps {
-  currentUserRole: string;
+  currentUserRole: IRole;
 }
 
-export function UserForm({ currentUserRole }: UserFormProps) {
+const UserForm: React.FC<UserFormProps> = ({ currentUserRole }) => {
   const router = useRouter();
-
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(userSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
       role: "AUTHOR",
       designation: "",
-      avatar: "",
     },
   });
 
-  // Determine which roles the current user can create
-  const availableRoles = () => {
-    if (currentUserRole === "SUPER_ADMIN") {
-      return ["SUPER_ADMIN", "ADMIN", "AUTHOR"];
-    } else if (currentUserRole === "ADMIN") {
-      return ["AUTHOR"];
-    } else {
-      return [];
-    }
-  };
+  const roles = availableRoles(currentUserRole);
 
-  async function onSubmit(values: FormValues) {
-    setIsLoading(true);
+  const onSubmit = async (values: FormValues) => {
+    console.log("button trigger ", values);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/user/create-user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
 
       if (!res.ok) {
         const error = await res.json();
@@ -94,6 +78,8 @@ export function UserForm({ currentUserRole }: UserFormProps) {
       toast({
         title: "User created",
         description: "The user has been created successfully",
+        type: "success",
+        position: "top-center",
       });
 
       form.reset();
@@ -103,15 +89,18 @@ export function UserForm({ currentUserRole }: UserFormProps) {
       toast({
         title: "Error",
         description: error.message || "Failed to create user",
+        type: "error",
+        position: "top-center",
       });
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Name */}
         <FormField
           control={form.control}
           name="name"
@@ -126,6 +115,7 @@ export function UserForm({ currentUserRole }: UserFormProps) {
           )}
         />
 
+        {/* Email */}
         <FormField
           control={form.control}
           name="email"
@@ -140,6 +130,7 @@ export function UserForm({ currentUserRole }: UserFormProps) {
           )}
         />
 
+        {/* Password */}
         <FormField
           control={form.control}
           name="password"
@@ -155,6 +146,7 @@ export function UserForm({ currentUserRole }: UserFormProps) {
           )}
         />
 
+        {/* Role */}
         <FormField
           control={form.control}
           name="role"
@@ -168,7 +160,7 @@ export function UserForm({ currentUserRole }: UserFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {availableRoles().map((role) => (
+                  {roles.map((role) => (
                     <SelectItem key={role} value={role}>
                       {role.replace("_", " ")}
                     </SelectItem>
@@ -183,6 +175,7 @@ export function UserForm({ currentUserRole }: UserFormProps) {
           )}
         />
 
+        {/* Designation */}
         <FormField
           control={form.control}
           name="designation"
@@ -200,30 +193,17 @@ export function UserForm({ currentUserRole }: UserFormProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="avatar"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Avatar URL (Optional)</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="https://example.com/avatar.jpg"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                URL to the user&apos;s profile picture
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" disabled={isLoading}>
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="bg-red-500 hover:bg-red-600"
+        >
           {isLoading ? "Creating..." : "Create User"}
         </Button>
       </form>
     </Form>
   );
-}
+};
+
+export default UserForm;

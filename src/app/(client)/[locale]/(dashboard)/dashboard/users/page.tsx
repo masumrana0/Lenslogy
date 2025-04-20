@@ -1,16 +1,20 @@
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header"
-import { UserForm } from "./_components/user-form"
-import { UsersTable } from "./_components/users-table"
- 
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
+import { UsersTable } from "./_components/users-table";
+import UserForm from "./_components/user-form";
 
 export default async function UsersPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
+  const role = session?.user.role;
 
-  if (!session || !session.user || (session.user.role !== "SUPER_ADMIN" && session.user.role !== "ADMIN")) {
-    redirect("/dashboard")
+  if (
+    !session ||
+    !session.user ||
+    (role !== "SUPER_ADMIN" && role !== "ADMIN")
+  ) {
+    redirect("/dashboard");
   }
 
   return (
@@ -20,13 +24,13 @@ export default async function UsersPage() {
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div>
           <h2 className="text-xl font-bold mb-4">Add New User</h2>
-          <UserForm currentUserRole={session.user.role} />
+          <UserForm currentUserRole={role} />
         </div>
         <div>
           <h2 className="text-xl font-bold mb-4">Existing Users</h2>
-          <UsersTable currentUserRole={session.user.role} />
+          <UsersTable currentUserRole={role} />
         </div>
       </div>
     </div>
-  )
+  );
 }

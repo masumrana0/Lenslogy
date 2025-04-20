@@ -16,18 +16,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
+import { categorySchema } from "@/schama";
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters",
-  }),
-  enName: z.string().min(2, {
-    message: "English name must be at least 2 characters",
-  }),
-  bnName: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof categorySchema>;
 
 export function CategoryForm() {
   const router = useRouter();
@@ -35,11 +26,9 @@ export function CategoryForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(categorySchema),
     defaultValues: {
       name: "",
-      enName: "",
-      bnName: "",
     },
   });
 
@@ -88,49 +77,20 @@ export function CategoryForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Slug Name</FormLabel>
-              <FormControl>
-                <Input placeholder="technology" {...field} />
-              </FormControl>
-              <FormDescription>
-                The unique identifier for the category (lowercase, no spaces)
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="enName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>English Name</FormLabel>
+              <FormLabel>Category Name </FormLabel>
               <FormControl>
                 <Input placeholder="Technology" {...field} />
               </FormControl>
-              <FormDescription>The display name in English</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="bnName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bengali Name (Optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="প্রযুক্তি" {...field} />
-              </FormControl>
-              <FormDescription>The display name in Bengali</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" disabled={isLoading}>
+        <Button
+          className="bg-red-500 hover:bg-red-600 text-white"
+          type="submit"
+          disabled={isLoading}
+        >
           {isLoading ? "Creating..." : "Create Category"}
         </Button>
       </form>

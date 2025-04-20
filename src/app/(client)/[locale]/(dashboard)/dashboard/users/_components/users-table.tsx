@@ -43,33 +43,33 @@ interface UsersTableProps {
 export function UsersTable({ currentUserRole }: UsersTableProps) {
   const router = useRouter();
 
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
-        if (!res.ok) throw new Error("Failed to fetch users");
-        const data = await res.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load users",
-          type: "error",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
+  //       if (!res.ok) throw new Error("Failed to fetch users");
+  //       const data = await res.json();
+  //       setUsers(data);
+  //     } catch (error) {
+  //       console.error("Error fetching users:", error);
+  //       toast({
+  //         title: "Error",
+  //         description: "Failed to load users",
+  //         type: "error",
+  //       });
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchUsers();
-  }, [toast]);
+  //   fetchUsers();
+  // }, [toast]);
 
   const handleDeleteClick = (id: string) => {
     setUserToDelete(id);
@@ -80,16 +80,16 @@ export function UsersTable({ currentUserRole }: UsersTableProps) {
     if (!userToDelete) return;
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userToDelete}`,
-        {
-          method: "DELETE",
-        }
-      );
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userToDelete}`,
+      //   {
+      //     method: "DELETE",
+      //   }
+      // );
 
-      if (!res.ok) {
-        throw new Error("Failed to delete user");
-      }
+      // if (!res.ok) {
+      //   throw new Error("Failed to delete user");
+      // }
 
       // Remove user from state
       setUsers(users.filter((user) => user.id !== userToDelete));

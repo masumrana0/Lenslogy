@@ -37,26 +37,26 @@ import {
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 
-async function getArticles() {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/articles?limit=100`,
-      {
-        cache: "no-store",
-      }
-    );
+// async function getArticles() {
+//   try {
+//     const res = await fetch(
+//       `${process.env.NEXT_PUBLIC_API_URL}/api/articles?limit=100`,
+//       {
+//         cache: "no-store",
+//       }
+//     );
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch articles");
-    }
+//     if (!res.ok) {
+//       throw new Error("Failed to fetch articles");
+//     }
 
-    const data = await res.json();
-    return data.articles;
-  } catch (error) {
-    console.error("Error fetching articles:", error);
-    return [];
-  }
-}
+//     const data = await res.json();
+//     return data.articles;
+//   } catch (error) {
+//     console.error("Error fetching articles:", error);
+//     return [];
+//   }
+// }
 
 export function ArticlesTable() {
   const router = useRouter();
@@ -68,16 +68,16 @@ export function ArticlesTable() {
   const [articleToDelete, setArticleToDelete] = useState<string | null>(null);
 
   // Fetch articles on component mount
-  useState(() => {
-    const fetchArticles = async () => {
-      setIsLoading(true);
-      const data = await getArticles();
-      setArticles(data);
-      setIsLoading(false);
-    };
+  // useState(() => {
+  //   const fetchArticles = async () => {
+  //     setIsLoading(true);
+  //     const data = await getArticles();
+  //     setArticles(data);
+  //     setIsLoading(false);
+  //   };
 
-    fetchArticles();
-  });
+  //   fetchArticles();
+  // });
 
   const filteredArticles = articles.filter((article) =>
     article.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -92,26 +92,26 @@ export function ArticlesTable() {
     if (!articleToDelete) return;
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/articles/${articleToDelete}`,
-        {
-          method: "DELETE",
-        }
-      );
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}/api/articles/${articleToDelete}`,
+      //   {
+      //     method: "DELETE",
+      //   }
+      // );
 
-      if (!res.ok) {
-        throw new Error("Failed to delete article");
-      }
+      // if (!res.ok) {
+      //   throw new Error("Failed to delete article");
+      // }
 
-      // Remove article from state
-      setArticles(
-        articles.filter((article) => article.slug !== articleToDelete)
-      );
+      // // Remove article from state
+      // setArticles(
+      //   articles.filter((article) => article.slug !== articleToDelete)
+      // );
 
-      toast({
-        title: "Article deleted",
-        description: "The article has been deleted successfully",
-      });
+      // toast({
+      //   title: "Article deleted",
+      //   description: "The article has been deleted successfully",
+      // });
     } catch (error) {
       console.error("Error deleting article:", error);
       toast({

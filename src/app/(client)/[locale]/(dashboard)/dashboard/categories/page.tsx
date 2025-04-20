@@ -6,14 +6,6 @@ import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-heade
 import { CategoryForm } from "./_components/CategoryForm";
 import { CategoriesTable } from "./_components/categories-table";
 
-declare module "next-auth" {
-  interface Session {
-    user?: {
-      role?: "SUPER_ADMIN" | "ADMIN" | "AUTHOR";
-    } & DefaultSession["user"];
-  }
-}
-
 export default async function CategoriesPage() {
   const session = await getServerSession(authOptions);
 

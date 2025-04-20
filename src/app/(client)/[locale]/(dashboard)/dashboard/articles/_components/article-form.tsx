@@ -152,7 +152,7 @@ export function ArticleForm({ article }: { article?: any }) {
           : "Your article has been created successfully",
       });
 
-      router.push("/dashboard/articles");
+      // router.push("/dashboard/articles");
       router.refresh();
     } catch (error) {
       console.error("Error saving article:", error);

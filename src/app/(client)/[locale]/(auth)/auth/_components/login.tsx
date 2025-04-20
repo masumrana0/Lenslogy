@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,64 +17,62 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import { toast } from "@/components/ui/toast";
-
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters",
-  }),
-});
+import { loginSchema } from "@/schama";
 
 export function LoginForm() {
   const router = useRouter();
-
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
 
     try {
       const result = await signIn("credentials", {
-        email: values.email,
-        password: values.password,
+        ...values,
         redirect: false,
       });
 
       if (result?.error) {
         toast({
-          title: "Error",
-          description: "Invalid email or password",
+          title: "Login Failed",
+          description:
+            result.error === "CredentialsSignin"
+              ? "Incorrect email or password. Please try again."
+              : result.error,
           type: "error",
+          position: "top-center",
         });
-
         return;
       }
 
+      toast({
+        title: "Success",
+        description: "You have logged in successfully",
+        type: "success",
+      });
+
       router.push("/dashboard");
       router.refresh();
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description:
+          error?.message || "Something went wrong. Please try again.",
         type: "error",
       });
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Form {...form}>
@@ -85,12 +84,18 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="name@example.com" {...field} />
+                <Input
+                  {...field}
+                  type="email"
+                  placeholder="name@example.com"
+                  disabled={isLoading}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -98,15 +103,21 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
+                <Input
+                  {...field}
+                  type="password"
+                  placeholder="••••••••"
+                  disabled={isLoading}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <Button
           type="submit"
-          className="w-full bg-red-500 hover:bg-red-600 "
+          className="w-full bg-red-500 hover:bg-red-600"
           disabled={isLoading}
         >
           {isLoading ? "Signing in..." : "Sign in"}
