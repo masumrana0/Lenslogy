@@ -1,8 +1,8 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { translateContent } from "@/lib/ai/gemenai";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { translateContent } from "@/lib/ai/openai";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Create Article
 export async function POST(req: NextRequest) {

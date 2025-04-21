@@ -73,6 +73,10 @@ CREATE TABLE "Article" (
     "tags" TEXT[],
     "lang" "Language" NOT NULL,
     "categoryId" TEXT,
+    "isFeatured" BOOLEAN NOT NULL DEFAULT false,
+    "isPinFeatured" BOOLEAN NOT NULL DEFAULT false,
+    "isPinLatest" BOOLEAN NOT NULL DEFAULT false,
+    "isPublished" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Article_pkey" PRIMARY KEY ("id")
 );
@@ -91,7 +95,7 @@ CREATE TABLE "ArticleAttachment" (
 -- CreateTable
 CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
-    "baseId" TEXT,
+    "baseId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "lang" "Language" NOT NULL,
 

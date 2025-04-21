@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -8,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,13 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { categorySchema } from "@/schama";
+import { useCreateCategoryMutation } from "@/redux/api/category.api";
 
 type FormValues = z.infer<typeof categorySchema>;
 
 export function CategoryForm() {
   const router = useRouter();
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [create, { isLoading }] = useCreateCategoryMutation();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(categorySchema),
@@ -32,42 +30,32 @@ export function CategoryForm() {
     },
   });
 
-  async function onSubmit(values: FormValues) {
-    setIsLoading(true);
-
+  const onSubmit = async (values: FormValues) => {
     try {
-      // const res = await fetch(
-      //   `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(values),
-      //   }
-      // );
+      const response = await create(values);
 
-      // if (!res.ok) {
-      //   throw new Error("Failed to create category");
-      // }
+      if (!response) {
+        throw new Error("No response from create function");
+      }
 
       toast({
-        title: "Category created",
-        description: "Your category has been created successfully",
+        title: "Success",
+        description: "Category created successfully.",
       });
 
       form.reset();
       router.refresh();
-    } catch (error) {
-      console.error("Error creating category:", error);
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create category",
+        description:
+          error?.message ||
+          "An unexpected error occurred while creating the category.",
       });
     } finally {
-      setIsLoading(false);
+      return;
     }
-  }
+  };
 
   return (
     <Form {...form}>
@@ -79,7 +67,7 @@ export function CategoryForm() {
             <FormItem>
               <FormLabel>Category Name </FormLabel>
               <FormControl>
-                <Input placeholder="Technology" {...field} />
+                <Input placeholder="enter category name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -114,7 +114,7 @@ model ArticleAttachment {
 
 model Category {
     id       String    @id @default(cuid())
-    baseId   String?
+    baseId   String    @default(cuid())
     name     String    @unique
     lang     Language
     articles Article[]
