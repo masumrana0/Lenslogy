@@ -79,28 +79,22 @@ model Session {
 
 model Article {
     id            String             @id @default(cuid())
-    baseId        String?
-    baseArticle   Article?           @relation("BaseArticle", fields: [baseId], references: [id])
-    translations  Article[]          @relation("BaseArticle")
+    baseId        String             @default(cuid())
     title         String
     excerpt       String
     content       String
     image         String
-    category      String
+    category      Category?          @relation(fields: [categoryId], references: [id])
     authorId      String
     author        User               @relation(fields: [authorId], references: [id])
     date          DateTime           @default(now())
-    tags          String[]
     lang          Language
     attachment    ArticleAttachment?
-    Category      Category?          @relation(fields: [categoryId], references: [id])
-    categoryId    String?
+    categoryId    String
     isFeatured    Boolean            @default(false)
     isPinFeatured Boolean            @default(false)
     isPinLatest   Boolean            @default(false)
     isPublished   Boolean            @default(false)
-
-    @@unique([baseId, lang])
 }
 
 model ArticleAttachment {

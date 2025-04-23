@@ -60,7 +60,7 @@ const UserForm: React.FC<UserFormProps> = ({ currentUserRole }) => {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/user/create-user`,
+        `${process.env.NEXT_PUBLIC_API_URL}/user/create-user`,
         {
           method: "POST",
           headers: {

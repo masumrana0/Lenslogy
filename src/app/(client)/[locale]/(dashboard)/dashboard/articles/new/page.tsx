@@ -8,9 +8,9 @@ import { ArticleForm } from "../_components/article-form";
 export default async function NewArticlePage() {
   const session = await getServerSession(authOptions);
 
-  // if (!session) {
-  //   redirect("/auth/login");
-  // }
+  if (!session) {
+    redirect("/auth/login");
+  }
 
   return (
     <div className="flex flex-col gap-4">

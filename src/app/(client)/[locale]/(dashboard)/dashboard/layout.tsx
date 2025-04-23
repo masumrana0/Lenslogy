@@ -24,9 +24,9 @@ export default async function DashboardLayout({
     };
   };
 
-  if (!session) {
-    redirect("/auth/login");
-  }
+  // if (!session) {
+  //   redirect("/auth/login");
+  // }
 
   return (
     <div className="flex min-h-screen flex-col">

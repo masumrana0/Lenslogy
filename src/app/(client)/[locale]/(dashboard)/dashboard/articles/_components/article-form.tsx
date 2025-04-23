@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,352 +24,272 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
-import { Editor } from "./editor";
+import { ImageUploader } from "@/components/ui/image-uploader";
+import { Loader2, Save } from "lucide-react";
+import { RichTextEditor } from "./editor";
+import { useGetAllCategoriesQuery } from "@/redux/api/category.api";
+import { articleSchema } from "@/schama";
+import { useCreateArticleMutation } from "@/redux/api/article.api";
 
-const formSchema = z.object({
-  title: z.string().min(5, {
-    message: "Title must be at least 5 characters",
-  }),
-  excerpt: z.string().min(10, {
-    message: "Excerpt must be at least 10 characters",
-  }),
-  content: z.string().min(50, {
-    message: "Content must be at least 50 characters",
-  }),
-  image: z.string().url({
-    message: "Please enter a valid URL for the image",
-  }),
-  categoryId: z.string({
-    required_error: "Please select a category",
-  }),
-  tags: z.array(z.string()).optional(),
-  published: z.boolean(),
-});
+// Validation schema
 
-type FormValues = z.infer<typeof formSchema>;
-
-interface Category {
-  id: string;
-  name: string;
-  enName: string;
-}
-
-interface Tag {
-  id: string;
-  name: string;
-  enName: string;
-}
+type FormValues = z.infer<typeof articleSchema>;
 
 export function ArticleForm({ article }: { article?: any }) {
   const router = useRouter();
+  const { data: categories, isLoading: isCategoryLoading } =
+    useGetAllCategoriesQuery("en");
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
+  const [create, { isLoading }] = useCreateArticleMutation();
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(articleSchema as any),
     defaultValues: {
-      title: article?.enTitle || "",
-      excerpt: article?.enExcerpt || "",
-      content: article?.enContent || "",
-      image: article?.enImage || "",
+      title: article?.title || "",
+      excerpt: article?.excerpt || "",
+      content: article?.content || "",
+      image: article?.image || null,
       categoryId: article?.categoryId || "",
-      tags: article?.tags?.map((tag: any) => tag.id) || [],
-      published: article?.published || false,
+      isFeatured: article?.isFeatured || false,
+      isPinFeatured: article?.isPinFeatured || false,
+      isPinLatest: article?.isPinLatest || false,
+      isPublished: article?.isPublished || false,
     },
   });
 
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     try {
-  //       const res = await fetch(
-  //         `${process.env.NEXT_PUBLIC_API_URL}/api/categories`
-  //       );
-  //       if (!res.ok) throw new Error("Failed to fetch categories");
-  //       const data = await res.json();
-  //       setCategories(data);
-  //     } catch (error) {
-  //       console.error("Error fetching categories:", error);
-  //       toast({
-  //         title: "Error",
-  //         description: "Failed to load categories",
-  //         type: "error",
-  //       });
-  //     }
-  //   };
-
-  //   const fetchTags = async () => {
-  //     try {
-  //       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tags`);
-  //       if (!res.ok) throw new Error("Failed to fetch tags");
-  //       const data = await res.json();
-  //       setTags(data);
-  //     } catch (error) {
-  //       console.error("Error fetching tags:", error);
-  //       toast({
-  //         title: "Error",
-  //         description: "Failed to load tags",
-  //         variant: "destructive",
-  //       });
-  //     }
-  //   };
-
-  //   fetchCategories();
-  //   fetchTags();
-  // }, [toast]);
-
   async function onSubmit(values: FormValues) {
-    setIsLoading(true);
-
     try {
-      // const endpoint = article
-      //   ? `${process.env.NEXT_PUBLIC_API_URL}/api/articles/${article.slug}`
-      //   : `${process.env.NEXT_PUBLIC_API_URL}/api/articles`;
+      console.log(values);
 
-      // const method = article ? "PUT" : "POST";
+      const { image, ...payload } = values;
 
-      // const res = await fetch(endpoint, {
-      //   method,
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(values),
-      // });
+      const formdata = new FormData();
+      formdata.append("payload", JSON.stringify(payload));
+      formdata.append("imgFile", image);
+      await create(formdata);
 
-      // if (!res.ok) {
-      //   throw new Error("Failed to save article");
-      // }
-
-      // const data = await res.json();
-
-      toast({
-        title: article ? "Article updated" : "Article created",
-        description: article
-          ? "Your article has been updated successfully"
-          : "Your article has been created successfully",
-      });
-
-      // router.push("/dashboard/articles");
+      toast({ title: "Success", description: "Article saved successfully" });
       router.refresh();
     } catch (error) {
-      console.error("Error saving article:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save article",
-      });
+      console.error(error);
+      toast({ title: "Error", description: "Failed to save article" });
     } finally {
-      setIsLoading(false);
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter article title" {...field} />
-                </FormControl>
-                <FormDescription>
-                  The title of your article as it will appear on the blog
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <Card className="border-none shadow-none p-5">
+      <CardHeader className="px-0">
+        <CardTitle className="text-2xl font-bold">
+          {article ? "Edit Article" : "Create New Article"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-0">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <Tabs defaultValue="content" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
+                <TabsTrigger value="content">Content</TabsTrigger>
+                <TabsTrigger value="settings">Settings</TabsTrigger>
+              </TabsList>
 
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Featured Image URL</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="https://example.com/image.jpg"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  URL to the featured image for your article
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="excerpt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Excerpt</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Brief summary of your article"
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                A short summary that appears on article cards
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Content</FormLabel>
-              <FormControl>
-                <Editor
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Write your article content here..."
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.enName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  The category this article belongs to
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="tags"
-            render={() => (
-              <FormItem>
-                <div className="mb-4">
-                  <FormLabel>Tags</FormLabel>
-                  <FormDescription>
-                    Select tags relevant to your article
-                  </FormDescription>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
+              <TabsContent value="content" className="space-y-8">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-[2fr_1fr]">
+                  <div className="space-y-8">
                     <FormField
-                      key={tag.id}
                       control={form.control}
-                      name="tags"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={tag.id}
-                            className="flex flex-row items-start space-x-3 space-y-0"
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Title</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter article title"
+                              {...field}
+                              className="text-lg"
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            The title of your article as it will appear on the
+                            blog
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="excerpt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Excerpt</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Brief summary of your article"
+                              className="min-h-[100px] resize-none"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            A short summary that appears on article cards
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="content"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Content</FormLabel>
+                          <FormControl>
+                            <RichTextEditor
+                              value={field.value}
+                              onChange={field.onChange}
+                              placeholder="Write your article content here..."
+                              className="min-h-[500px] w-4xl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-8">
+                    <FormField
+                      control={form.control}
+                      name="image"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Featured Image</FormLabel>
+                          <FormControl>
+                            <ImageUploader
+                              onImageUpload={({ file }) => field.onChange(file)}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Upload a featured image for your article
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="categoryId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Category</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
                           >
                             <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(tag.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([
-                                        ...(field.value || []),
-                                        tag.id,
-                                      ])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== tag.id
-                                        )
-                                      );
-                                }}
-                              />
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a category" />
+                              </SelectTrigger>
                             </FormControl>
-                            <FormLabel className="font-normal">
-                              {tag.enName}
-                            </FormLabel>
-                          </FormItem>
-                        );
-                      }}
+                            <SelectContent>
+                              {!isCategoryLoading &&
+                                categories?.map((category: any) => (
+                                  <SelectItem
+                                    key={category.id}
+                                    value={category.id}
+                                  >
+                                    {category.name}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            The category this article belongs to
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="settings" className="space-y-8">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {[
+                    {
+                      name: "isPublished",
+                      label: "Publish",
+                      desc: "Check this box to make the article publicly visible",
+                    },
+                    {
+                      name: "isFeatured",
+                      label: "Featured",
+                      desc: "Feature this article on the homepage",
+                    },
+                    {
+                      name: "isPinFeatured",
+                      label: "Pin to Featured",
+                      desc: "Pin this article to the top of featured articles",
+                    },
+                    {
+                      name: "isPinLatest",
+                      label: "Pin to Latest",
+                      desc: "Pin this article to the top of latest articles",
+                    },
+                  ].map(({ name, label, desc }) => (
+                    <FormField
+                      key={name}
+                      control={form.control}
+                      name={name as keyof FormValues}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value as any}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>{label}</FormLabel>
+                            <FormDescription>{desc}</FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
                     />
                   ))}
                 </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+              </TabsContent>
+            </Tabs>
 
-        <FormField
-          control={form.control}
-          name="published"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Publish</FormLabel>
-                <FormDescription>
-                  Check this box to make the article publicly visible
-                </FormDescription>
-              </div>
-            </FormItem>
-          )}
-        />
-
-        <div className="flex gap-2">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading
-              ? "Saving..."
-              : article
-              ? "Update Article"
-              : "Create Article"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.push("/dashboard/articles")}
-          >
-            Cancel
-          </Button>
-        </div>
-      </form>
-    </Form>
+            <div className="flex gap-2">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="gap-2 bg-[#ff005b] hover:bg-[#ff3380]"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Article
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

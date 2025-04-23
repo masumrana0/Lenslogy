@@ -7,7 +7,7 @@ import UserForm from "./_components/user-form";
 
 export default async function UsersPage() {
   const session = await getServerSession(authOptions);
-  const role = session?.user.role;
+  const role = session?.user.role || "SUPER_ADMIN";
 
   if (
     !session ||

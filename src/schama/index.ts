@@ -27,3 +27,31 @@ export const categorySchema = z.object({
     message: "Name must be at least 2 characters",
   }),
 });
+
+export const articleSchema = z.object({
+  title: z.string().min(5, {
+    message: "Title must be at least 5 characters",
+  }),
+  excerpt: z.string().min(10, {
+    message: "Excerpt must be at least 10 characters",
+  }),
+  content: z.string().min(50, {
+    message: "Content must be at least 50 characters",
+  }),
+  image: z.union([z.instanceof(File), z.string().length(0)]).refine(
+    (value) => {
+      if (typeof value === "string") return value.length === 0; // If it's a string, it must be empty
+      return value instanceof File; // Otherwise, it must be a File object
+    },
+    {
+      message: "Image is required.",
+    }
+  ),
+  categoryId: z.string({
+    required_error: "Please select a category",
+  }),
+  isFeatured: z.boolean().default(false),
+  isPinFeatured: z.boolean().default(false),
+  isPinLatest: z.boolean().default(false),
+  isPublished: z.boolean().default(false),
+});
