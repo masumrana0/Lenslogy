@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
     // Pull out your optional filters
     const langParam = searchParams.get("lang") as Language | undefined;
-    const isPinFeaturedParam = searchParams.get("ispinfeatured");
+    const isPinFeaturedParam = searchParams.get("isPin");
     const isFeaturedParam = searchParams.get("isfeatured");
     const categoryIdParam = searchParams.get("categoryId");
     // default sort order

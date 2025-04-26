@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const langParam = searchParams.get("lang") as Language | undefined;
-    const pinPopularParam = searchParams.get("pinPopular");
+    const pinPopularParam = searchParams.get("isPin");
     const isPinPopular = pinPopularParam === "true";
 
     const where: any = {
