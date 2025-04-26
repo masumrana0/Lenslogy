@@ -95,8 +95,6 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      
-
       // If we reach here, both database operations succeeded
       return NextResponse.json(
         { en: baseArticle, bn: createdBangArticle },
@@ -134,3 +132,42 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// export async function PATCH(req: NextRequest) {
+//   try {
+//     const { searchParams } = new URL(req.url);
+//     const articleId = searchParams.get("id");
+
+//     if (!articleId) {
+//       return NextResponse.json(
+//         { error: "Article ID is required." },
+//         { status: 400 }
+//       );
+//     }
+
+//     const body = await req.json();
+
+//     const updatedBaseArticle = await prisma.article.update({
+//       where: { id: articleId },
+//       data: body,
+//     });
+
+//     if(body.)
+
+//     const tranlatedBody = await translateContent(body);
+//     const updatedBanglaArticle = await prisma.article.update({
+//       where: { lang: "bn", baseId: updatedBaseArticle.baseId },
+//       data: body,
+//     });
+
+//     return NextResponse.json(
+//       { en: updatedBaseArticle, bn: updatedBanglaArticle },
+//       { status: 200 }
+//     );
+//   } catch (error) {
+     
+//       { error: "Failed to update article." },
+//       { status: 500 }
+//     );
+//   }
+// }

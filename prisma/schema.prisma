@@ -99,8 +99,8 @@ model Article {
 
 model ArticleAttachment {
     id        String  @id @default(cuid())
-    views     String
-    likes     String
+    views     Int     @default(0)
+    likes     Int     @default(0)
     ipAddress String
     articleId String  @unique
     article   Article @relation(fields: [articleId], references: [id])
