@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Article" ADD COLUMN     "isGadget" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "isHotTech" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "isLatest" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "isUpComing" BOOLEAN NOT NULL DEFAULT false;
