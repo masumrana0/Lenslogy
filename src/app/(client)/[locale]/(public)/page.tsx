@@ -9,6 +9,15 @@ const HomePage = async ({ params }: IParamsProps) => {
   // Language
   const resolvedParams = await params;
   const lang = resolvedParams.locale;
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/articles/nav?lang=${lang}`,
+    {
+      next: { revalidate: 60 },
+    }
+  );
+
+  const data = await res.json();
+  console.log("data from navbar", data);
 
   return (
     <div className="min-h-screen">

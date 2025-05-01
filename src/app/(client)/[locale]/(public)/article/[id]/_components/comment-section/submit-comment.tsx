@@ -12,7 +12,7 @@ const SubmitComment: React.FC<{ articleId: string }> = ({ articleId }) => {
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real app, you would send this to your backend
-    console.log({ name, email, comment });
+    // console.log({ name, email, comment });
     // Reset form
     setComment("");
     setName("");

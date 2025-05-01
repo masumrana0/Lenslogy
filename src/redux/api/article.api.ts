@@ -13,7 +13,7 @@ const articleApi: any = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["article"],
     }),
-    
+
     updateArticle: build.mutation({
       query: ({ data, id }: { data: any; id: string }) => ({
         url: `${url}/${id}`,
@@ -23,29 +23,14 @@ const articleApi: any = baseApi.injectEndpoints({
       invalidatesTags: ["article"],
     }),
 
-    // getAllArticles: build.query({
-    //   query: (args:  []) => {
-    //     const params = new URLSearchParams();
-    //     if (args) {
-    //       args.forEach((item:  ) => {
-    //         params.append(item.name, item.value as string);
-    //       });
-    //     }
-    //     return {
-    //       url: url,
-    //       method: "GET",
-    //       params: params,
-    //     };
-    //   },
-    //   providesTags: ["article"],
-    // }),
-    getArticleById: build.query({
-      query: (id: string) => ({
-        url: `${url}/${id}`,
+    getAllArticle: build.query({
+      query: (lang: "en" | "bn") => ({
+        url: `${url}?lang=${lang} `,
         method: "GET",
       }),
       providesTags: ["article"],
     }),
+
     deleteArticle: build.mutation({
       query: (id: string) => ({
         url: `${url}/${id}`,
@@ -58,9 +43,8 @@ const articleApi: any = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetAllArticlesQuery,
   useCreateArticleMutation,
   useUpdateArticleMutation,
-  useGetAllArticlesQuery,
-  useGetArticleByIdQuery,
   useDeleteArticleMutation,
 } = articleApi;

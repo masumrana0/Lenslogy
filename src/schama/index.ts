@@ -40,8 +40,8 @@ export const articleSchema = z.object({
   }),
   image: z.union([z.instanceof(File), z.string().length(0)]).refine(
     (value) => {
-      if (typeof value === "string") return value.length === 0; // If it's a string, it must be empty
-      return value instanceof File; // Otherwise, it must be a File object
+      if (typeof value === "string") return value.length === 0;
+      return value instanceof File;
     },
     {
       message: "Image is required.",
@@ -50,8 +50,17 @@ export const articleSchema = z.object({
   categoryId: z.string({
     required_error: "Please select a category",
   }),
+
+  // ✅ Main boolean flags
+  isPublished: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
   isPinFeatured: z.boolean().default(false),
   isPinLatest: z.boolean().default(false),
-  isPublished: z.boolean().default(false),
+
+  // ✅ Additional boolean flags (added from your Settings tab)
+  isPinHero: z.boolean().default(false),
+  isUpComing: z.boolean().default(false),
+  isEmergingTech: z.boolean().default(false),
+  isHotTech: z.boolean().default(false),
+  isGadget: z.boolean().default(false),
 });

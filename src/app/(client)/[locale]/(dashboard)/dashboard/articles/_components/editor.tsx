@@ -369,7 +369,7 @@ export function RichTextEditor({
   return (
     <div className={cn("border rounded-md overflow-hidden", className)}>
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <div className="flex items-center justify-between border-b px-3 py-2 bg-gray-50">
+        <div className="flex items-center justify-between border-b px-3 py-2  bg-gray-50 dark:bg-gray-800">
           <TabsList className="grid w-[180px] grid-cols-2">
             <TabsTrigger value="write" className="flex items-center gap-1">
               <Edit className="h-4 w-4" />

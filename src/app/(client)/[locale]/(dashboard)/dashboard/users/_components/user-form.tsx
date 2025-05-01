@@ -56,7 +56,7 @@ const UserForm: React.FC<UserFormProps> = ({ currentUserRole }) => {
   const roles = availableRoles(currentUserRole);
 
   const onSubmit = async (values: FormValues) => {
-    console.log("button trigger ", values);
+    // console.log("button trigger ", values);
 
     try {
       const res = await fetch(

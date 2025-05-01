@@ -99,7 +99,7 @@ const reviewsCore = {
 
 const ReviewsSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
   const reviews = reviewsCore[lang];
-  console.log(reviews);
+  // console.log(reviews);
   return (
     <section className="py-8 border-t">
       <div className="flex items-center justify-between mb-6">

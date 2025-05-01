@@ -1,36 +1,29 @@
-// middleware.ts
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { langMiddleware } from "./middlewares/lang-middleware";
 
-const PUBLIC_FILE = /\.(.*)$/;
+// Define protected routes and their required roles
+const protectedRoutes = new Map([
+  ["/api/admin", ["admin"]],
+  ["/api/user", ["user", "admin"]],
+]);
 
-export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
 
-  // Skip public files and API
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    PUBLIC_FILE.test(pathname)
-  ) {
-    return;
+  // // For API routes
+  if (path.startsWith("/api/")) {
+    // return errorHandlerMiddleware(request);
   }
 
-  // Already has locale
-  if (pathname.startsWith("/en") || pathname.startsWith("/bn")) {
-    return;
-  }
-
-  // Detect from cookie or browser
-  const cookieLang = req.cookies.get("i18next")?.value;
-  const browserLang = req.headers
-    .get("accept-language")
-    ?.split(",")[0]
-    .split("-")[0];
-
-  const preferredLang = cookieLang || browserLang || "en";
-
-  return NextResponse.redirect(
-    new URL(`/${preferredLang}${pathname}`, req.url)
-  );
+  // For non-protected API routes
+  return langMiddleware(request);
 }
+
+export const config = {
+  matcher: [
+    // API routes
+    "/api/:path*",
+    // All pages except public files and API routes
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
+};

@@ -8,7 +8,8 @@ import LanguageSwitcher from "./switch-lang";
 import Theme from "./theme";
 import NavMobileToggle from "./mobile/mob-nav-toggle";
 
-const Navbar = () => {
+const Navbar = async ({ lang = "en" }: { lang: "en" | "bn" }) => {
+  // console.log("data in navbar", data);
   return (
     <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors duration-200">
       <div className="container mx-auto px-4">

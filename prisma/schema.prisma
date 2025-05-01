@@ -75,26 +75,28 @@ model Session {
 }
 
 model Article {
-    id            String             @id @default(cuid())
-    baseId        String             @default(cuid())
-    title         String
-    excerpt       String
-    content       String
-    image         String
-    category      Category?          @relation(fields: [categoryId], references: [id])
-    authorId      String
-    author        User               @relation(fields: [authorId], references: [id])
-    date          DateTime           @default(now())
-    lang          Language
-    attachment    ArticleAttachment?
-    categoryId    String
-    isFeatured    Boolean            @default(false)
-    isPinFeatured Boolean            @default(false)
-    isPinLatest   Boolean            @default(false)
-    isPublished   Boolean            @default(false)
-    isUpComing    Boolean            @default(false)
-    isHotTech     Boolean            @default(false)
-    isGadget      Boolean            @default(false)
+    id             String             @id @default(cuid())
+    baseId         String             @default(cuid())
+    title          String
+    excerpt        String
+    content        String
+    image          String
+    category       Category?          @relation(fields: [categoryId], references: [id])
+    authorId       String
+    author         User               @relation(fields: [authorId], references: [id])
+    date           DateTime           @default(now())
+    lang           Language
+    attachment     ArticleAttachment?
+    categoryId     String
+    isFeatured     Boolean            @default(false)
+    isPinFeatured  Boolean            @default(false)
+    isPinLatest    Boolean            @default(false)
+    isPinHero      Boolean            @default(false)
+    isPublished    Boolean            @default(false)
+    isUpComing     Boolean            @default(false)
+    isEmergingTech Boolean            @default(false)
+    isHotTech      Boolean            @default(false)
+    isGadget       Boolean            @default(false)
 }
 
 model ArticleAttachment {

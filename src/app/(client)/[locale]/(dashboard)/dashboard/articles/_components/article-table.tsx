@@ -1,8 +1,7 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,31 +35,12 @@ import {
 
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { toast } from "@/components/ui/toast";
-
-// async function getArticles() {
-//   try {
-//     const res = await fetch(
-//       `${process.env.NEXT_PUBLIC_API_URL}/api/articles?limit=100`,
-//       {
-//         cache: "no-store",
-//       }
-//     );
-
-//     if (!res.ok) {
-//       throw new Error("Failed to fetch articles");
-//     }
-
-//     const data = await res.json();
-//     return data.articles;
-//   } catch (error) {
-//     console.error("Error fetching articles:", error);
-//     return [];
-//   }
-// }
+import { useGetAllArticlesQuery } from "@/redux/api/article.api";
+ 
 
 export function ArticlesTable() {
   const router = useRouter();
-
+  const param = useParams();
   const [articles, setArticles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,6 +58,9 @@ export function ArticlesTable() {
 
   //   fetchArticles();
   // });
+
+  // const { data } =  useGetAllArticlesQuery(param.locale);
+  // console.log(data);
 
   const filteredArticles = articles.filter((article) =>
     article.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -98,16 +81,13 @@ export function ArticlesTable() {
       //     method: "DELETE",
       //   }
       // );
-
       // if (!res.ok) {
       //   throw new Error("Failed to delete article");
       // }
-
       // // Remove article from state
       // setArticles(
       //   articles.filter((article) => article.slug !== articleToDelete)
       // );
-
       // toast({
       //   title: "Article deleted",
       //   description: "The article has been deleted successfully",

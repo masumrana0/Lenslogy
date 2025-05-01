@@ -11,7 +11,7 @@ const PublicLayout = ({
 }>) => {
   return (
     <main className="min-h-screen">
-      <Navbar />
+      <Navbar lang={params.locale} />
       <div className="container mx-auto px-4 pb-12">{children}</div>
       <Footer lang={params.locale} />
     </main>

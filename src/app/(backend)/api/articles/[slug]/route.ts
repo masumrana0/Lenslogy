@@ -2,6 +2,7 @@ import { translateContent } from "@/lib/ai/gemenai";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
+import { ApiError } from "next/dist/server/api-utils";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -9,6 +10,7 @@ export async function GET(
   { params }: { params: { slug: string } }
 ) {
   try {
+    throw new ApiError(500, "something is wrong");
     const { slug } = params;
 
     // Get query parameters

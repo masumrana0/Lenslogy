@@ -1,62 +1,90 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Language } from "@prisma/client";
+import { ApiError } from "next/dist/server/api-utils";
 
 export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const langParam = searchParams.get("lang") as Language | undefined;
-    const isHotTechParam = searchParams.get("hotTech");
-    const isHotTech = isHotTechParam === "true";
+  // try {
 
-    const isGadgetParam = searchParams.get("gadget");
-    const isGadget = isGadgetParam === "true";
-    
-    const isGadgetParam = searchParams.get("gadget");
-    const isGadget = isGadgetParam === "true";
+  console.log("hello wrold ");
+  throw new ApiError(500, "something is wrong");
+  const { searchParams } = new URL(req.url);
+  const langParam = searchParams.get("lang") as Language | undefined;
 
-    const where: any = {
-      isPublished: true,
-      ...(langParam && { lang: langParam }),
-      AND: {
-        OR: [
-          { attachment: { views: { gte: 100 } } },
-          { attachment: { likes: { gte: 20 } } },
-        ],
-      },
-    };
+  const where = {
+    isPublished: true,
+    isEmergingTech: true,
+    ...(langParam && { lang: langParam }),
+  };
 
-    const articles = await prisma.article.findMany({
-      where,
-      take: isPinPopular ? 6 : 50,
-      orderBy: [{ attachment: { likes: "desc" } }, { date: "desc" }],
-      select: {
-        title: true,
-        image: true,
-        excerpt: true,
-        date: true,
-        author: {
-          select: {
-            name: true,
-            avatar: true,
-            designation: true,
-          },
+  const [aiAndMachineLearning, emergingTech, upcomingGadgets, latestGadgets] =
+    await Promise.all([
+      prisma.article.findMany({
+        where: { ...where, category: { name: "AI" } },
+        orderBy: { date: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          image: true,
+          date: true,
+          category: { select: { name: true } },
         },
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
+      }),
+      prisma.article.findMany({
+        where: { ...where },
+        orderBy: { date: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          image: true,
+          date: true,
+          category: { select: { name: true } },
         },
-      },
-    });
+      }),
+      prisma.article.findMany({
+        where: { ...where, isUpComing: true, isGadget: true },
+        orderBy: { date: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          image: true,
+          date: true,
+          category: { select: { name: true } },
+        },
+      }),
+      prisma.article.findMany({
+        where: { ...where, isGadget: true },
+        orderBy: { date: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          image: true,
+          date: true,
+          category: { select: { name: true } },
+        },
+      }),
+    ]);
 
-    return NextResponse.json({ data: articles }, { status: 200 });
-  } catch (err) {
-    console.error("GET /api/popular-articles error:", err);
-    return NextResponse.json(
-      { error: "Unable to fetch popular articles." },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    {
+      data: {
+        aiAndMachineLearning,
+        emergingTech,
+        upcomingGadgets,
+        latestGadgets,
+      },
+    },
+    { status: 200 }
+  );
+  // } catch (error) {
+  //   console.error("GET /api/nav-articles error:", error);
+  //   return NextResponse.json(
+  //     { error:  er },
+  //     { status: 500 }
+  //   );
+  // }
 }
