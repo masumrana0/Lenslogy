@@ -1,7 +1,7 @@
-import { writeFile, mkdir, unlink } from "fs/promises";
-import path from "path";
+import { GlobalErrorHandler } from "@/app/(backend)/_core/error-handler/global-error-handler/global-error-handler";
 import { randomUUID } from "crypto";
-import { GlobalErrorHandler } from "@/app/(backend)/_essentials/error-handler/global-error-handler";
+import { mkdir, unlink, writeFile } from "fs/promises";
+import path from "path";
 
 export type UploadedFile = {
   filename: string;

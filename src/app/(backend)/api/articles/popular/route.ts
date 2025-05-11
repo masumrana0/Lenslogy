@@ -23,12 +23,12 @@ export async function GET(req: NextRequest) {
     const articles = await prisma.article.findMany({
       where,
       take: isPinPopular ? 6 : 50,
-      orderBy: [{ attachment: { likes: "desc" } }, { date: "desc" }],
+      orderBy: [{ attachment: { likes: "desc" } }, { createdAt: "desc" }],
       select: {
         title: true,
         image: true,
         excerpt: true,
-        date: true,
+        createdAt: true,
         author: {
           select: {
             name: true,

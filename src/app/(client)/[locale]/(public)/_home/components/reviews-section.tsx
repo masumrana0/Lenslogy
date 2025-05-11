@@ -12,7 +12,7 @@ const reviewsCore = {
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
       category: "Audio",
       rating: 9.3,
-      date: "May 28, 2023",
+      createdAt: "May 28, 2023",
     },
     {
       id: 20,
@@ -23,7 +23,7 @@ const reviewsCore = {
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "Laptops",
       rating: 9.5,
-      date: "May 27, 2023",
+      createdAt: "May 27, 2023",
     },
     {
       id: 21,
@@ -34,7 +34,7 @@ const reviewsCore = {
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "Smartphones",
       rating: 9.0,
-      date: "May 26, 2023",
+      createdAt: "May 26, 2023",
     },
     {
       id: 22,
@@ -44,7 +44,7 @@ const reviewsCore = {
         "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
       category: "Gaming",
       rating: 8.7,
-      date: "May 25, 2023",
+      createdAt: "May 25, 2023",
     },
   ],
 
@@ -58,7 +58,7 @@ const reviewsCore = {
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
       category: "অডিও",
       rating: 9.3,
-      date: "২৮ মে, ২০২৩",
+      createdAt: "২৮ মে, ২০২৩",
     },
     {
       id: 20,
@@ -70,7 +70,7 @@ const reviewsCore = {
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "ল্যাপটপ",
       rating: 9.5,
-      date: "২৭ মে, ২০২৩",
+      createdAt: "২৭ মে, ২০২৩",
     },
     {
       id: 21,
@@ -81,7 +81,7 @@ const reviewsCore = {
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "স্মার্টফোন",
       rating: 9.0,
-      date: "২৬ মে, ২০২৩",
+      createdAt: "২৬ মে, ২০২৩",
     },
     {
       id: 22,
@@ -92,7 +92,7 @@ const reviewsCore = {
         "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
       category: "গেমিং",
       rating: 8.7,
-      date: "২৫ মে, ২০২৩",
+      createdAt: "২৫ মে, ২০২৩",
     },
   ],
 };
@@ -141,7 +141,7 @@ const ReviewsSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
               {review.excerpt}
             </p>
 
-            <span className="text-xs text-gray-500">{review.date}</span>
+            <span className="text-xs text-gray-500">{review.createdAt}</span>
           </div>
         ))}
       </div>

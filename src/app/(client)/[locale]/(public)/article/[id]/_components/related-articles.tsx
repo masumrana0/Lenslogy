@@ -12,7 +12,7 @@ const relatedArticles: IArticleForCard[] = [
     image:
       "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/ai-brain.jpg",
     category: "ভিআর এবং এআর",
-    date: "June 20, 2023",
+    createdAt: "June 20, 2023",
   },
   {
     id: "2",
@@ -21,7 +21,7 @@ const relatedArticles: IArticleForCard[] = [
     image:
       "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/ai-brain.jpg",
     category: "ভিআর এবং এআর",
-    date: "June 20, 2023",
+    createdAt: "June 20, 2023",
   },
   {
     id: "3",
@@ -30,7 +30,7 @@ const relatedArticles: IArticleForCard[] = [
     image:
       "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/ai-brain.jpg",
     category: "ভিআর এবং এআর",
-    date: "June 20, 2023",
+    createdAt: "June 20, 2023",
   },
 ];
 

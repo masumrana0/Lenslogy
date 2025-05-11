@@ -13,7 +13,7 @@ const latestArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
       category: "Hardware",
-      date: "June 2, 2023",
+      createdAt: "June 2, 2023",
     },
     {
       id: 15,
@@ -23,7 +23,7 @@ const latestArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "Policy",
-      date: "June 1, 2023",
+      createdAt: "June 1, 2023",
     },
     {
       id: 16,
@@ -33,17 +33,17 @@ const latestArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "Displays",
-      date: "May 31, 2023",
+      createdAt: "May 31, 2023",
     },
     {
       id: 17,
-      title: "Windows 12: Everything We Know About Microsoft's Next Big Update",
+      title: "Windows 12: Everything We Know About Microsoft's Next Big UpcreatedAt",
       excerpt:
-        "Rumored features, release date, and compatibility requirements for the next Windows version.",
+        "Rumored features, release createdAt, and compatibility requirements for the next Windows version.",
       image:
         "https://www.linuxinsider.com/wp-content/uploads/sites/2/2022/03/server-admins.jpg",
       category: "Software",
-      date: "May 30, 2023",
+      createdAt: "May 30, 2023",
     },
     {
       id: 18,
@@ -53,7 +53,7 @@ const latestArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/hp-sign.jpg",
       category: "Space Tech",
-      date: "May 29, 2023",
+      createdAt: "May 29, 2023",
     },
   ],
 
@@ -67,7 +67,7 @@ const latestArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
       category: "হার্ডওয়্যার",
-      date: "২ জুন, ২০২৩",
+      createdAt: "২ জুন, ২০২৩",
     },
     {
       id: 15,
@@ -78,7 +78,7 @@ const latestArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "নীতি",
-      date: "১ জুন, ২০২৩",
+      createdAt: "১ জুন, ২০২৩",
     },
     {
       id: 16,
@@ -88,7 +88,7 @@ const latestArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "ডিসপ্লে",
-      date: "৩১ মে, ২০২৩",
+      createdAt: "৩১ মে, ২০২৩",
     },
     {
       id: 17,
@@ -99,7 +99,7 @@ const latestArticles = {
       image:
         "https://www.linuxinsider.com/wp-content/uploads/sites/2/2022/03/server-admins.jpg",
       category: "সফটওয়্যার",
-      date: "৩০ মে, ২০২৩",
+      createdAt: "৩০ মে, ২০২৩",
     },
     {
       id: 18,
@@ -109,7 +109,7 @@ const latestArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/hp-sign.jpg",
       category: "স্পেস টেক",
-      date: "২৯ মে, ২০২৩",
+      createdAt: "২৯ মে, ২০২৩",
     },
   ],
 };

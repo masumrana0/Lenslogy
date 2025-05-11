@@ -46,7 +46,7 @@ export const translateNumber = (
   }
 };
 
-export const formatTimestampToDate = (
+export const formatTimestampTocreatedAt = (
   timestamp: number | string,
   lang: "en" | "bn" = "en"
 ): string => {

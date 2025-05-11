@@ -23,14 +23,14 @@ export async function POST(req: NextRequest) {
 
     // Generate token
     const token = crypto.randomBytes(32).toString("hex")
-    const expires = new Date(Date.now() + 3600000) // 1 hour
+    const expires = new createdAt(createdAt.now() + 3600000) // 1 hour
 
     // Save token
     await prisma.resetToken.upsert({
       where: {
         userId: user.id,
       },
-      update: {
+      upcreatedAt: {
         token,
         expires,
       },
@@ -73,15 +73,15 @@ export async function PUT(req: NextRequest) {
       },
     })
 
-    if (!resetToken || resetToken.expires < new Date()) {
+    if (!resetToken || resetToken.expires < new createdAt()) {
       return NextResponse.json({ error: "Invalid or expired token" }, { status: 400 })
     }
 
     // Hash new password
     const hashedPassword = await hash(password, 10)
 
-    // Update user password
-    await prisma.user.update({
+    // UpcreatedAt user password
+    await prisma.user.upcreatedAt({
       where: {
         id: resetToken.userId,
       },

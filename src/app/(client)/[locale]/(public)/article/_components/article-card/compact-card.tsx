@@ -7,7 +7,7 @@ const CompactArticleCard = ({
   showCategory = true,
   showExcerpt = false,
 }: IArticleVariantCardProps) => {
-  const { title, category, date, image, id } = article;
+  const { title, category, createdAt, image, id } = article;
 
   return (
     <Link href={`/article/${id}`} className="group flex items-start space-x-3">
@@ -35,7 +35,7 @@ const CompactArticleCard = ({
         )}
 
         <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-          <span>{date}</span>
+          <span>{createdAt}</span>
         </div>
       </div>
     </Link>

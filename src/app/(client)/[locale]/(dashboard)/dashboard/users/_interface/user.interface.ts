@@ -16,6 +16,4 @@ export interface IUser {
   designation?: string;
   role: Role;
   avatar?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }

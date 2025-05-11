@@ -11,16 +11,16 @@ const articleApi: any = baseApi.injectEndpoints({
         data: data,
         contentType: "multipart/form-data",
       }),
-      invalidatesTags: ["article"],
+      invalicreatedAts ags: ["article"],
     }),
 
-    updateArticle: build.mutation({
+    upcreatedAtArt cle: build.mutation({
       query: ({ data, id }: { data: any; id: string }) => ({
         url: `${url}/${id}`,
         method: "PATCH",
         data: data,
       }),
-      invalidatesTags: ["article"],
+      invalicreatedAts ags: ["article"],
     }),
 
     getAllArticle: build.query({
@@ -36,7 +36,7 @@ const articleApi: any = baseApi.injectEndpoints({
         url: `${url}/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["article"],
+      invalicreatedAts ags: ["article"],
     }),
   }),
   overrideExisting: false,
@@ -45,6 +45,6 @@ const articleApi: any = baseApi.injectEndpoints({
 export const {
   useGetAllArticlesQuery,
   useCreateArticleMutation,
-  useUpdateArticleMutation,
+  useUpcreatedAtArticleMutation,
   useDeleteArticleMutation,
 } = articleApi;

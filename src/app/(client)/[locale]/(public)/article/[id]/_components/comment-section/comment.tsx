@@ -7,7 +7,7 @@ const Comment: React.FC<{ comment: IComment }> = ({ comment }) => {
       <div className="flex justify-between mb-2">
         <h4 className="font-medium dark:text-white">{comment.author}</h4>
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          {comment.date}
+          {comment.createdAt}
         </span>
       </div>
       <p className="text-gray-700 dark:text-gray-300">{comment.content}</p>

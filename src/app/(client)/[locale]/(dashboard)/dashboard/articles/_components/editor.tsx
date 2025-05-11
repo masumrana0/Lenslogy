@@ -73,7 +73,7 @@ export function RichTextEditor({
     }
   }, [value, logDebug]);
 
-  // Update editor content when external value changes
+  // UpcreatedAt editor content when external value changes
   useEffect(() => {
     if (
       !isInitialMount.current &&
@@ -141,7 +141,7 @@ export function RichTextEditor({
         // Execute the command
         document.execCommand(command, false, value);
 
-        // Update content after command execution
+        // UpcreatedAt content after command execution
         handleContentChange();
       } catch (error) {
         console.error(`Error executing command ${command}:`, error);
@@ -163,7 +163,7 @@ export function RichTextEditor({
         // Apply heading format
         document.execCommand("formatBlock", false, `<h${level}>`);
 
-        // Update content
+        // UpcreatedAt content
         handleContentChange();
       } catch (error) {
         console.error(`Error applying heading ${level}:`, error);
@@ -185,7 +185,7 @@ export function RichTextEditor({
         // Apply blockquote format
         document.execCommand("formatBlock", false, "<blockquote>");
 
-        // Update content
+        // UpcreatedAt content
         handleContentChange();
       } catch (error) {
         console.error("Error applying blockquote:", error);
@@ -270,7 +270,7 @@ export function RichTextEditor({
   //               // Replace the loading element
   //               document.execCommand("insertHTML", false, imgHTML);
 
-  //               // Update content
+  //               // UpcreatedAt content
   //               handleContentChange();
   //             }
   //           } catch (error) {
@@ -286,7 +286,7 @@ export function RichTextEditor({
   //                 '<span class="text-[#ff005b]">Failed to upload image</span>'
   //               );
 
-  //               // Update content
+  //               // UpcreatedAt content
   //               handleContentChange();
   //             }
   //           }

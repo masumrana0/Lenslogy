@@ -17,12 +17,12 @@ export async function GET(req: NextRequest) {
     const articles = await prisma.article.findMany({
       where,
       take: isLatest ? 6 : 50,
-      orderBy: { date: "desc" },
+      orderBy: { createdAt: "desc" },
       select: {
         title: true,
         excerpt: true,
         image: true,
-        date: true,
+        createdAt: true,
         author: {
           select: {
             name: true,

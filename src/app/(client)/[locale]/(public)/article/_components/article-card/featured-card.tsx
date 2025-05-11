@@ -7,7 +7,7 @@ const FeaturedArticleCard = ({
   showCategory = true,
   showExcerpt = true,
 }: IArticleVariantCardProps) => {
-  const { title, category, date, excerpt, image, id } = article;
+  const { title, category, createdAt, excerpt, image, id } = article;
 
   return (
     <Link href={`/article/${id}`} className="group block">
@@ -33,7 +33,7 @@ const FeaturedArticleCard = ({
         <p className="text-gray-600 dark:text-gray-300 mb-3">{excerpt}</p>
       )}
       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-        <span>{date}</span>
+        <span>{createdAt}</span>
       </div>
     </Link>
   );

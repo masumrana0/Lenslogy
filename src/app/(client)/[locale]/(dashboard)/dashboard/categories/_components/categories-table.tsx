@@ -38,7 +38,7 @@ import {
 import {
   useDeleteCategoryMutation,
   useGetAllCategoriesQuery,
-  useUpdateCategoryMutation,
+  useUpcreatedAtCategoryMutation,
 } from "@/redux/api/category.api";
 
 interface Category {
@@ -62,8 +62,8 @@ export function CategoriesTable() {
 
   const [deleteCategory, { isLoading: isDeleteLoading }] =
     useDeleteCategoryMutation();
-  const [updateCategory, { isLoading: isUpdateLoading }] =
-    useUpdateCategoryMutation();
+  const [upcreatedAtCategory, { isLoading: isUpcreatedAtLoading }] =
+    useUpcreatedAtCategoryMutation();
 
   const handleDeleteClick = (id: string) => {
     setCategoryToDelete(id);
@@ -105,19 +105,19 @@ export function CategoriesTable() {
     if (!categoryToEdit) return;
 
     try {
-      await updateCategory({
+      await upcreatedAtCategory({
         id: categoryToEdit.id,
         name: editedName,
       }).unwrap();
 
       toast({
-        title: "Category updated",
-        description: "The category has been updated successfully",
+        title: "Category upcreatedAtd",
+        description: "The category has been upcreatedAtd successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update category",
+        description: "Failed to upcreatedAt category",
         type: "error",
       });
     } finally {
@@ -243,7 +243,7 @@ export function CategoriesTable() {
           <DialogHeader>
             <DialogTitle className="text-xl">Edit Category</DialogTitle>
             <DialogDescription className="text-gray-600">
-              Update the category name below.
+              UpcreatedAt the category name below.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -268,10 +268,10 @@ export function CategoriesTable() {
             </Button>
             <Button
               onClick={handleEditConfirm}
-              disabled={isUpdateLoading || !editedName.trim()}
+              disabled={isUpcreatedAtLoading || !editedName.trim()}
               className="bg-blue-500 hover:bg-blue-600 transition-colors"
             >
-              {isUpdateLoading ? "Saving..." : "Save Changes"}
+              {isUpcreatedAtLoading ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </DialogContent>

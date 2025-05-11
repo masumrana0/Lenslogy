@@ -37,12 +37,11 @@ model User {
 
 // it's need for  reset password
 model ResetToken {
-    id        String   @id @default(cuid())
-    token     String   @unique
-    expires   DateTime
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    String   @unique
-    createdAt DateTime @default(now())
+    id      String   @id @default(cuid())
+    token   String   @unique
+    expires DateTime
+    user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId  String   @unique
 }
 
 //it's need for Manages external provider accounts (OAuth). Handles sign-in with Google, GitHub, Facebook, etc.
@@ -75,16 +74,15 @@ model Session {
 }
 
 model Article {
-    id             String             @id @default(cuid())
-    baseId         String             @default(cuid())
-    title          String
-    excerpt        String
-    content        String
-    image          String
-    category       Category?          @relation(fields: [categoryId], references: [id])
-    authorId       String
-    author         User               @relation(fields: [authorId], references: [id])
-    date           DateTime           @default(now())
+    id       String    @id @default(cuid())
+    baseId   String    @default(cuid())
+    title    String
+    excerpt  String
+    content  String
+    image    String
+    category Category? @relation(fields: [categoryId], references: [id])
+    authorId String
+    author   User      @relation(fields: [authorId], references: [id])
     lang           Language
     attachment     ArticleAttachment?
     categoryId     String
@@ -97,23 +95,29 @@ model Article {
     isEmergingTech Boolean            @default(false)
     isHotTech      Boolean            @default(false)
     isGadget       Boolean            @default(false)
+    createdAt      DateTime           @default(now())
+    updatedAt      DateTime           @updatedAt
 }
 
 model ArticleAttachment {
-    id        String  @id @default(cuid())
-    views     Int     @default(0)
-    likes     Int     @default(0)
+    id        String   @id @default(cuid())
+    views     Int      @default(0)
+    likes     Int      @default(0)
     ipAddress String
-    articleId String  @unique
-    article   Article @relation(fields: [articleId], references: [id])
+    articleId String   @unique
+    article   Article  @relation(fields: [articleId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Category {
-    id       String    @id @default(cuid())
-    baseId   String    @default(cuid())
-    name     String    @unique
-    lang     Language
-    articles Article[]
+    id        String    @id @default(cuid())
+    baseId    String    @default(cuid())
+    name      String    @unique
+    lang      Language
+    articles  Article[]
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
 
     @@unique([lang, baseId])
 }

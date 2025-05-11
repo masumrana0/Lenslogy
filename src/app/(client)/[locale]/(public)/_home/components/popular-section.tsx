@@ -11,7 +11,7 @@ const popularArticlesCore = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "Smartphones",
-      date: "June 12, 2023",
+      createdAt: "June 12, 2023",
     },
     {
       id: 5,
@@ -21,7 +21,7 @@ const popularArticlesCore = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/hp-sign.jpg",
       category: "Innovation",
-      date: "June 11, 2023",
+      createdAt: "June 11, 2023",
     },
     {
       id: 6,
@@ -31,7 +31,7 @@ const popularArticlesCore = {
       image:
         "https://www.linuxinsider.com/wp-content/uploads/sites/2/2022/03/server-admins.jpg",
       category: "Gaming",
-      date: "June 10, 2023",
+      createdAt: "June 10, 2023",
     },
     {
       id: 7,
@@ -41,7 +41,7 @@ const popularArticlesCore = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
       category: "AI",
-      date: "June 9, 2023",
+      createdAt: "June 9, 2023",
     },
   ],
 
@@ -53,7 +53,7 @@ const popularArticlesCore = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/gripes-with-Apple.jpg",
       category: "স্মার্টফোন",
-      date: "১২ জুন, ২০২৩",
+      createdAt: "১২ জুন, ২০২৩",
     },
     {
       id: 5,
@@ -62,7 +62,7 @@ const popularArticlesCore = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/hp-sign.jpg",
       category: "উদ্ভাবন",
-      date: "১১ জুন, ২০২৩",
+      createdAt: "১১ জুন, ২০২৩",
     },
     {
       id: 6,
@@ -72,7 +72,7 @@ const popularArticlesCore = {
       image:
         "https://www.linuxinsider.com/wp-content/uploads/sites/2/2022/03/server-admins.jpg",
       category: "গেমিং",
-      date: "১০ জুন, ২০২৩",
+      createdAt: "১০ জুন, ২০২৩",
     },
     {
       id: 7,
@@ -82,7 +82,7 @@ const popularArticlesCore = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/microprocessor-international-trade.jpg",
       category: "এআই",
-      date: "৯ জুন, ২০২৩",
+      createdAt: "৯ জুন, ২০২৩",
     },
   ],
 };

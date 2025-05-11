@@ -88,7 +88,7 @@ const DeskNavDropdown: React.FC<{ menu: INavDropdown; lang: "en" | "bn" }> = ({
                           {item.title[lang]}
                         </h4>
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {item.date}
+                          {item.createdAt}
                         </span>
                       </div>
                     </Link>

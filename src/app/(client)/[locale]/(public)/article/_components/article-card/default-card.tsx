@@ -7,7 +7,7 @@ const DefaultArticleCard = ({
   showCategory = true,
   showExcerpt = true,
 }: IArticleVariantCardProps) => {
-  const { title, category, date, excerpt, image, id } = article;
+  const { title, category, createdAt, excerpt, image, id } = article;
 
   return (
     <Link
@@ -39,7 +39,7 @@ const DefaultArticleCard = ({
           </p>
         )}
         <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-          <span>{date}</span>
+          <span>{createdAt}</span>
         </div>
       </div>
     </Link>

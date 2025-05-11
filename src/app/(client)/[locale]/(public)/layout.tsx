@@ -9,6 +9,8 @@ const PublicLayout = ({
   children: React.ReactNode;
   params: { locale: "en" | "bn" };
 }>) => {
+
+  
   return (
     <main className="min-h-screen">
       <Navbar lang={params.locale} />

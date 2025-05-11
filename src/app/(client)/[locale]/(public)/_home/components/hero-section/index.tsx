@@ -11,7 +11,7 @@ const heroArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/04/Lip-Bu-Tan.jpg",
       category: "VR & AR",
-      date: "June 15, 2023",
+      createdAt: "June 15, 2023",
     },
     {
       id: 2,
@@ -20,7 +20,7 @@ const heroArticles = {
       image:
         "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/03/smartphone-security.jpg",
       category: "AI",
-      date: "June 14, 2023",
+      createdAt: "June 14, 2023",
     },
     {
       id: 3,
@@ -29,7 +29,7 @@ const heroArticles = {
       image:
         "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
       category: "Apple",
-      date: "June 13, 2023",
+      createdAt: "June 13, 2023",
     },
   ],
   bn: [
@@ -41,7 +41,7 @@ const heroArticles = {
       image:
         "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/04/Lip-Bu-Tan.jpg",
       category: "ভিআর ও এআর",
-      date: "১৫ জুন, ২০২৩",
+      createdAt: "১৫ জুন, ২০২৩",
     },
     {
       id: 2,
@@ -50,7 +50,7 @@ const heroArticles = {
       image:
         "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/03/smartphone-security.jpg",
       category: "এআই",
-      date: "১৪ জুন, ২০২৩",
+      createdAt: "১৪ জুন, ২০২৩",
     },
     {
       id: 3,
@@ -58,7 +58,7 @@ const heroArticles = {
       image:
         "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
       category: "অ্যাপল",
-      date: "১৩ জুন, ২০২৩",
+      createdAt: "১৩ জুন, ২০২৩",
     },
   ],
 };
@@ -94,7 +94,7 @@ const HeroSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
               {mainArticle.excerpt}
             </p>
           )}
-          <span className="text-sm text-gray-300">{mainArticle.date}</span>
+          <span className="text-sm text-gray-300">{mainArticle.createdAt}</span>
         </div>
       </div>
 
@@ -119,7 +119,7 @@ const HeroSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
               <h3 className="text-lg font-bold group-hover:text-red-400 transition-colors">
                 <Link href={`/article/${article.id}`}>{article.title}</Link>
               </h3>
-              <span className="text-sm text-gray-300">{article.date}</span>
+              <span className="text-sm text-gray-300">{article.createdAt}</span>
             </div>
           </div>
         ))}

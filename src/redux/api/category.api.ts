@@ -11,17 +11,17 @@ const categoryApi: any = baseApi.injectEndpoints({
         method: "POST",
         data,
       }),
-      invalidatesTags: ["category"],
+      invalicreatedAts ags: ["category"],
     }),
 
-    // Update an existing category
-    updateCategory: build.mutation({
+    // Upcrea ed t an exi ting category
+    upcreatedAtCate ory: build.mutation({
       query: (data: { id: string; name: string }) => ({
         url: `${url}`,
         method: "PATCH",
         data,
       }),
-      invalidatesTags: ["category"],
+      invalicreatedAts ags: ["category"],
     }),
 
     // Delete a category
@@ -30,7 +30,7 @@ const categoryApi: any = baseApi.injectEndpoints({
         url: `${url}?baseId=${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["category"],
+      invalicreatedAts ags: ["category"],
     }),
 
     // Get all categories (optionally by language)
@@ -58,7 +58,7 @@ const categoryApi: any = baseApi.injectEndpoints({
 
 export const {
   useCreateCategoryMutation,
-  useUpdateCategoryMutation,
+  useUpcreatedAtCategoryMutation,
   useDeleteCategoryMutation,
   useGetAllCategoriesQuery,
   useGetCategoryByIdQuery,

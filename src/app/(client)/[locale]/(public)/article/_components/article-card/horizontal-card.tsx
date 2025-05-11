@@ -7,7 +7,7 @@ const HorizontalArticleCard = ({
   showCategory = true,
   showExcerpt = true,
 }: IArticleVariantCardProps) => {
-  const { title, category, date, excerpt, image, id } = article;
+  const { title, category, createdAt, excerpt, image, id } = article;
 
   return (
     <Link href={`/article/${id}`} className="group flex items-start space-x-4">
@@ -33,7 +33,7 @@ const HorizontalArticleCard = ({
             {excerpt}
           </p>
         )}
-        <span className="text-xs text-gray-500 dark:text-gray-400">{date}</span>
+        <span className="text-xs text-gray-500 dark:text-gray-400">{createdAt}</span>
       </div>
     </Link>
   );

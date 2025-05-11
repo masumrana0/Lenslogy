@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
         role: true,
         avatar: true,
         createdAt: true,
-        updatedAt: true,
+        upcreatedAtdAt: true,
       },
     });
 

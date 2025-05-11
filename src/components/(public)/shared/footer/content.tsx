@@ -43,7 +43,7 @@ export const newsLatterContent = {
   en: {
     title: "Newsletter",
     description:
-      "Subscribe to our newsletter for the latest tech news and updates.",
+      "Subscribe to our newsletter for the latest tech news and upcreatedAts.",
     placeholder: "Your email address",
     buttonText: "Subscribe",
   },

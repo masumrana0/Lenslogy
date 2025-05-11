@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     const { password, ...payload } = await req.json();
 
-    // Validate role permissions
+    // ValicreatedAt role permissions
     if (
       (payload.role === "SUPER_ADMIN" && userRole !== "SUPER_ADMIN") ||
       (payload.role === "ADMIN" && userRole !== "SUPER_ADMIN") ||

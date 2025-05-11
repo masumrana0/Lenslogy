@@ -22,7 +22,7 @@ const FilterSortBar = ({ categories }: { categories: string[] }) => {
     setSelectedSort(sort);
   }, []);
 
-  // Update query only after first mount
+  // UpcreatedAt query only after first mount
   useEffect(() => {
     if (!hasMounted.current) {
       hasMounted.current = true;

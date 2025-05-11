@@ -8,7 +8,7 @@ interface MenuItem {
   title: LocalizedString;
   image: string;
   category: LocalizedString;
-  date: string;
+  createdAt: string;
 }
 
 interface MenuSection {

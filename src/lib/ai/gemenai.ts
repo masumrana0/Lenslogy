@@ -33,7 +33,7 @@ Example format:
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
     const response = result.response;
-    const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = response.candicreatedAts?.[0]?.content?.parts?.[0]?.text;
 
     if (!text) throw new Error("No text response from Gemini.");
 

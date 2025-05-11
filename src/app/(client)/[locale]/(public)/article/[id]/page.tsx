@@ -49,7 +49,7 @@ const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
         <p>Battery life remains a limitation for the Quest 3, with approximately 2-3 hours of use on a single charge depending on the applications being used. This is comparable to the Quest 2 but still falls short of what many users would consider ideal for longer VR sessions. The headset charges via USB-C, and Meta sells an optional battery pack that can extend usage time.</p>
 
         <h2>Software Ecosystem</h2>
-        <p>The Quest 3 runs on the same Meta Horizon OS as the Quest 2, providing access to the extensive library of VR applications available on the Meta Quest Store. All Quest 2 applications are compatible with the Quest 3, and many developers are releasing updates that take advantage of the new hardware's capabilities.</p>
+        <p>The Quest 3 runs on the same Meta Horizon OS as the Quest 2, providing access to the extensive library of VR applications available on the Meta Quest Store. All Quest 2 applications are compatible with the Quest 3, and many developers are releasing upcreatedAts that take advantage of the new hardware's capabilities.</p>
 
         <p>Meta continues to invest heavily in exclusive content, with titles like Asgard's Wrath 2 showcasing what's possible on the new hardware. The company has also improved the social features of the platform, making it easier to connect with friends in virtual spaces.</p>
 
@@ -71,7 +71,7 @@ const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
         "https://media.licdn.com/dms/image/v2/D5603AQH5knHodXbHIA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1710602305413?e=1750291200&v=beta&t=CE0p0_psVHuk0MDSpo4w38OIlYKWmDsWsRTnNTR_dL4 ",
       role: "Tech Journalist",
     },
-    date: "2025-04-15",
+    createdAt: "2025-04-15",
     tags: ["AI", "Future", "Technology"],
     articleAttachment: {
       articleId: "1",

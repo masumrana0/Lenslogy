@@ -26,7 +26,6 @@ CREATE TABLE "ResetToken" (
     "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ResetToken_pkey" PRIMARY KEY ("id")
 );
@@ -62,21 +61,25 @@ CREATE TABLE "Session" (
 -- CreateTable
 CREATE TABLE "Article" (
     "id" TEXT NOT NULL,
-    "baseId" TEXT,
+    "baseId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "excerpt" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "image" TEXT NOT NULL,
-    "category" TEXT NOT NULL,
     "authorId" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "tags" TEXT[],
     "lang" "Language" NOT NULL,
-    "categoryId" TEXT,
+    "categoryId" TEXT NOT NULL,
     "isFeatured" BOOLEAN NOT NULL DEFAULT false,
     "isPinFeatured" BOOLEAN NOT NULL DEFAULT false,
     "isPinLatest" BOOLEAN NOT NULL DEFAULT false,
+    "isPinHero" BOOLEAN NOT NULL DEFAULT false,
     "isPublished" BOOLEAN NOT NULL DEFAULT false,
+    "isUpComing" BOOLEAN NOT NULL DEFAULT false,
+    "isEmergingTech" BOOLEAN NOT NULL DEFAULT false,
+    "isHotTech" BOOLEAN NOT NULL DEFAULT false,
+    "isGadget" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Article_pkey" PRIMARY KEY ("id")
 );
@@ -84,10 +87,12 @@ CREATE TABLE "Article" (
 -- CreateTable
 CREATE TABLE "ArticleAttachment" (
     "id" TEXT NOT NULL,
-    "views" TEXT NOT NULL,
-    "likes" TEXT NOT NULL,
+    "views" INTEGER NOT NULL DEFAULT 0,
+    "likes" INTEGER NOT NULL DEFAULT 0,
     "ipAddress" TEXT NOT NULL,
     "articleId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "ArticleAttachment_pkey" PRIMARY KEY ("id")
 );
@@ -98,6 +103,8 @@ CREATE TABLE "Category" (
     "baseId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "lang" "Language" NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -118,9 +125,6 @@ CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provi
 CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Article_baseId_lang_key" ON "Article"("baseId", "lang");
-
--- CreateIndex
 CREATE UNIQUE INDEX "ArticleAttachment_articleId_key" ON "ArticleAttachment"("articleId");
 
 -- CreateIndex
@@ -139,13 +143,10 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Article" ADD CONSTRAINT "Article_baseId_fkey" FOREIGN KEY ("baseId") REFERENCES "Article"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Article" ADD CONSTRAINT "Article_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Article" ADD CONSTRAINT "Article_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Article" ADD CONSTRAINT "Article_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ArticleAttachment" ADD CONSTRAINT "ArticleAttachment_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "Article"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

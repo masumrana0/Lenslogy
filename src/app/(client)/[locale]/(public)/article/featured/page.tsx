@@ -39,7 +39,7 @@ export const articles: IArticleForCard[] = [
     image:
       "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
     category: "Technology",
-    date: "2025-04-15",
+    createdAt: "2025-04-15",
   },
   {
     id: "2",
@@ -48,7 +48,7 @@ export const articles: IArticleForCard[] = [
     image:
       "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
     category: "Productivity",
-    date: "2025-04-10",
+    createdAt: "2025-04-10",
   },
   {
     id: "3",
@@ -57,7 +57,7 @@ export const articles: IArticleForCard[] = [
     image:
       "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
     category: "Travel",
-    date: "2025-03-28",
+    createdAt: "2025-03-28",
   },
   {
     id: "4",
@@ -66,7 +66,7 @@ export const articles: IArticleForCard[] = [
     image:
       "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
     category: "Environment",
-    date: "2025-03-20",
+    createdAt: "2025-03-20",
   },
   {
     id: "5",
@@ -76,7 +76,7 @@ export const articles: IArticleForCard[] = [
     image:
       "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/03/virtual-reality-metaverse.jpg",
     category: "Finance",
-    date: "2025-02-25",
+    createdAt: "2025-02-25",
   },
 ];
 

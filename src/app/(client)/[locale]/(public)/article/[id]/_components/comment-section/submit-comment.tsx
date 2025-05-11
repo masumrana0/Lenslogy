@@ -17,7 +17,7 @@ const SubmitComment: React.FC<{ articleId: string }> = ({ articleId }) => {
     setComment("");
     setName("");
     setEmail("");
-    // Show success message or update comments list
+    // Show success message or upcreatedAt comments list
     alert("Comment submitted successfully!");
   };
 

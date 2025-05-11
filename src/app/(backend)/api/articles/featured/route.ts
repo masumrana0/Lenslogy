@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 
     const articles = await prisma.article.findMany({
       where,
-      orderBy: { date: sortOrder },
+      orderBy: { createdAt: sortOrder },
       include: {
         author: {
           select: {

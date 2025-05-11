@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatDate } from "@/lib/utils";
+import { formatcreatedAt } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -14,7 +14,7 @@ import { any } from "zod";
 // async function getRecentArticles() {
 //   try {
 //     const res = await fetch(`${process.env.API_URL}/api/articles?limit=5`, {
-//       next: { revalidate: 60 }, // Revalidate every minute
+//       next: { revalicreatedAt: 60 }, // RevalicreatedAt every minute
 //     })
 
 //     if (!res.ok) {
@@ -41,7 +41,7 @@ export async function RecentArticles() {
           <TableHead>Title</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Date</TableHead>
+          <TableHead>createdAt</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -62,7 +62,7 @@ export async function RecentArticles() {
                   Published
                 </Badge>
               </TableCell>
-              <TableCell>{formatDate(article.date, "en-US")}</TableCell>
+              <TableCell>{formatcreatedAt(article.createdAt, "en-US")}</TableCell>
             </TableRow>
           ))
         ) : (

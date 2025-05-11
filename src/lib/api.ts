@@ -34,12 +34,12 @@
 //     switch (sort) {
 //       case "newest":
 //         articles.sort(
-//           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+//           (a, b) => new createdAt(b.createdAt).getTime() - new createdAt(a.createdAt).getTime()
 //         );
 //         break;
 //       case "oldest":
 //         articles.sort(
-//           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+//           (a, b) => new createdAt(a.createdAt).getTime() - new createdAt(b.createdAt).getTime()
 //         );
 //         break;
 //       case "popular":
@@ -81,12 +81,12 @@
 //     switch (sort) {
 //       case "newest":
 //         articles.sort(
-//           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+//           (a, b) => new createdAt(b.createdAt).getTime() - new createdAt(a.createdAt).getTime()
 //         );
 //         break;
 //       case "oldest":
 //         articles.sort(
-//           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+//           (a, b) => new createdAt(a.createdAt).getTime() - new createdAt(b.createdAt).getTime()
 //         );
 //         break;
 //       case "popular":
@@ -127,12 +127,12 @@
 //     switch (sort) {
 //       case "newest":
 //         articles.sort(
-//           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+//           (a, b) => new createdAt(b.createdAt).getTime() - new createdAt(a.createdAt).getTime()
 //         );
 //         break;
 //       case "oldest":
 //         articles.sort(
-//           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+//           (a, b) => new createdAt(a.createdAt).getTime() - new createdAt(b.createdAt).getTime()
 //         );
 //         break;
 //       case "popular":
@@ -173,12 +173,12 @@
 //     switch (sort) {
 //       case "newest":
 //         articles.sort(
-//           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+//           (a, b) => new createdAt(b.createdAt).getTime() - new createdAt(a.createdAt).getTime()
 //         );
 //         break;
 //       case "oldest":
 //         articles.sort(
-//           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+//           (a, b) => new createdAt(a.createdAt).getTime() - new createdAt(b.createdAt).getTime()
 //         );
 //         break;
 //       case "popular":

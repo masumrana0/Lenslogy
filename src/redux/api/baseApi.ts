@@ -2,7 +2,7 @@
  * Title: 'Redux RTK query setup by Masum Rana'
  * Description: ''
  * Author: 'Masum Rana'
- * Date: 08-11-2024
+ * creat dAt: 08-11-2024
  *
  */
 

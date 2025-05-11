@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { formatDate } from "@/lib/utils";
+import { formatcreatedAt } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -122,7 +122,7 @@ export function ArticlesTable() {
               <TableHead>Title</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>createdAt</TableHead>
               <TableHead>Views</TableHead>
               <TableHead>Likes</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -152,7 +152,7 @@ export function ArticlesTable() {
                       Published
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatDate(article.date, "en-US")}</TableCell>
+                  <TableCell>{formatcreatedAt(article.createdAt, "en-US")}</TableCell>
                   <TableCell>{article.views}</TableCell>
                   <TableCell>{article.likes}</TableCell>
                   <TableCell className="text-right">

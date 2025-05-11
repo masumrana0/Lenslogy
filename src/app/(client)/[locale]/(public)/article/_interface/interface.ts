@@ -25,7 +25,7 @@ export interface IArticle {
   image: string;
   category: string;
   author: Author;
-  date: string;
+  createdAt: string;
   tags?: string[];
   articleAttachment: IArticleAttachment;
 }
@@ -51,7 +51,7 @@ export interface IArticleForCard {
   excerpt: string;
   image: string;
   category: string;
-  date: string;
+  createdAt: string;
 }
 
 export interface ArticlesPageLayoutProps {

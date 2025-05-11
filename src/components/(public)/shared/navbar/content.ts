@@ -34,7 +34,7 @@ const navMenu: INavItem[] = [
               en: "VR",
               bn: "ভিআর",
             },
-            date: "June 15, 2023",
+            createdAt: "June 15, 2023",
           },
           {
             id: 2,
@@ -48,7 +48,7 @@ const navMenu: INavItem[] = [
               en: "Mobile",
               bn: "মোবাইল",
             },
-            date: "June 12, 2023",
+            createdAt: "June 12, 2023",
           },
           {
             id: 3,
@@ -62,7 +62,7 @@ const navMenu: INavItem[] = [
               en: "Smart Home",
               bn: "স্মার্ট হোম",
             },
-            date: "June 10, 2023",
+            createdAt: "June 10, 2023",
           },
         ],
       },
@@ -84,7 +84,7 @@ const navMenu: INavItem[] = [
               en: "Audio",
               bn: "অডিও",
             },
-            date: "June 8, 2023",
+            createdAt: "June 8, 2023",
           },
           {
             id: 5,
@@ -98,7 +98,7 @@ const navMenu: INavItem[] = [
               en: "Peripherals",
               bn: "পেরিফেরালস",
             },
-            date: "June 5, 2023",
+            createdAt: "June 5, 2023",
           },
           {
             id: 6,
@@ -112,7 +112,7 @@ const navMenu: INavItem[] = [
               en: "Wearables",
               bn: "পরিধানযোগ্য",
             },
-            date: "June 3, 2023",
+            createdAt: "June 3, 2023",
           },
         ],
       },
@@ -134,7 +134,7 @@ const navMenu: INavItem[] = [
           {
             id: 7,
             title: {
-              en: "GPT-5 Release Date Announced",
+              en: "GPT-5 Release createdAt Announced",
               bn: "জিপিটি-৫ রিলিজ তারিখ ঘোষণা করা হয়েছে",
             },
              image:
@@ -143,7 +143,7 @@ const navMenu: INavItem[] = [
               en: "AI",
               bn: "এআই",
             },
-            date: "June 14, 2023",
+            createdAt: "June 14, 2023",
           },
           {
             id: 8,
@@ -157,7 +157,7 @@ const navMenu: INavItem[] = [
               en: "Dev Tools",
               bn: "ডেভ টুলস",
             },
-            date: "June 11, 2023",
+            createdAt: "June 11, 2023",
           },
           {
             id: 9,
@@ -171,7 +171,7 @@ const navMenu: INavItem[] = [
               en: "AI",
               bn: "এআই",
             },
-            date: "June 9, 2023",
+            createdAt: "June 9, 2023",
           },
         ],
       },
@@ -193,7 +193,7 @@ const navMenu: INavItem[] = [
               en: "Computing",
               bn: "কম্পিউটিং",
             },
-            date: "June 7, 2023",
+            createdAt: "June 7, 2023",
           },
           {
             id: 11,
@@ -207,7 +207,7 @@ const navMenu: INavItem[] = [
               en: "Hardware",
               bn: "হার্ডওয়্যার",
             },
-            date: "June 4, 2023",
+            createdAt: "June 4, 2023",
           },
           {
             id: 12,
@@ -221,7 +221,7 @@ const navMenu: INavItem[] = [
               en: "Networking",
               bn: "নেটওয়ার্কিং",
             },
-            date: "June 2, 2023",
+            createdAt: "June 2, 2023",
           },
         ],
       },
