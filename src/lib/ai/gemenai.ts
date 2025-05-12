@@ -1,3 +1,4 @@
+import { GlobalErrorHandler } from "@/app/(backend)/_core/error-handler/global-error-handler/global-error-handler";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 type TranslationInput = Record<string, string>;
@@ -18,7 +19,10 @@ export async function translateContent(data: TranslationInput) {
 
     const prompt = `
 Translate the following key-value pairs from English to Bengali (Bangla).
-Only translate the values. Keep the keys unchanged and return the result as valid JSON.
+- Only translate the values.
+- If a value is null, exclude that key-value pair from the output.
+- Keep the keys unchanged.
+- Return the result as valid JSON. 
 
 ${formattedInput}
 
@@ -33,7 +37,7 @@ Example format:
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
     const response = result.response;
-    const text = response.candicreatedAts?.[0]?.content?.parts?.[0]?.text;
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!text) throw new Error("No text response from Gemini.");
 
@@ -46,10 +50,6 @@ Example format:
     const jsonString = text.slice(jsonStart, jsonEnd + 1);
     return JSON.parse(jsonString) as TranslationInput;
   } catch (error) {
-    console.error("Translation error:", error);
-    return Object.keys(data).reduce((acc, key) => {
-      acc[key] = "";
-      return acc;
-    }, {} as TranslationInput);
+    GlobalErrorHandler(error);
   }
 }
