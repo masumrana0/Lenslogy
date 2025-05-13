@@ -26,6 +26,13 @@ import {
 
 import { Trash } from "lucide-react";
 import { toast } from "@/components/ui/toast";
+import {
+  useDeleteUserMutation,
+  useGetAllUserQuery,
+  useUpdateUserMutation,
+} from "@/redux/api/user.api";
+import status from "http-status";
+import { IUser } from "../_interface/user.interface";
 
 interface User {
   id: string;
@@ -43,72 +50,38 @@ interface UsersTableProps {
 export function UsersTable({ currentUserRole }: UsersTableProps) {
   const router = useRouter();
 
-  const [users, setUsers] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
-  //       if (!res.ok) throw new Error("Failed to fetch users");
-  //       const data = await res.json();
-  //       setUsers(data);
-  //     } catch (error) {
-  //       console.error("Error fetching users:", error);
-  //       toast({
-  //         title: "Error",
-  //         description: "Failed to load users",
-  //         type: "error",
-  //       });
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchUsers();
-  // }, [toast]);
+  // rtk
+  const [deleteUser, { isDeleting }] = useDeleteUserMutation();
+  const [updateUser, { isUpdating }] = useUpdateUserMutation();
+  const { data, isLoading } = useGetAllUserQuery();
+  const users = data?.data || [];
 
   const handleDeleteClick = (id: string) => {
-    setUserToDelete(id);
+    setUserId(id);
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
-    if (!userToDelete) return;
+    if (!userId) return;
 
     try {
-      // const res = await fetch(
-      //   `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userToDelete}`,
-      //   {
-      //     method: "DELETE",
-      //   }
-      // );
-
-      // if (!res.ok) {
-      //   throw new Error("Failed to delete user");
-      // }
-
-      // Remove user from state
-      setUsers(users.filter((user) => user.id !== userToDelete));
-
-      toast({
-        title: "User deleted",
-        description: "The user has been deleted successfully",
-      });
-
-      router.refresh();
-    } catch (error) {
+      const res = deleteUser(userId);
+      if (res.statusCode === status.OK) {
+        toast({
+          title: "User deleted",
+          description: "The user has been deleted successfully",
+        });
+      }
+    } catch (error: any) {
       console.error("Error deleting user:", error);
+      const message = error?.data?.message || "An unexpected error occurred";
       toast({
         title: "Error",
-        description: "Failed to delete user",
+        description: message,
       });
-    } finally {
-      setDeleteDialogOpen(false);
-      setUserToDelete(null);
     }
   };
 
@@ -151,7 +124,7 @@ export function UsersTable({ currentUserRole }: UsersTableProps) {
                 </TableCell>
               </TableRow>
             ) : users.length > 0 ? (
-              users.map((user) => (
+              users.map((user: IUser) => (
                 <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -218,7 +191,7 @@ export function UsersTable({ currentUserRole }: UsersTableProps) {
               onClick={handleDeleteConfirm}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete
+              {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,5 +1,5 @@
+import { authOptions } from "@/lib/next-auth/auth";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";

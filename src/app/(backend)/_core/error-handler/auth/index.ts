@@ -1,5 +1,5 @@
 import { IRole } from "@/app/(client)/[locale]/(dashboard)/dashboard/users/_interface/user.interface";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/next-auth/auth";
 import { getServerSession, Session } from "next-auth";
 import { ApiErrors } from "../../errors/api-error";
 

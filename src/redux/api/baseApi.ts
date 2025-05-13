@@ -1,18 +1,17 @@
 /**
- * Title: 'Redux RTK query setup by Masum Rana'
+ * Title: 'rtk setup by Masum Rana'
  * Description: ''
  * Author: 'Masum Rana'
- * creat dAt: 08-11-2024
+ * Date: 13-05-2025
  *
  */
 
-import { axiosBaseQuery } from "@/helper/axios/axiosBaseQuery";
 import { getBaseUrl } from "@/helper/config/envConfig";
-import { createApi } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const baseApi = createApi({
   reducerPath: "api",
-  baseQuery: axiosBaseQuery({ baseUrl: getBaseUrl() }),
+  baseQuery: fetchBaseQuery({ baseUrl: getBaseUrl() }),
   endpoints: () => ({}),
-  tagTypes: ["user", "profile", "partnership", "auth"],
+  tagTypes: ["user", "category", "article"],
 });

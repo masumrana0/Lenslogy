@@ -1,13 +1,13 @@
-import Link from "next/link"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
-import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header"
-import { ArticlesTable } from "./_components/article-table"
- 
+import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
+import { Button } from "@/components/ui/button";
+import { authOptions } from "@/lib/next-auth/auth";
+import { Plus } from "lucide-react";
+import { getServerSession } from "next-auth/next";
+import Link from "next/link";
+import { ArticlesTable } from "./_components/article-table";
+
 export default async function ArticlesPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   return (
     <div className="flex flex-col gap-4">
@@ -21,5 +21,5 @@ export default async function ArticlesPage() {
 
       <ArticlesTable />
     </div>
-  )
+  );
 }

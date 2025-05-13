@@ -1,8 +1,6 @@
 "use client";
-
 import { useState } from "react";
 import { useParams } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -24,7 +22,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { Pencil, Trash } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 import {
@@ -36,9 +33,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  useCreateCategoryMutation,
   useDeleteCategoryMutation,
   useGetAllCategoriesQuery,
-  useUpcreatedAtCategoryMutation,
 } from "@/redux/api/category.api";
 
 interface Category {
@@ -62,8 +59,8 @@ export function CategoriesTable() {
 
   const [deleteCategory, { isLoading: isDeleteLoading }] =
     useDeleteCategoryMutation();
-  const [upcreatedAtCategory, { isLoading: isUpcreatedAtLoading }] =
-    useUpcreatedAtCategoryMutation();
+  const [updateCategory, { isLoading: isLoadingUpdate }] =
+    useCreateCategoryMutation();
 
   const handleDeleteClick = (id: string) => {
     setCategoryToDelete(id);
@@ -105,7 +102,7 @@ export function CategoriesTable() {
     if (!categoryToEdit) return;
 
     try {
-      await upcreatedAtCategory({
+      await updateCategory({
         id: categoryToEdit.id,
         name: editedName,
       }).unwrap();
@@ -268,10 +265,10 @@ export function CategoriesTable() {
             </Button>
             <Button
               onClick={handleEditConfirm}
-              disabled={isUpcreatedAtLoading || !editedName.trim()}
+              disabled={isLoadingUpdate || !editedName.trim()}
               className="bg-blue-500 hover:bg-blue-600 transition-colors"
             >
-              {isUpcreatedAtLoading ? "Saving..." : "Save Changes"}
+              {isLoadingUpdate ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </DialogContent>

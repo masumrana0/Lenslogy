@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import status from "http-status";
 
-// UI components
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// Components
 import {
   Form,
   FormControl,
@@ -18,6 +17,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -26,11 +27,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Utils & Schemas
+// Utils & Redux
 import { toast } from "@/components/ui/toast";
 import { userSchema } from "@/schama";
 import { availableRoles } from "../_utils";
 import { IRole } from "../_interface/user.interface";
+import { useCreateUserMutation } from "@/redux/api/user.api";
 
 type FormValues = z.infer<typeof userSchema>;
 
@@ -40,7 +42,7 @@ interface UserFormProps {
 
 const UserForm: React.FC<UserFormProps> = ({ currentUserRole }) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const roles = availableRoles(currentUserRole);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(userSchema),
@@ -53,47 +55,30 @@ const UserForm: React.FC<UserFormProps> = ({ currentUserRole }) => {
     },
   });
 
-  const roles = availableRoles(currentUserRole);
+  const [createUser, { isLoading }] = useCreateUserMutation();
 
   const onSubmit = async (values: FormValues) => {
-    // console.log("button trigger ", values);
-
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/create-user`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        }
-      );
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || "Failed to create user");
+      const res: any = await createUser(values).unwrap();
+      if (res?.statusCode === status.CREATED) {
+        toast({
+          title: "User created",
+          description: res?.message,
+          type: "success",
+          position: "top-center",
+        });
       }
-
-      toast({
-        title: "User created",
-        description: "The user has been created successfully",
-        type: "success",
-        position: "top-center",
-      });
 
       form.reset();
       router.refresh();
     } catch (error: any) {
-      console.error("Error creating user:", error);
+      const message = error?.data?.message || "An unexpected error occurred";
       toast({
         title: "Error",
-        description: error.message || "Failed to create user",
+        description: message,
         type: "error",
         position: "top-center",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -168,7 +153,7 @@ const UserForm: React.FC<UserFormProps> = ({ currentUserRole }) => {
                 </SelectContent>
               </Select>
               <FormDescription>
-                Determines what the user can do in the system
+                Determines what the user can do in the system.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -186,7 +171,7 @@ const UserForm: React.FC<UserFormProps> = ({ currentUserRole }) => {
                 <Input placeholder="Senior Editor" {...field} />
               </FormControl>
               <FormDescription>
-                The user&apos;s job title or role description
+                The user&apos;s job title or role description.
               </FormDescription>
               <FormMessage />
             </FormItem>

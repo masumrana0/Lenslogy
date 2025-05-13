@@ -64,3 +64,32 @@ export const articleSchema = z.object({
   isHotTech: z.boolean().default(false),
   isGadget: z.boolean().default(false),
 });
+export const editProfileSchema = z
+  .object({
+    name: z.string().optional(),
+    email: z.string().email({ message: "Invalid email address" }).optional(),
+    designation: z.string().optional(),
+    oldPassword: z.string().optional(),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters." })
+      .optional(),
+    confirmPassword: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      const anyPasswordFilled =
+        data.oldPassword || data.password || data.confirmPassword;
+      if (anyPasswordFilled) {
+        if (!data.oldPassword || !data.password || !data.confirmPassword)
+          return false;
+        if (data.password !== data.confirmPassword) return false;
+      }
+      return true;
+    },
+    {
+      message:
+        "To change password, all password fields must be filled and new passwords must match.",
+      path: ["confirmPassword"],
+    }
+  );

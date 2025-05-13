@@ -1,10 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { langMiddleware } from "./middlewares/lang-middleware";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "./lib/auth";
-import { ApiErrors } from "./app/(backend)/_core/errors/api-error";
-
 enum Role {
   ADMIN = "ADMIN",
   SUPER_ADMIN = "SUPER_ADMIN",

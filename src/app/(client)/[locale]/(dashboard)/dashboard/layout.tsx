@@ -1,14 +1,13 @@
-import type React from "react";
-import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/next-auth/auth";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import type React from "react";
 
 import { DashboardNav } from "@/components/(dashboard)/shared/nav";
 import { UserNav } from "@/components/(dashboard)/shared/nav/user-nav";
 import Logo from "@/components/(public)/shared/navbar/logo";
+import LanguageSwitcher from "@/components/(public)/shared/navbar/switch-lang";
 import Theme from "@/components/(public)/shared/navbar/theme";
 import { IRole } from "./users/_interface/user.interface";
-import LanguageSwitcher from "@/components/(public)/shared/navbar/switch-lang";
 
 export default async function DashboardLayout({
   children,

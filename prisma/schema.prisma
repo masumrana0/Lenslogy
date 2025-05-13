@@ -121,5 +121,5 @@ model Category {
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
 
-    @@unique([lang, baseId])
+    @@unique([baseId, lang], name: "baseId_lang_unique")
 }

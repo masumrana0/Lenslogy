@@ -1,19 +1,15 @@
 import { GlobalErrorHandler } from "@/app/(backend)/_core/error-handler/global-error-handler/global-error-handler";
-import { ApiErrors } from "@/app/(backend)/_core/errors/api-error";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/next-auth/auth";
 import { getServerSession } from "next-auth/next";
-import { NextRequest, NextResponse } from "next/server";
-
+import { NextRequest } from "next/server";
 
 export async function authMiddleware(request: NextRequest) {
-
   const session = await getServerSession(authOptions);
   try {
     // const session = await getServerSession(authOptions);
     // if (!session || !session.user?.role) {
     //   throw ApiErrors.Unauthorized();
     // }
-
     // const userRole = session.user.role;
     // if (!allowedRoles.includes(userRole)) {
     //   throw ApiErrors.Forbidden(

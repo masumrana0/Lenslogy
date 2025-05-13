@@ -1,9 +1,9 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
-import { UsersTable } from "./_components/users-table";
+import { authOptions } from "@/lib/next-auth/auth";
+import { getServerSession } from "next-auth/next";
+import { redirect } from "next/navigation";
 import UserForm from "./_components/user-form";
+import { UsersTable } from "./_components/users-table";
 
 export default async function UsersPage() {
   const session = await getServerSession(authOptions);

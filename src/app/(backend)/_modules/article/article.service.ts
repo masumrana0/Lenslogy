@@ -4,7 +4,9 @@ import prisma from "@/lib/prisma";
 import { saveFileToLocal } from "@/lib/uploader/uploader";
 import Auth from "../../_core/error-handler/auth";
 import { ApiErrors } from "../../_core/errors/api-error";
+import { Language } from "@prisma/client";
 
+// create article
 const createArticle = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
   const formData = await req.formData();
@@ -21,23 +23,25 @@ const createArticle = async (req: Request) => {
     Promise.resolve(JSON.parse(payloadStr)),
   ]);
 
+  if (payload) {
+    Object.assign(baseArticle, payload);
+  }
+
   if (savedFile) {
     baseArticle.Image = savedFile.url;
     banglaArticle.image = savedFile.url;
   }
 
-  if (payload) {
-    Object.assign(baseArticle, payload);
-  }
-
+  const { title, excerpt, content, ...others } = baseArticle;
   const translatedContent = await translateContent({
-    title: payload.title,
-    excerpt: payload.excerpt,
-    content: payload.content,
+    title: title,
+    excerpt: excerpt,
+    content: content,
   });
 
   if (translatedContent) {
-    Object.assign(banglaArticle, translatedContent);
+    const allData = { ...others, ...translatedContent };
+    Object.assign(banglaArticle, allData);
   }
 
   const result = await prisma.$transaction(async (tx: any) => {
@@ -57,6 +61,7 @@ const createArticle = async (req: Request) => {
   return result;
 };
 
+// update Article
 const updateArticle = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
 
@@ -103,14 +108,17 @@ const updateArticle = async (req: Request) => {
     Object.assign(updatedBase, basePayload);
   }
 
+  const { title, excerpt, content, ...others } = updatedBase;
+
   const translatedContent = await translateContent({
-    title: updatedBase?.title,
-    excerpt: updatedBase?.excerpt,
-    content: updatedBase?.content,
+    title: title,
+    excerpt: excerpt,
+    content: content,
   });
 
   if (translatedContent) {
-    Object.assign(updatedBangla, translatedContent);
+    const allData = { ...others, translatedContent };
+    Object.assign(updatedBangla, allData);
   }
 
   const result = await prisma.$transaction(async (tx) => {
@@ -146,6 +154,7 @@ const updateArticle = async (req: Request) => {
   return result;
 };
 
+// delete Article
 const deleteArticle = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
   const { searchParams } = new URL(req.url);
@@ -172,8 +181,21 @@ const deleteArticle = async (req: Request) => {
   });
 };
 
+// getAllArticle for admin
+const getAllArticle = async (req: Request) => {
+  // auth Guard
+  await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
+
+  const { searchParams } = new URL(req.url);
+  const lang = (searchParams.get("lang") || "en") as Language;
+
+  const result = await prisma.article.findMany({ where: { lang: lang } });
+  return result;
+};
+
 export const ArticleService = {
   createArticle,
   deleteArticle,
   updateArticle,
+  getAllArticle,
 };

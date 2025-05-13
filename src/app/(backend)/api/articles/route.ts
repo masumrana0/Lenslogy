@@ -5,3 +5,6 @@ export const POST = ArticleController.createArticle;
 export const PATCH = ArticleController.updateArticle;
 
 export const DELETE = ArticleController.deleteArticle;
+
+
+

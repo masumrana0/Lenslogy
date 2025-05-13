@@ -1,7 +1,7 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
+import { authOptions } from "@/lib/next-auth/auth";
+import { getServerSession } from "next-auth/next";
+import { redirect } from "next/navigation";
 import { CategoryForm } from "./_components/CategoryForm";
 import { CategoriesTable } from "./_components/categories-table";
 
