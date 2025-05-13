@@ -1,3 +1,4 @@
+import { useUpdateUserMutation } from "@/redux/api/user.api";
 import { baseApi } from "./baseApi";
 
 const url = "/categories";
@@ -9,28 +10,28 @@ const categoryApi: any = baseApi.injectEndpoints({
       query: (data: { name: string }) => ({
         url: `${url}`,
         method: "POST",
-        data,
+        body: data,
       }),
       invalidatesTags: ["category"],
     }),
 
     // Upcrea ed t an exi ting category
     updateCategory: build.mutation({
-      query: (data: { id: string; name: string }) => ({
-        url: `${url}`,
+      query: ({ name, id }: { id: string; name: string }) => ({
+        url: `${url}?id=${id}`,
         method: "PATCH",
-        data,
+        body: { name: name },
       }),
       invalidatesTags: ["category"],
     }),
 
     // Delete a category
     deleteCategory: build.mutation({
-      query: (id: string) => ({
-        url: `${url}?baseId=${id}`,
+      query: (baseId: string) => ({
+        url: `${url}?baseId=${baseId}`,
         method: "DELETE",
       }),
-      deleteCategory: ["category"],
+      invalidatesTags: ["category"],
     }),
 
     // Get all categories (optionally by language)
@@ -58,7 +59,9 @@ const categoryApi: any = baseApi.injectEndpoints({
 
 export const {
   useCreateCategoryMutation,
+  useUpdateCategoryMutation,
   useDeleteCategoryMutation,
   useGetAllCategoriesQuery,
+
   useGetCategoryByIdQuery,
 } = categoryApi;

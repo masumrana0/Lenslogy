@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -16,11 +16,11 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { categorySchema } from "@/schama";
 import { useCreateCategoryMutation } from "@/redux/api/category.api";
+import status from "http-status";
 
 type FormValues = z.infer<typeof categorySchema>;
 
 export function CategoryForm() {
-  const router = useRouter();
   const [create, { isLoading }] = useCreateCategoryMutation();
 
   const form = useForm<FormValues>({
@@ -30,30 +30,26 @@ export function CategoryForm() {
     },
   });
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     try {
-      const response = await create(values);
+      const response = await create(data).unwrap();
 
-      if (!response) {
-        throw new Error("No response from create function");
+      if (response?.statusCode === status.CREATED) {
+        toast({
+          title: "Success",
+          description: "Category created successfully.",
+        });
       }
 
-      toast({
-        title: "Success",
-        description: "Category created successfully.",
-      });
-
       form.reset();
-      router.refresh();
     } catch (error: any) {
+      const message =
+        error.data.message ||
+        "An unexpected error occurred while creating the category";
       toast({
         title: "Error",
-        description:
-          error?.message ||
-          "An unexpected error occurred while creating the category.",
+        description: message,
       });
-    } finally {
-      return;
     }
   };
 

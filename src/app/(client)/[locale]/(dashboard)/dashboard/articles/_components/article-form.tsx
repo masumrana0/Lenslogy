@@ -352,35 +352,15 @@ import { RichTextEditor } from "./editor";
 import { useGetAllCategoriesQuery } from "@/redux/api/category.api";
 import { articleSchema } from "@/schama";
 import { useCreateArticleMutation } from "@/redux/api/article.api";
+import { Article } from "@prisma/client";
 
 type FormValues = z.infer<typeof articleSchema>;
 
-interface Category {
-  id: string;
-  name: string;
-}
-
-interface Article {
-  title: string;
-  excerpt: string;
-  content: string;
-  image: File | null;
-  categoryId: string;
-  isFeatured: boolean;
-  isPinFeatured: boolean;
-  isPinLatest: boolean;
-  isPublished: boolean;
-  isPinHero: boolean;
-  isUpComing: boolean;
-  isEmergingTech: boolean;
-  isHotTech: boolean;
-  isGadget: boolean;
-}
-
 export function ArticleForm({ article }: { article?: Partial<Article> }) {
   const router = useRouter();
-  const { data: categories, isLoading: isCategoryLoading } =
-    useGetAllCategoriesQuery("en");
+  const { data, isLoading: isCategoryLoading } = useGetAllCategoriesQuery("en");
+
+  const categories = data?.data || [];
 
   const [createArticle, { isLoading }] = useCreateArticleMutation();
 

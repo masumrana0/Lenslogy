@@ -1,6 +1,11 @@
 "use client";
+
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import status from "http-status";
+import { Category } from "@prisma/client";
+
+// ui components
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -33,42 +38,44 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  useCreateCategoryMutation,
   useDeleteCategoryMutation,
   useGetAllCategoriesQuery,
+  useUpdateCategoryMutation,
 } from "@/redux/api/category.api";
 
-interface Category {
-  id: string;
-  name: string;
-  baseId: string;
-}
-
-export function CategoriesTable() {
+// Component to render categories in a table format with edit/delete functionality
+const CategoriesTable = () => {
   const param = useParams();
   const lang = param.locale;
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
 
-  // Edit state
+  // State for delete confirmation dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [baseId, setBaseId] = useState<string | null>(null);
+
+  // State for edit dialog
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [editedName, setEditedName] = useState("");
 
+  // Fetch categories based on current language
   const { data, isLoading } = useGetAllCategoriesQuery(lang);
+  const categories = data?.data || [];
 
+  // API hooks for delete and update
   const [deleteCategory, { isLoading: isDeleteLoading }] =
     useDeleteCategoryMutation();
   const [updateCategory, { isLoading: isLoadingUpdate }] =
-    useCreateCategoryMutation();
+    useUpdateCategoryMutation();
 
+  // Handle delete click and open confirmation dialog
   const handleDeleteClick = (id: string) => {
-    setCategoryToDelete(id);
+    setBaseId(id);
     setDeleteDialogOpen(true);
   };
 
+  // Handle edit click and open edit dialog
   const handleEditClick = (category: Category) => {
-    if (lang == "bn") {
+    if (lang === "bn") {
       return alert("Please Switch English Language.");
     }
     setCategoryToEdit(category);
@@ -76,45 +83,43 @@ export function CategoriesTable() {
     setEditDialogOpen(true);
   };
 
+  // Confirm delete action
   const handleDeleteConfirm = async () => {
-    if (!categoryToDelete) return;
-
+    if (!baseId) return;
     try {
-      await deleteCategory(categoryToDelete).unwrap();
-
-      toast({
-        title: "Category deleted",
-        description: "The category has been deleted successfully",
-      });
-    } catch (error) {
+      const res = await deleteCategory(baseId).unwrap();
+      if (res.statusCode === status.OK) {
+        toast({
+          title: "Category deleted",
+          description: "The category has been deleted successfully",
+        });
+      }
+    } catch (error: any) {
+      const message = error.data?.message || "Failed to delete category";
       toast({
         title: "Error",
-        description: "Failed to delete category",
-        type: "error",
+        description: message,
       });
-    } finally {
-      setDeleteDialogOpen(false);
-      setCategoryToDelete(null);
     }
   };
 
+  // Confirm edit action
   const handleEditConfirm = async () => {
     if (!categoryToEdit) return;
-
     try {
       await updateCategory({
-        id: categoryToEdit.id,
         name: editedName,
+        id: categoryToEdit.id,
       }).unwrap();
-
       toast({
-        title: "Category upcreatedAtd",
-        description: "The category has been upcreatedAtd successfully",
+        title: "Category updated",
+        description: "The category has been updated successfully",
       });
-    } catch (error) {
+    } catch (error: any) {
+      const message = error.data.message || "Failed to edit category";
       toast({
         title: "Error",
-        description: "Failed to upcreatedAt category",
+        description: message,
         type: "error",
       });
     } finally {
@@ -125,62 +130,43 @@ export function CategoriesTable() {
 
   return (
     <>
-      <div className="rounded-md border border-gray-200 shadow-sm overflow-hidden">
+      {/* Table displaying categories */}
+      <div className="rounded-md border overflow-hidden">
         <Table>
-          <TableHeader className="bg-gray-50">
+          <TableHeader>
             <TableRow>
-              <TableHead className="font-semibold text-gray-700">
-                Name
-              </TableHead>
-              <TableHead className="font-semibold text-gray-700">
-                Base ID
-              </TableHead>
-              <TableHead className="text-right font-semibold text-gray-700">
-                Actions
-              </TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Base ID</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-8">
-                  <div className="flex justify-center items-center space-x-2">
-                    <div className="h-4 w-4 rounded-full bg-red-500 animate-pulse"></div>
-                    <p className="text-gray-500">Loading categories...</p>
-                  </div>
+                <TableCell colSpan={3} className="text-center py-4">
+                  Loading categories...
                 </TableCell>
               </TableRow>
-            ) : data && data.length > 0 ? (
-              data.map((category: Category) => (
-                <TableRow
-                  key={category.id}
-                  className="hover:bg-gray-200 transition-colors group"
-                >
-                  <TableCell className="font-medium group-hover:text-red-500">
-                    {category.name}
-                  </TableCell>
-                  <TableCell className="text-gray-600">
-                    {category.baseId}
-                  </TableCell>
+            ) : categories.length > 0 ? (
+              categories.map((category: Category) => (
+                <TableRow key={category.id}>
+                  <TableCell>{category.name}</TableCell>
+                  <TableCell>{category.baseId}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end space-x-2">
                       <Button
+                        onClick={() => handleEditClick(category)}
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleEditClick(category)}
-                        className="hover:bg-blue-50 text-blue-500 hover:text-blue-600 transition-colors"
                       >
-                        <Pencil className="h-4 w-4 mr-1" />
-                        <span className="hidden sm:inline">Edit</span>
+                        <Pencil className="w-4 h-4" />
                       </Button>
                       <Button
+                        onClick={() => handleDeleteClick(category.baseId)}
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDeleteClick(category.baseId)}
-                        className="hover:bg-red-50 text-red-500 hover:text-red-600 transition-colors"
                       >
-                        <Trash className="h-4 w-4 mr-1" />
-                        <span className="hidden sm:inline">Delete</span>
+                        <Trash className="w-4 h-4 text-red-500" />
                       </Button>
                     </div>
                   </TableCell>
@@ -188,18 +174,8 @@ export function CategoriesTable() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-12">
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <div className="rounded-full bg-red-100 p-3">
-                      <Trash className="h-6 w-6 text-red-500" />
-                    </div>
-                    <p className="text-gray-500 font-medium">
-                      No categories found
-                    </p>
-                    <p className="text-gray-400 text-sm">
-                      Create a category to get started
-                    </p>
-                  </div>
+                <TableCell colSpan={3} className="text-center py-4">
+                  No categories found
                 </TableCell>
               </TableRow>
             )}
@@ -207,26 +183,23 @@ export function CategoriesTable() {
         </Table>
       </div>
 
-      {/* Delete Dialog */}
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl">
-              Delete Category
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600">
-              This action cannot be undone. This will permanently delete the
-              category and may affect articles using this category.
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="font-semibold text-yellow-500">Warning:</span>{" "}
+              This action is irreversible. Deleting this category will
+              permanently remove it and may impact articles that reference or
+              use it.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="border-gray-300 hover:bg-gray-50 transition-colors">
-              Cancel
-            </AlertDialogCancel>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={isDeleteLoading}
-              className="bg-red-500 hover:bg-red-600 transition-colors"
             >
               {isDeleteLoading ? "Deleting..." : "Delete"}
             </AlertDialogAction>
@@ -234,39 +207,31 @@ export function CategoriesTable() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Edit Dialog */}
+      {/* Edit Category Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-xl">Edit Category</DialogTitle>
-            <DialogDescription className="text-gray-600">
-              UpcreatedAt the category name below.
+            <DialogTitle>Edit Category</DialogTitle>
+            <DialogDescription>
+              Update the category name below
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <Label htmlFor="category-name" className="text-sm font-medium">
-              Category Name
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="name">Category Name</Label>
             <Input
-              id="category-name"
+              id="name"
               value={editedName}
               onChange={(e) => setEditedName(e.target.value)}
-              className="mt-1"
-              placeholder="Enter category name"
+              placeholder="Enter new category name"
             />
           </div>
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setEditDialogOpen(false)}
-              className="border-gray-300 hover:bg-gray-50 transition-colors"
-            >
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
               Cancel
             </Button>
             <Button
               onClick={handleEditConfirm}
               disabled={isLoadingUpdate || !editedName.trim()}
-              className="bg-blue-500 hover:bg-blue-600 transition-colors"
             >
               {isLoadingUpdate ? "Saving..." : "Save Changes"}
             </Button>
@@ -275,4 +240,6 @@ export function CategoriesTable() {
       </Dialog>
     </>
   );
-}
+};
+
+export default CategoriesTable;
