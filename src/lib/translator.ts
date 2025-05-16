@@ -46,11 +46,15 @@ export const translateNumber = (
   }
 };
 
-export const formatTimestampTocreatedAt = (
-  timestamp: number | string,
+export const formatTimestampWithTranslation = (
+  timestamp: number | string | Date,
   lang: "en" | "bn" = "en"
 ): string => {
-  const date = new Date(Number(timestamp));
+  const date = new Date(timestamp);
+
+  if (isNaN(date.getTime())) {
+    return ""; // Invalid date fallback
+  }
 
   const banglaMonths = [
     "জানুয়ারি",
@@ -87,6 +91,19 @@ export const formatTimestampTocreatedAt = (
   const year = date.getFullYear();
 
   if (lang === "bn") {
+    const enToBnDigits: { [key: string]: string } = {
+      "0": "০",
+      "1": "১",
+      "2": "২",
+      "3": "৩",
+      "4": "৪",
+      "5": "৫",
+      "6": "৬",
+      "7": "৭",
+      "8": "৮",
+      "9": "৯",
+    };
+
     const convertToBanglaDigits = (num: number): string =>
       num
         .toString()

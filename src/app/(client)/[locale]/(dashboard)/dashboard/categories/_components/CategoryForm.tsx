@@ -19,8 +19,7 @@ import { useCreateCategoryMutation } from "@/redux/api/category.api";
 import status from "http-status";
 
 type FormValues = z.infer<typeof categorySchema>;
-
-export function CategoryForm() {
+const CategoryForm = () => {
   const [create, { isLoading }] = useCreateCategoryMutation();
 
   const form = useForm<FormValues>({
@@ -80,4 +79,6 @@ export function CategoryForm() {
       </form>
     </Form>
   );
-}
+};
+
+export default CategoryForm;

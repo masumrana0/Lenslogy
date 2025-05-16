@@ -2,7 +2,7 @@ import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-heade
 import { authOptions } from "@/lib/next-auth/auth";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
-import { CategoryForm } from "./_components/CategoryForm";
+import CategoryForm from "./_components/CategoryForm";
 import CategoriesTable from "./_components/categories-table";
 
 export default async function CategoriesPage() {

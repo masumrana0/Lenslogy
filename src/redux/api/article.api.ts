@@ -1,15 +1,23 @@
+import { objectToQuery } from "@/utils/query";
 import { baseApi } from "./baseApi";
 
 const url = "/articles";
 
 const articleApi: any = baseApi.injectEndpoints({
   endpoints: (build: any) => ({
+    getAllArticles: build.query({
+      query: (obj: Record<string, any>) => ({
+        url: `${url}${objectToQuery(obj)}`,
+        method: "GET",
+      }),
+      providesTags: ["article"],
+    }),
+
     createArticle: build.mutation({
       query: (data: any) => ({
         url: url,
         method: "POST",
-        data: data,
-        contentType: "multipart/form-data",
+        body: data,
       }),
       invalidatesTags: ["article"],
     }),
@@ -21,14 +29,6 @@ const articleApi: any = baseApi.injectEndpoints({
         data: data,
       }),
       invalidatesTags: ["article"],
-    }),
-
-    getAllArticle: build.query({
-      query: (lang: "en" | "bn") => ({
-        url: `${url}?lang=${lang} `,
-        method: "GET",
-      }),
-      providesTags: ["article"],
     }),
 
     deleteArticle: build.mutation({
@@ -45,6 +45,6 @@ const articleApi: any = baseApi.injectEndpoints({
 export const {
   useGetAllArticlesQuery,
   useCreateArticleMutation,
-  useUpcreatedAtArticleMutation,
+  useUpdateArticleMutation,
   useDeleteArticleMutation,
 } = articleApi;

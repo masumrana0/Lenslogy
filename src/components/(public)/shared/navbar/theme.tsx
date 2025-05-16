@@ -1,10 +1,13 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 const Theme = () => {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };

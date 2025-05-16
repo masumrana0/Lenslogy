@@ -31,7 +31,7 @@ const deleteArticle = catchAsync(async (req: Request) => {
 });
 
 const getAllArticle = catchAsync(async (req: Request) => {
-  const result = await ArticleService.updateArticle(req);
+  const result = await ArticleService.getAllArticle(req);
   return sendResponse({
     statusCode: status.OK,
     message: "Article deleted successfully",

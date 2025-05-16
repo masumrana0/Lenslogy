@@ -6,5 +6,4 @@ export const PATCH = ArticleController.updateArticle;
 
 export const DELETE = ArticleController.deleteArticle;
 
-
-
+export const GET = ArticleController.getAllArticle;

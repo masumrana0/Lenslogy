@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/next-auth/auth";
 import { Plus } from "lucide-react";
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
-import { ArticlesTable } from "./_components/article-table";
+import ArticlesTable from "./_components/article-table";
 
 export default async function ArticlesPage() {
   const session = await getServerSession(authOptions);

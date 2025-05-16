@@ -5,54 +5,63 @@ import { saveFileToLocal } from "@/lib/uploader/uploader";
 import Auth from "../../_core/error-handler/auth";
 import { ApiErrors } from "../../_core/errors/api-error";
 import { Language } from "@prisma/client";
+import { paginationHelpers } from "../../_core/helper/pagination-helper";
+import pick from "../../_core/shared/pick";
+import {
+  articleFilterAbleFields,
+  articleSearchableFields,
+} from "../../_core/constants/article.constant";
+import { paginationFields } from "../../_core/constants/patination.constant";
 
 // create article
 const createArticle = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
   const formData = await req.formData();
-  const file = formData.get("imgFile") as File;
-  const payloadStr = formData.get("payload") as string;
-  const baseArticle: any = { authorId: session!.user.id, lang: "en" };
-  const banglaArticle: any = { authorId: session!.user.id, lang: "bn" };
 
-  if (!file || !payloadStr)
+  const file = formData.get("imgFile") as File | null;
+  const payloadStr = formData.get("payload") as string | null;
+
+  if (!file || !payloadStr) {
     throw ApiErrors.BadRequest("File and payload are required.");
+  }
 
+  // Parallel tasks
   const [savedFile, payload] = await Promise.all([
     saveFileToLocal(file, { directory: "public/uploads/articles" }),
     Promise.resolve(JSON.parse(payloadStr)),
   ]);
 
-  if (payload) {
-    Object.assign(baseArticle, payload);
-  }
+  const image = savedFile.url;
+  const { title, excerpt, content, ...rest } = payload;
 
-  if (savedFile) {
-    baseArticle.Image = savedFile.url;
-    banglaArticle.image = savedFile.url;
-  }
+  // Base (English) article
+  const baseArticle = {
+    ...payload,
+    image,
+    authorId: session!.user.id,
+    lang: "en",
+  };
 
-  const { title, excerpt, content, ...others } = baseArticle;
-  const translatedContent = await translateContent({
-    title: title,
-    excerpt: excerpt,
-    content: content,
-  });
+  // Translate content to Bangla
+  const translated = await translateContent({ title, excerpt, content });
 
-  if (translatedContent) {
-    const allData = { ...others, ...translatedContent };
-    Object.assign(banglaArticle, allData);
-  }
+  // Bangla article
+  const banglaArticle = {
+    ...rest,
+    ...translated,
+    image,
+    authorId: session!.user.id,
+    lang: "bn",
+  };
 
-  const result = await prisma.$transaction(async (tx: any) => {
-    const baseData = await tx.article.create({
-      data: {
-        ...baseArticle,
-      },
-    });
-
+  // Save both articles in a transaction
+  const result = await prisma.$transaction(async (tx) => {
+    const baseData = await tx.article.create({ data: baseArticle });
     const banglaData = await tx.article.create({
-      data: { ...banglaArticle, baseId: baseData.baseId },
+      data: {
+        ...banglaArticle,
+        baseId: baseData.baseId,
+      },
     });
 
     return { en: baseData, bn: banglaData };
@@ -183,13 +192,63 @@ const deleteArticle = async (req: Request) => {
 
 // getAllArticle for admin
 const getAllArticle = async (req: Request) => {
-  // auth Guard
+  // Auth guard
   await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
 
   const { searchParams } = new URL(req.url);
+  const searchParamsObj = Object.fromEntries(searchParams.entries());
+
+  const filters = pick(searchParamsObj, articleFilterAbleFields);
+  const paginationOptions = pick(searchParamsObj, paginationFields);
+
+  const { limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
+
+  const searchTerm = searchParams.get("searchTerm") || "";
   const lang = (searchParams.get("lang") || "en") as Language;
 
-  const result = await prisma.article.findMany({ where: { lang: lang } });
+  const where: any = {
+    lang,
+    category: {
+      lang,
+    },
+  };
+
+  // Add search term filtering
+  if (searchTerm) {
+    where.OR = articleSearchableFields.map((field) => ({
+      [field]: {
+        contains: searchTerm,
+        mode: "insensitive",
+      },
+    }));
+  }
+
+  // Add exact filters
+  for (const [key, value] of Object.entries(filters)) {
+    if (value && key !== "searchTerm") {
+      where[key] = value;
+    }
+  }
+
+  // Sort configuration
+  const orderBy: any = {};
+  if (sortBy && sortOrder) {
+    orderBy[sortBy] = sortOrder.toLowerCase();
+  } else {
+    orderBy.createdAt = "desc";
+  }
+
+  const result = await prisma.article.findMany({
+    where,
+    skip,
+    take: limit,
+    orderBy,
+    include: {
+      category: true,
+    },
+  });
+
   return result;
 };
 
