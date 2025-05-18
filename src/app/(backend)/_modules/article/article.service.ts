@@ -201,7 +201,7 @@ const getAllArticle = async (req: Request) => {
   const filters = pick(searchParamsObj, articleFilterAbleFields);
   const paginationOptions = pick(searchParamsObj, paginationFields);
 
-  const { limit, skip, sortBy, sortOrder } =
+  const { limit, page, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
   const searchTerm = searchParams.get("searchTerm") || "";
@@ -248,8 +248,20 @@ const getAllArticle = async (req: Request) => {
       category: true,
     },
   });
+  // Query: get total count
+  const total = await prisma.article.count({ where });
 
-  return result;
+  const totalPage = Math.ceil(total / limit);
+
+  return {
+    result: result,
+    meta: {
+      total,
+      page,
+      limit,
+      totalPage,
+    },
+  };
 };
 
 export const ArticleService = {

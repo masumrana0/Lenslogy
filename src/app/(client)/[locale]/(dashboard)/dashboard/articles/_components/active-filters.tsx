@@ -3,7 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import type { ArticlesTableFilters } from "../index";
+import { ArticlesTableFilters } from "./article-table";
+ 
 
 interface ActiveFiltersProps {
   filters: ArticlesTableFilters;

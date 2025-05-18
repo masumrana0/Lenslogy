@@ -33,7 +33,7 @@ interface FilterPanelProps {
   onLimitChange: (limit: number) => void;
 }
 
-const allStatus = [
+export const allStatus: (keyof ArticlesTableFilters)[] = [
   "isFeatured",
   "isPinFeatured",
   "isPinLatest",
@@ -55,17 +55,25 @@ const FilterPanel = ({
 }: FilterPanelProps) => {
   const [localFilters, setLocalFilters] = React.useState(filters);
 
-  // Update local filters when props change
+  // Sync props with local state
   React.useEffect(() => {
     setLocalFilters(filters);
   }, [filters]);
 
-  // Update a single filter value
+  // Update a single filter
   const updateFilter = (
     key: keyof ArticlesTableFilters,
     value: string | null
   ) => {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // Toggle boolean filter
+  const toggleBooleanFilter = (key: keyof ArticlesTableFilters) => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      [key]: prev[key] === "true" ? null : "true",
+    }));
   };
 
   // Apply filters from local state
@@ -74,7 +82,7 @@ const FilterPanel = ({
   };
 
   return (
-    <div className="flex items-center gap-2 w-full sm:w-auto     ">
+    <div className="flex items-center gap-2 w-full sm:w-auto">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="sm" className="h-9">
@@ -83,7 +91,7 @@ const FilterPanel = ({
           </Button>
         </SheetTrigger>
 
-        <SheetContent>
+        <SheetContent className="p-5 space-y-6">
           <SheetHeader>
             <SheetTitle>Filter Articles</SheetTitle>
             <SheetDescription>
@@ -91,7 +99,8 @@ const FilterPanel = ({
             </SheetDescription>
           </SheetHeader>
 
-          <div className="  space-y-4">
+          <div className="space-y-4">
+            {/* Category Filter */}
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select
@@ -114,17 +123,27 @@ const FilterPanel = ({
               </Select>
             </div>
 
+            {/* Status Toggles */}
             <div className="space-y-2">
-              <Label htmlFor="status">All Statuses</Label>
+              <Label htmlFor="status">Statuses</Label>
               <div className="flex flex-wrap gap-2">
-                {allStatus.map((status, index) => (
-                  <Button variant="outline" key={index}>
-                    {status}
+                {allStatus.map((statusKey) => (
+                  <Button
+                    key={statusKey}
+                    type="button"
+                    variant={
+                      localFilters[statusKey] === "true" ? "default" : "outline"
+                    }
+                    onClick={() => toggleBooleanFilter(statusKey)}
+                    className="text-xs"
+                  >
+                    {statusKey}
                   </Button>
                 ))}
               </div>
             </div>
 
+            {/* Sort By */}
             <div className="space-y-2">
               <Label htmlFor="sortBy">Sort By</Label>
               <Select
@@ -136,12 +155,12 @@ const FilterPanel = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="createdAt">Created Date</SelectItem>
-                  <SelectItem value="title">Title</SelectItem>
                   <SelectItem value="updatedAt">Updated Date</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
+            {/* Sort Order */}
             <div className="space-y-2">
               <Label htmlFor="sortOrder">Sort Order</Label>
               <Select
@@ -159,7 +178,8 @@ const FilterPanel = ({
             </div>
           </div>
 
-          <SheetFooter>
+          {/* Footer Buttons */}
+          <SheetFooter className="flex justify-between pt-4">
             <SheetClose asChild>
               <Button variant="outline" onClick={onResetFilters}>
                 Reset
@@ -172,9 +192,10 @@ const FilterPanel = ({
         </SheetContent>
       </Sheet>
 
+      {/* Pagination Limit */}
       <Select
         value={limit.toString()}
-        onValueChange={(value) => onLimitChange(Number.parseInt(value))}
+        onValueChange={(value) => onLimitChange(Number(value))}
       >
         <SelectTrigger className="w-[100px] h-9">
           <SelectValue placeholder="10 per page" />
@@ -187,6 +208,7 @@ const FilterPanel = ({
         </SelectContent>
       </Select>
 
+      {/* Clear Filters */}
       <Button
         variant="outline"
         size="sm"

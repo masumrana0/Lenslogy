@@ -1,9 +1,7 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import type { Language } from "@prisma/client";
-
 import {
   useDeleteArticleMutation,
   useGetAllArticlesQuery,
@@ -13,15 +11,25 @@ import { toast } from "@/components/ui/toast";
 import status from "http-status";
 import SearchBar from "./search-bar";
 import FilterPanel from "./filter-pannel";
-import ActiveFilters from "../active-filters";
+
 import ArticlesList from "./article-list";
 import PaginationControls from "./pagination-controls";
 import DeleteDialog from "./delete-dialog";
+import ActiveUrlFilters from "../active-filters";
+import ActiveFilters from "../active-filters";
 
 export interface ArticlesTableFilters {
   searchTerm: string;
   categoryId: string;
   isPublished: string | null;
+  isPinFeatured: string | null;
+  isPinLatest: string | null;
+  isPinHero: string | null;
+  isUpComing: string | null;
+  isEmergingTech: string | null;
+  isHotTech: string | null;
+  isGadget: string | null;
+  isFeatured: string | null;
   sortBy: string;
   sortOrder: string;
 }
@@ -41,6 +49,14 @@ const ArticlesTable = () => {
     searchTerm: searchParams.get("searchTerm") || "",
     categoryId: searchParams.get("categoryId") || "",
     isPublished: searchParams.get("isPublished") || null,
+    isFeatured: searchParams.get("isFeatured") || null,
+    isEmergingTech: searchParams.get("isEmergingTech") || null,
+    isGadget: searchParams.get("isGadget") || null,
+    isHotTech: searchParams.get("isHotTech") || null,
+    isPinFeatured: searchParams.get(" isPinFeatured") || null,
+    isPinHero: searchParams.get("isPinHero") || null,
+    isPinLatest: searchParams.get("isPinLatest") || null,
+    isUpComing: searchParams.get("isUpComing") || null,
     sortBy: searchParams.get("sortBy") || "createdAt",
     sortOrder: searchParams.get("sortOrder") || "desc",
   });
@@ -77,8 +93,8 @@ const ArticlesTable = () => {
   const { data, isLoading, refetch } = useGetAllArticlesQuery(
     buildQueryString()
   );
-  const articles = data?.data || [];
-  // console.log( );
+  const articles = data?.result || [];
+
   const meta = data?.meta || { total: 0, page: 1, limit: 10, totalPage: 1 };
 
   const { data: categoriesData } = useGetAllCategoriesQuery(lang);
@@ -107,7 +123,7 @@ const ArticlesTable = () => {
 
     params.set("sortBy", updatedFilters.sortBy);
     params.set("sortOrder", updatedFilters.sortOrder);
-    params.set("page", "1"); // Reset to first page when filters change
+    params.set("page", "1");
 
     router.push(`?${params.toString()}`);
     setPage(1);
@@ -120,6 +136,14 @@ const ArticlesTable = () => {
       searchTerm: "",
       categoryId: "",
       isPublished: null,
+      isEmergingTech: null,
+      isFeatured: null,
+      isGadget: null,
+      isHotTech: null,
+      isPinFeatured: null,
+      isPinHero: null,
+      isPinLatest: null,
+      isUpComing: null,
       sortBy: "createdAt",
       sortOrder: "desc",
     });
@@ -185,6 +209,14 @@ const ArticlesTable = () => {
       searchTerm: params.get("searchTerm") || "",
       categoryId: params.get("categoryId") || "",
       isPublished: params.get("isPublished") || null,
+      isEmergingTech: params.get("isEmergingTech") || null,
+      isFeatured: params.get("isFeatured") || null,
+      isGadget: params.get("isGadget") || null,
+      isHotTech: params.get("isHotTech") || null,
+      isPinFeatured: params.get("isPinFeatured") || null,
+      isPinHero: params.get("isPinHero") || null,
+      isPinLatest: params.get("isPinLatest") || null,
+      isUpComing: params.get("isUpComing") || null,
       sortBy: params.get("sortBy") || "createdAt",
       sortOrder: params.get("sortOrder") || "desc",
     });
@@ -221,6 +253,7 @@ const ArticlesTable = () => {
           applyFilters(newFilters);
         }}
       />
+      {/* <ActiveUrlFilters /> */}
 
       <ArticlesList
         articles={articles}
