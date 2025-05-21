@@ -527,8 +527,7 @@ export function RichTextEditor({
             ref={editorRef}
             contentEditable
             className={cn(
-              "min-h-[300px] p-4 focus:outline-none prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-[#ff005b] prose-a:no-underline hover:prose-a:underline",
-              isFocused && "ring-1 ring-[#ff005b]/20"
+              "min-h-[500px] p-2 focus:outline-none prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-[#ff005b] prose-a:no-underline hover:prose-a:underline"
             )}
             placeholder={placeholder as any}
             onInput={handleContentChange}
@@ -539,11 +538,11 @@ export function RichTextEditor({
             onFocus={() => setIsFocused(true)}
             onKeyDown={handleKeyDown}
             spellCheck="true"
-            // data-gramm="false"
+            data-gramm="false"
           />
         </TabsContent>
 
-        <TabsContent value="preview" className="p-4 m-0 min-h-[300px]">
+        <TabsContent value="preview" className="p-4 m-0 min-h-full">
           <div
             contentEditable
             className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-[#ff005b] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[#ff005b] prose-blockquote:text-gray-700 prose-blockquote:font-normal prose-blockquote:italic"

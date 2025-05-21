@@ -13,7 +13,7 @@ const createUser = catchAsync(async (req: Request) => {
   });
 });
 
-const getAllUser = catchAsync(async (req: Request) => {
+const getAllUser = catchAsync(async () => {
   const result = await UserService.getAllUser();
 
   return sendResponse({

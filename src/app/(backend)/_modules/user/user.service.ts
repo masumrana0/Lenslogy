@@ -106,6 +106,7 @@ const updateUser = async (req: Request) => {
   });
 
   // ✅ Exclude sensitive fields before returning
+ 
   const { password, ...safeUser } = updatedUser;
   return safeUser;
 };

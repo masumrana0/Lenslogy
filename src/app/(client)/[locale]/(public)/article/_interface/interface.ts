@@ -1,4 +1,3 @@
-import { IArticle } from './interface';
 export type IPageProps = {
   params: Promise<{ locale: "bn" | "en"; id: string }>;
 };
@@ -28,13 +27,6 @@ export interface IArticle {
   createdAt: string;
   tags?: string[];
   articleAttachment: IArticleAttachment;
-}
-
-
-{
-en:IArticle,
-bn:IArticle
-
 }
 
 export interface RelatedArticlesProps {

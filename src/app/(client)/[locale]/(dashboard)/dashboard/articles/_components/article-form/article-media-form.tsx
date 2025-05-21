@@ -43,7 +43,7 @@ const ArticleMediaCategoryInputs = ({
       <FormField
         control={form.control}
         name="image"
-        render={({ field: { onChange, value } }) => (
+        render={({ field: { onChange } }) => (
           <FormItem>
             <FormLabel>Featured Image</FormLabel>
             <FormControl>

@@ -20,7 +20,7 @@ const FilterSortBar = ({ categories }: { categories: string[] }) => {
 
     setSelectedCategory(category);
     setSelectedSort(sort);
-  }, []);
+  }, [searchParams]);
 
   // UpcreatedAt query only after first mount
   useEffect(() => {

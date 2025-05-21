@@ -5,6 +5,7 @@ import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
+import Image from "next/image";
 
 interface ImageUploaderProps {
   onImageUpload: (data: { file: File; previewUrl: string }) => void;
@@ -93,7 +94,7 @@ export const ImageUploader = ({
 
       {previewUrl ? (
         <div className="relative rounded-md overflow-hidden border border-gray-200">
-          <img
+          <Image
             src={previewUrl || "/placeholder.svg"}
             alt="Preview"
             className="w-full h-48 object-cover"
