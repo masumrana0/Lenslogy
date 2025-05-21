@@ -11,7 +11,7 @@ interface SearchBarProps {
 
 const SearchBar = ({ searchTerm, onSearch }: SearchBarProps) => {
   return (
-    <div className="relative w-full sm:w-auto max-w-sm">
+    <div className="relative w-full  max-w-lg">
       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
       <Input
         placeholder="Search articles..."

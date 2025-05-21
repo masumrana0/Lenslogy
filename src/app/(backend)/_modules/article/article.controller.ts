@@ -22,7 +22,7 @@ const updateArticle = catchAsync(async (req: Request) => {
 });
 
 const deleteArticle = catchAsync(async (req: Request) => {
-  const result = await ArticleService.updateArticle(req);
+  const result = await ArticleService.deleteArticle(req);
   return sendResponse({
     statusCode: status.OK,
     message: "Article deleted successfully",
@@ -34,7 +34,7 @@ const getAllArticle = catchAsync(async (req: Request) => {
   const result = await ArticleService.getAllArticle(req);
   return sendResponse({
     statusCode: status.OK,
-    message: "Article deleted successfully",
+    message: "Article retrieved successfully",
     data: result,
   });
 });

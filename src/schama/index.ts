@@ -47,9 +47,10 @@ export const articleSchema = z.object({
       message: "Image is required.",
     }
   ),
-  categoryId: z.string({
+  categoryBaseId: z.string({
     required_error: "Please select a category",
   }),
+  categoryId: z.string(),
 
   // ✅ Main boolean flags
   isPublished: z.boolean().default(false),

@@ -3,26 +3,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { ArticlesTableFilters } from ".";
 import React from "react";
+import { IArticlesTableFilters } from "../../interface/article.interface";
+import { booleanFilterKeys } from "../utils";
 
 interface ActiveFiltersProps {
-  filters: ArticlesTableFilters;
+  filters: IArticlesTableFilters;
   categories: any[];
-  onRemoveFilter: (key: keyof ArticlesTableFilters) => void;
+  onRemoveFilter: (key: keyof IArticlesTableFilters) => void;
 }
-
-const booleanFilterKeys: (keyof ArticlesTableFilters)[] = [
-  "isPublished",
-  "isFeatured",
-  "isPinFeatured",
-  "isPinLatest",
-  "isPinHero",
-  "isUpComing",
-  "isEmergingTech",
-  "isHotTech",
-  "isGadget",
-];
 
 const ActiveFilters = ({
   filters,
@@ -31,7 +20,7 @@ const ActiveFilters = ({
 }: ActiveFiltersProps) => {
   const hasActiveFilters = Boolean(
     filters.searchTerm ||
-      filters.categoryId ||
+      filters.categoryBaseId ||
       filters.sortBy ||
       filters.sortOrder ||
       booleanFilterKeys.some((key) => filters[key] === "true")
@@ -58,16 +47,16 @@ const ActiveFilters = ({
         </Badge>
       )}
 
-      {filters.categoryId && (
+      {filters.categoryBaseId && (
         <Badge variant="secondary" className="flex items-center gap-1">
           Category:{" "}
-          {categories.find((c: any) => c.id === filters.categoryId)?.name ||
-            filters.categoryId}
+          {categories.find((c: any) => c.id === filters.categoryBaseId)?.name ||
+            filters.categoryBaseId}
           <Button
             variant="ghost"
             size="sm"
             className="h-4 w-4 p-0 ml-1"
-            onClick={() => onRemoveFilter("categoryId")}
+            onClick={() => onRemoveFilter("categoryBaseId")}
           >
             <X className="h-3 w-3" />
             <span className="sr-only">Remove</span>

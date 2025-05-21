@@ -1,11 +1,10 @@
 "use client";
-// React and Next.js
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
 
-// Validation
+import { useParams } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useState, useEffect } from "react";
+import { status } from "http-status";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -32,8 +31,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
 import { ImageUploader } from "@/components/ui/image-uploader";
-
-// Icons
 import { Loader2, Save } from "lucide-react";
 
 // Custom Components
@@ -41,41 +38,74 @@ import { RichTextEditor } from "./editor";
 
 // API Hooks
 import { useGetAllCategoriesQuery } from "@/redux/api/category.api";
-import { useCreateArticleMutation } from "@/redux/api/article.api";
+import {
+  useCreateArticleMutation,
+  useUpdateArticleMutation,
+} from "@/redux/api/article.api";
 
 // Schema & Types
 import { articleSchema } from "@/schama";
-import { Article, Category } from "@prisma/client";
+import type { Article, Category } from "@prisma/client";
 import { articleBooleanFields } from "./utils";
-import status from "http-status";
+import { log } from "console";
 
-// Form Schema Type
-type FormValues = z.infer<typeof articleSchema>;
+// Form Schema Type - Explicitly define the type to match the schema
+type FormValues = {
+  title: string;
+  excerpt: string;
+  content: string;
+  image: File | string;
+  categoryBaseId: string;
+  categoryId: string;
+  isPublished: boolean;
+  isFeatured: boolean;
+  isPinFeatured: boolean;
+  isPinLatest: boolean;
+  isPinHero: boolean;
+  isUpComing: boolean;
+  isEmergingTech: boolean;
+  isHotTech: boolean;
+  isGadget: boolean;
+};
 
-// Article Form Component
-const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
+interface ArticleFormProps {
+  article?: Partial<Article>;
+  onSuccess?: (article: Article) => void;
+}
+
+const ArticleForm = ({ article, onSuccess }: ArticleFormProps) => {
   const params = useParams();
-  const lang = params?.locale;
+  const lang = params?.locale as string;
+  const isEditMode = !!article?.id;
+
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    article?.image || null
+  );
 
   // Fetch categories
   const { data, isLoading: isCategoryLoading } = useGetAllCategoriesQuery(lang);
   const categories = data?.data || [];
 
-  // Create article mutation
-  const [createArticle, { isLoading }] = useCreateArticleMutation();
+  // API mutations
+  const [createArticle, { isLoading: isCreating }] = useCreateArticleMutation();
+  const [updateArticle, { isLoading: isUpdating }] = useUpdateArticleMutation();
+  const isLoading = isCreating || isUpdating;
 
-  // Initialize form
+  // Initialize form with explicit default values for all boolean fields
   const form = useForm<FormValues>({
-    resolver: zodResolver(articleSchema as any),
+    resolver: zodResolver(articleSchema) as any,
     defaultValues: {
       title: article?.title || "",
       excerpt: article?.excerpt || "",
       content: article?.content || "",
+      image: "",
+      categoryBaseId: article?.categoryBaseId || "",
       categoryId: article?.categoryId || "",
+      // Ensure all boolean fields have explicit default values
+      isPublished: article?.isPublished || false,
       isFeatured: article?.isFeatured || false,
       isPinFeatured: article?.isPinFeatured || false,
       isPinLatest: article?.isPinLatest || false,
-      isPublished: article?.isPublished || false,
       isPinHero: article?.isPinHero || false,
       isUpComing: article?.isUpComing || false,
       isEmergingTech: article?.isEmergingTech || false,
@@ -84,27 +114,81 @@ const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
     },
   });
 
+  // Set selected category when form values change
+  // useEffect(() => {
+  //   if (article?.categoryBaseId && categories.length > 0) {
+  //     const category = categories.find(
+  //       (cat: Category) => cat.id === article.categoryBaseId
+  //     );
+  //     if (category) {
+  //       form.setValue("categoryId", category.id);
+  //     }
+  //   }
+  // }, [article, categories, form]);
+
   // Submit handler
   const onSubmit = async (values: FormValues) => {
+    console.log("Form Values:", values);
+    console.log("Image Preview:", imagePreview);
     try {
-      const { image, ...payload } = values;
-
       const formData = new FormData();
-      formData.append("payload", JSON.stringify(payload));
-      if (image) formData.append("imgFile", image);
+      const { image, ...payloadData } = values;
 
-      const res = await createArticle(formData).unwrap();
-      if (res?.statusCode === status.CREATED) {
-        toast({
-          title: "Success",
-          description: "Article Created successfully",
-        });
+      formData.append("payload", JSON.stringify(payloadData));
+
+      if (image instanceof File) {
+        formData.append("imgFile", image);
       }
 
-      form.reset();
-    } catch (error: any) {
-      const message = error.data.message || "Failed to Create article";
+      let response;
 
+      if (isEditMode && article?.id) {
+        formData.append("id", article.id.toString());
+        response = await updateArticle(formData).unwrap();
+      } else {
+        response = await createArticle(formData).unwrap();
+      }
+
+      if (
+        response?.statusCode === status.CREATED ||
+        response?.statusCode === status.OK
+      ) {
+        toast({
+          title: "Success",
+          description: isEditMode
+            ? "Article updated successfully"
+            : "Article created successfully",
+        });
+
+        if (onSuccess && response.data) {
+          onSuccess(response.data);
+        }
+
+        if (!isEditMode) {
+          // Keep the image preview but reset the form with proper default values
+          // const currentImagePreview = imagePreview;
+          form.reset({
+            title: "",
+            excerpt: "",
+            content: "",
+            image: "",
+            categoryBaseId: "",
+            categoryId: "",
+            isPublished: false,
+            isFeatured: false,
+            isPinFeatured: false,
+            isPinLatest: false,
+            isPinHero: false,
+            isUpComing: false,
+            isEmergingTech: false,
+            isHotTech: false,
+            isGadget: false,
+          });
+          setImagePreview(null);
+        }
+      }
+    } catch (error: any) {
+      const message = error.data?.message || "Failed to save article";
       toast({
         title: "Error",
         description: message,
@@ -116,7 +200,7 @@ const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
     <Card className="border-none shadow-none p-5">
       <CardHeader className="px-0">
         <CardTitle className="text-2xl font-bold">
-          {article ? "Edit Article" : "Create New Article"}
+          {isEditMode ? "Edit Article" : "Create New Article"}
         </CardTitle>
       </CardHeader>
 
@@ -202,12 +286,20 @@ const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
                     <FormField
                       control={form.control}
                       name="image"
-                      render={({ field }) => (
+                      render={({ field: { onChange, value } }) => (
                         <FormItem>
                           <FormLabel>Featured Image</FormLabel>
                           <FormControl>
                             <ImageUploader
-                              onImageUpload={({ file }) => field.onChange(file)}
+                              onImageUpload={({ file, previewUrl }) => {
+                                onChange(file);
+                                setImagePreview(previewUrl);
+                              }}
+                              initialImage={imagePreview}
+                              onRemove={() => {
+                                onChange("");
+                                setImagePreview(null);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -218,13 +310,21 @@ const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
                     {/* Category Dropdown */}
                     <FormField
                       control={form.control}
-                      name="categoryId"
+                      name="categoryBaseId"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Category</FormLabel>
                           <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              const category = categories.find(
+                                (cat: Category) => cat.baseId === value
+                              );
+                              if (category) {
+                                form.setValue("categoryId", category.id);
+                              }
+                            }}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -232,12 +332,21 @@ const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {!isCategoryLoading &&
+                              {isCategoryLoading ? (
+                                <SelectItem value="loading" disabled>
+                                  Loading categories...
+                                </SelectItem>
+                              ) : categories.length === 0 ? (
+                                <SelectItem value="empty" disabled>
+                                  No categories available
+                                </SelectItem>
+                              ) : (
                                 categories.map((cat: Category) => (
-                                  <SelectItem key={cat.id} value={cat.id}>
+                                  <SelectItem key={cat.id} value={cat.baseId}>
                                     {cat.name}
                                   </SelectItem>
-                                ))}
+                                ))
+                              )}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -258,15 +367,16 @@ const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
                       control={form.control}
                       name={name as keyof FormValues}
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-start p-4 border rounded-md">
+                        <FormItem className="flex flex-row items-start p-4 border rounded-md space-x-3 space-y-0">
                           <FormControl>
                             <Checkbox
-                              checked={field.value as boolean}
+                              checked={field.value as any}
                               onCheckedChange={field.onChange}
+                              id={name}
                             />
                           </FormControl>
-                          <div className="ml-3 space-y-1">
-                            <FormLabel>{label}</FormLabel>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel htmlFor={name}>{label}</FormLabel>
                             <FormDescription>{desc}</FormDescription>
                           </div>
                         </FormItem>
@@ -280,6 +390,34 @@ const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
             {/* Submit Button */}
             <div className="flex justify-end gap-2">
               <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  const currentImagePreview = imagePreview;
+                  form.reset({
+                    title: "",
+                    excerpt: "",
+                    content: "",
+                    image: "",
+                    categoryBaseId: "",
+                    categoryId: "",
+                    isPublished: false,
+                    isFeatured: false,
+                    isPinFeatured: false,
+                    isPinLatest: false,
+                    isPinHero: false,
+                    isUpComing: false,
+                    isEmergingTech: false,
+                    isHotTech: false,
+                    isGadget: false,
+                  });
+                  setImagePreview(currentImagePreview);
+                }}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
                 type="submit"
                 disabled={isLoading}
                 className="gap-2 bg-red-500 hover:bg-red-600 text-white"
@@ -287,12 +425,12 @@ const ArticleForm = ({ article }: { article?: Partial<Article> }) => {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Saving...
+                    {isEditMode ? "Updating..." : "Saving..."}
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4" />
-                    Save Article
+                    {isEditMode ? "Update Article" : "Save Article"}
                   </>
                 )}
               </Button>

@@ -22,28 +22,17 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import type { ArticlesTableFilters } from ".";
+import { IArticlesTableFilters } from "../../interface/article.interface";
+import { booleanFilterKeys } from "../utils";
 
 interface FilterPanelProps {
-  filters: ArticlesTableFilters;
+  filters: IArticlesTableFilters;
   categories: any[];
   limit: number;
-  onApplyFilters: (filters: Partial<ArticlesTableFilters>) => void;
+  onApplyFilters: (filters: Partial<IArticlesTableFilters>) => void;
   onResetFilters: () => void;
   onLimitChange: (limit: number) => void;
 }
-
-export const allStatus: (keyof ArticlesTableFilters)[] = [
-  "isFeatured",
-  "isPinFeatured",
-  "isPinLatest",
-  "isPinHero",
-  "isPublished",
-  "isUpComing",
-  "isEmergingTech",
-  "isHotTech",
-  "isGadget",
-];
 
 const FilterPanel = ({
   filters,
@@ -62,14 +51,15 @@ const FilterPanel = ({
 
   // Update a single filter
   const updateFilter = (
-    key: keyof ArticlesTableFilters,
+    key: keyof IArticlesTableFilters,
     value: string | null
   ) => {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  console.log("Local Filters:", localFilters);
   // Toggle boolean filter
-  const toggleBooleanFilter = (key: keyof ArticlesTableFilters) => {
+  const toggleBooleanFilter = (key: keyof IArticlesTableFilters) => {
     setLocalFilters((prev) => ({
       ...prev,
       [key]: prev[key] === "true" ? null : "true",
@@ -104,9 +94,9 @@ const FilterPanel = ({
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select
-                value={localFilters.categoryId || "all"}
+                value={localFilters.categoryBaseId || "all"}
                 onValueChange={(value) =>
-                  updateFilter("categoryId", value === "all" ? "" : value)
+                  updateFilter("categoryBaseId", value === "all" ? "" : value)
                 }
               >
                 <SelectTrigger id="category">
@@ -115,7 +105,7 @@ const FilterPanel = ({
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
                   {categories.map((category: any) => (
-                    <SelectItem key={category.id} value={category.id}>
+                    <SelectItem key={category.baseId} value={category.baseId}>
                       {category.name}
                     </SelectItem>
                   ))}
@@ -127,7 +117,7 @@ const FilterPanel = ({
             <div className="space-y-2">
               <Label htmlFor="status">Statuses</Label>
               <div className="flex flex-wrap gap-2">
-                {allStatus.map((statusKey) => (
+                {booleanFilterKeys.map((statusKey) => (
                   <Button
                     key={statusKey}
                     type="button"
@@ -197,7 +187,7 @@ const FilterPanel = ({
         value={limit.toString()}
         onValueChange={(value) => onLimitChange(Number(value))}
       >
-        <SelectTrigger className="w-[100px] h-9">
+        <SelectTrigger className="w-[130px] h-9">
           <SelectValue placeholder="10 per page" />
         </SelectTrigger>
         <SelectContent>

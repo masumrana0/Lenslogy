@@ -1,4 +1,3 @@
-import { objectToQuery } from "@/utils/query";
 import { baseApi } from "./baseApi";
 
 const url = "/articles";
@@ -6,8 +5,8 @@ const url = "/articles";
 const articleApi: any = baseApi.injectEndpoints({
   endpoints: (build: any) => ({
     getAllArticles: build.query({
-      query: (obj: Record<string, any>) => ({
-        url: `${url}${objectToQuery(obj)}`,
+      query: (query: string) => ({
+        url: `${url}?${query}`,
         method: "GET",
       }),
       providesTags: ["article"],

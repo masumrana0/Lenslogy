@@ -1,7 +1,7 @@
 import { Role } from "@/app/(client)/[locale]/(dashboard)/dashboard/users/_interface/user.interface";
 import { translateContent } from "@/lib/ai/gemenai";
 import prisma from "@/lib/prisma";
-import { saveFileToLocal } from "@/lib/uploader/uploader";
+import { cleanUpFile, saveFileToLocal } from "@/lib/uploader/uploader";
 import Auth from "../../_core/error-handler/auth";
 import { ApiErrors } from "../../_core/errors/api-error";
 import { Language } from "@prisma/client";
@@ -53,6 +53,8 @@ const createArticle = async (req: Request) => {
     authorId: session!.user.id,
     lang: "bn",
   };
+
+  console.log("Base Article:", baseArticle);
 
   // Save both articles in a transaction
   const result = await prisma.$transaction(async (tx) => {
@@ -168,6 +170,7 @@ const deleteArticle = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
   const { searchParams } = new URL(req.url);
   const articleId = searchParams.get("id");
+
   if (!articleId) throw ApiErrors.BadRequest("Article ID is missing");
 
   // Check if article exists
@@ -188,33 +191,39 @@ const deleteArticle = async (req: Request) => {
   await prisma.article.deleteMany({
     where: { baseId: isExistArticle.baseId },
   });
+  console.log("Deleting file:", isExistArticle.image);
+
+  await cleanUpFile(isExistArticle.image);
 };
 
 // getAllArticle for admin
 const getAllArticle = async (req: Request) => {
-  // Auth guard
-  await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
+  // Auth guard (optional)
+  // await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
 
   const { searchParams } = new URL(req.url);
+
   const searchParamsObj = Object.fromEntries(searchParams.entries());
 
   const filters = pick(searchParamsObj, articleFilterAbleFields);
+
   const paginationOptions = pick(searchParamsObj, paginationFields);
 
   const { limit, page, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
-  const searchTerm = searchParams.get("searchTerm") || "";
-  const lang = (searchParams.get("lang") || "en") as Language;
+  const searchTerm = searchParamsObj.searchTerm || "";
+  const lang = (searchParamsObj.lang || "en") as Language;
 
   const where: any = {
-    lang,
-    category: {
+    lang: lang,
+
+    Category: {
       lang,
     },
   };
 
-  // Add search term filtering
+  // Search logic
   if (searchTerm) {
     where.OR = articleSearchableFields.map((field) => ({
       [field]: {
@@ -224,14 +233,19 @@ const getAllArticle = async (req: Request) => {
     }));
   }
 
-  // Add exact filters
+  // Apply filters
   for (const [key, value] of Object.entries(filters)) {
     if (value && key !== "searchTerm") {
-      where[key] = value;
+      if (value === "true" || value === "false") {
+        where[key] = value === "true";
+      } else {
+        where[key] = value;
+      }
     }
   }
 
-  // Sort configuration
+  console.log(where);
+  // Sorting
   const orderBy: any = {};
   if (sortBy && sortOrder) {
     orderBy[sortBy] = sortOrder.toLowerCase();
@@ -239,22 +253,23 @@ const getAllArticle = async (req: Request) => {
     orderBy.createdAt = "desc";
   }
 
+  // Fetch articles with populated Category
   const result = await prisma.article.findMany({
     where,
     skip,
     take: limit,
     orderBy,
     include: {
-      category: true,
+      Category: true,
     },
   });
-  // Query: get total count
-  const total = await prisma.article.count({ where });
 
+  // Count for pagination
+  const total = await prisma.article.count({ where });
   const totalPage = Math.ceil(total / limit);
 
   return {
-    result: result,
+    result,
     meta: {
       total,
       page,

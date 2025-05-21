@@ -1,3 +1,5 @@
+import { IArticlesTableFilters } from "../interface/article.interface";
+
 export const articleBooleanFields = [
   {
     name: "isPublished",
@@ -33,3 +35,31 @@ export const articleBooleanFields = [
   },
   { name: "isGadget", label: "Gadget", desc: "Categorized as Gadget" },
 ] as const;
+
+export const booleanFilterKeys: (keyof IArticlesTableFilters)[] = [
+  "isPublished",
+  "isFeatured",
+  "isPinFeatured",
+  "isPinLatest",
+  "isPinHero",
+  "isUpComing",
+  "isEmergingTech",
+  "isHotTech",
+  "isGadget",
+];
+
+export const filterInitialState: IArticlesTableFilters = {
+  searchTerm: "",
+  categoryBaseId: "",
+  isPublished: null,
+  isEmergingTech: null,
+  isFeatured: null,
+  isGadget: null,
+  isHotTech: null,
+  isPinFeatured: null,
+  isPinHero: null,
+  isPinLatest: null,
+  isUpComing: null,
+  sortBy: "createdAt",
+  sortOrder: "desc",
+};

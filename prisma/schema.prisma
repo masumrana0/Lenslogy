@@ -80,12 +80,11 @@ model Article {
     excerpt        String
     content        String
     image          String
-    category       Category?          @relation(fields: [categoryId], references: [id])
     authorId       String
     author         User               @relation(fields: [authorId], references: [id])
     lang           Language
     attachment     ArticleAttachment?
-    categoryId     String
+    categoryBaseId String
     isFeatured     Boolean            @default(false)
     isPinFeatured  Boolean            @default(false)
     isPinLatest    Boolean            @default(false)
@@ -97,6 +96,8 @@ model Article {
     isGadget       Boolean            @default(false)
     createdAt      DateTime           @default(now())
     updatedAt      DateTime           @updatedAt
+    category       Category?          @relation(fields: [categoryId], references: [id])
+    categoryId     String
 
     @@unique([baseId, lang], name: "baseId_lang_unique")
 }

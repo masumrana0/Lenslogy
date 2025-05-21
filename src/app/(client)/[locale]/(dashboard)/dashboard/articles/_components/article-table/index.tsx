@@ -15,24 +15,10 @@ import FilterPanel from "./filter-pannel";
 import ArticlesList from "./article-list";
 import PaginationControls from "./pagination-controls";
 import DeleteDialog from "./delete-dialog";
-import ActiveUrlFilters from "../active-filters";
-import ActiveFilters from "../active-filters";
 
-export interface ArticlesTableFilters {
-  searchTerm: string;
-  categoryId: string;
-  isPublished: string | null;
-  isPinFeatured: string | null;
-  isPinLatest: string | null;
-  isPinHero: string | null;
-  isUpComing: string | null;
-  isEmergingTech: string | null;
-  isHotTech: string | null;
-  isGadget: string | null;
-  isFeatured: string | null;
-  sortBy: string;
-  sortOrder: string;
-}
+import ActiveFilters from "../active-filters";
+import { IArticlesTableFilters } from "../../interface/article.interface";
+import { booleanFilterKeys, filterInitialState } from "../utils";
 
 const ArticlesTable = () => {
   const router = useRouter();
@@ -45,23 +31,32 @@ const ArticlesTable = () => {
   const [limit, setLimit] = useState(10);
 
   // Filtering and sorting state
-  const [filters, setFilters] = useState<ArticlesTableFilters>({
-    searchTerm: searchParams.get("searchTerm") || "",
-    categoryId: searchParams.get("categoryId") || "",
-    isPublished: searchParams.get("isPublished") || null,
-    isFeatured: searchParams.get("isFeatured") || null,
-    isEmergingTech: searchParams.get("isEmergingTech") || null,
-    isGadget: searchParams.get("isGadget") || null,
-    isHotTech: searchParams.get("isHotTech") || null,
-    isPinFeatured: searchParams.get(" isPinFeatured") || null,
-    isPinHero: searchParams.get("isPinHero") || null,
-    isPinLatest: searchParams.get("isPinLatest") || null,
-    isUpComing: searchParams.get("isUpComing") || null,
-    sortBy: searchParams.get("sortBy") || "createdAt",
-    sortOrder: searchParams.get("sortOrder") || "desc",
-  });
+  const [filters, setFilters] =
+    useState<IArticlesTableFilters>(filterInitialState);
 
+  // Initialize state from URL params on component mount
+  useEffect(() => {
+    const params = searchParams;
+    setFilters({
+      searchTerm: params.get("searchTerm") || "",
+      categoryBaseId: params.get("categoryBaseId") || "",
+      isPublished: params.get("isPublished") || null,
+      isEmergingTech: params.get("isEmergingTech") || null,
+      isFeatured: params.get("isFeatured") || null,
+      isGadget: params.get("isGadget") || null,
+      isHotTech: params.get("isHotTech") || null,
+      isPinFeatured: params.get("isPinFeatured") || null,
+      isPinHero: params.get("isPinHero") || null,
+      isPinLatest: params.get("isPinLatest") || null,
+      isUpComing: params.get("isUpComing") || null,
+      sortBy: params.get("sortBy") || "createdAt",
+      sortOrder: params.get("sortOrder") || "desc",
+    });
+    setPage(Number.parseInt(params.get("page") || "1"));
+    setLimit(Number.parseInt(params.get("limit") || "10"));
+  }, [searchParams]);
   // Delete dialog state
+
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [articleToDelete, setArticleToDelete] = useState<string | null>(null);
 
@@ -79,9 +74,16 @@ const ArticlesTable = () => {
 
     // Filtering
     if (filters.searchTerm) queryParams.set("searchTerm", filters.searchTerm);
-    if (filters.categoryId) queryParams.set("categoryId", filters.categoryId);
-    if (filters.isPublished !== null)
-      queryParams.set("isPublished", filters.isPublished);
+    if (filters.categoryBaseId)
+      queryParams.set("categoryBaseId", filters.categoryBaseId);
+
+    booleanFilterKeys.forEach((key) => {
+      if (filters[key] !== null) {
+        queryParams.set(key, filters[key]);
+      } else {
+        queryParams.delete(key);
+      }
+    });
 
     // Language
     queryParams.set("lang", lang);
@@ -93,17 +95,22 @@ const ArticlesTable = () => {
   const { data, isLoading, refetch } = useGetAllArticlesQuery(
     buildQueryString()
   );
-  const articles = data?.result || [];
-
-  const meta = data?.meta || { total: 0, page: 1, limit: 10, totalPage: 1 };
-
   const { data: categoriesData } = useGetAllCategoriesQuery(lang);
   const categories = categoriesData?.data || [];
-
   const [deleteArticle] = useDeleteArticleMutation();
 
+  // filters
+  const articles = data?.data.result || [];
+
+  const meta = data?.data?.meta || {
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPage: 1,
+  };
+
   // Apply filters and update URL
-  const applyFilters = (newFilters?: Partial<ArticlesTableFilters>) => {
+  const applyFilters = (newFilters?: Partial<IArticlesTableFilters>) => {
     const updatedFilters = { ...filters, ...newFilters };
     setFilters(updatedFilters);
 
@@ -113,13 +120,17 @@ const ArticlesTable = () => {
       params.set("searchTerm", updatedFilters.searchTerm);
     else params.delete("searchTerm");
 
-    if (updatedFilters.categoryId)
-      params.set("categoryId", updatedFilters.categoryId);
-    else params.delete("categoryId");
+    if (updatedFilters.categoryBaseId)
+      params.set("categoryBaseId", updatedFilters.categoryBaseId);
+    else params.delete("categoryBaseId");
 
-    if (updatedFilters.isPublished !== null)
-      params.set("isPublished", updatedFilters.isPublished);
-    else params.delete("isPublished");
+    booleanFilterKeys.forEach((key) => {
+      if (updatedFilters[key] !== null) {
+        params.set(key, updatedFilters[key]);
+      } else {
+        params.delete(key);
+      }
+    });
 
     params.set("sortBy", updatedFilters.sortBy);
     params.set("sortOrder", updatedFilters.sortOrder);
@@ -132,23 +143,10 @@ const ArticlesTable = () => {
 
   // Reset all filters
   const resetFilters = () => {
-    setFilters({
-      searchTerm: "",
-      categoryId: "",
-      isPublished: null,
-      isEmergingTech: null,
-      isFeatured: null,
-      isGadget: null,
-      isHotTech: null,
-      isPinFeatured: null,
-      isPinHero: null,
-      isPinLatest: null,
-      isUpComing: null,
-      sortBy: "createdAt",
-      sortOrder: "desc",
-    });
+    setFilters(filterInitialState);
     setPage(1);
-    router.push(""); // Clear URL params
+    router.push("?");
+
     refetch();
   };
 
@@ -183,6 +181,7 @@ const ArticlesTable = () => {
 
     try {
       const res = await deleteArticle(articleToDelete);
+      console.log(res);
       if (res.statusCode === status.OK) {
         toast({
           title: "Deleted",
@@ -201,28 +200,6 @@ const ArticlesTable = () => {
       setArticleToDelete(null);
     }
   };
-
-  // Initialize state from URL params on component mount
-  useEffect(() => {
-    const params = searchParams;
-    setFilters({
-      searchTerm: params.get("searchTerm") || "",
-      categoryId: params.get("categoryId") || "",
-      isPublished: params.get("isPublished") || null,
-      isEmergingTech: params.get("isEmergingTech") || null,
-      isFeatured: params.get("isFeatured") || null,
-      isGadget: params.get("isGadget") || null,
-      isHotTech: params.get("isHotTech") || null,
-      isPinFeatured: params.get("isPinFeatured") || null,
-      isPinHero: params.get("isPinHero") || null,
-      isPinLatest: params.get("isPinLatest") || null,
-      isUpComing: params.get("isUpComing") || null,
-      sortBy: params.get("sortBy") || "createdAt",
-      sortOrder: params.get("sortOrder") || "desc",
-    });
-    setPage(Number.parseInt(params.get("page") || "1"));
-    setLimit(Number.parseInt(params.get("limit") || "10"));
-  }, [searchParams]);
 
   return (
     <div className="space-y-4">
@@ -253,7 +230,6 @@ const ArticlesTable = () => {
           applyFilters(newFilters);
         }}
       />
-      {/* <ActiveUrlFilters /> */}
 
       <ArticlesList
         articles={articles}

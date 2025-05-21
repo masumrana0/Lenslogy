@@ -124,14 +124,25 @@ export async function saveFileToLocal(
   };
 }
 
-export const cleanUpFile = async (uploadedFile: UploadedFile) => {
-  if (uploadedFile?.path) {
+export const cleanUpFile = async (fileUrl: string) => {
+  try {
+    // Remove domain if present
+    let pathname: string;
+
     try {
-      await unlink(uploadedFile.path);
-      // console.log("Temporary file cleaned up");
-    } catch (error) {
-      GlobalErrorHandler(error);
-      // console.error("Error cleaning up file:", error);
+      pathname = new URL(fileUrl).pathname;
+    } catch {
+      pathname = fileUrl;
     }
+
+    // Remove leading slash for joining paths correctly
+    const relativePath = pathname.startsWith("/")
+      ? pathname.slice(1)
+      : pathname;
+
+    const localPath = path.join(process.cwd(), "public", relativePath);
+    await unlink(localPath);
+  } catch (error) {
+    GlobalErrorHandler(error);
   }
 };

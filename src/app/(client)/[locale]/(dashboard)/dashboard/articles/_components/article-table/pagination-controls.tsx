@@ -97,7 +97,7 @@ const PaginationControls = ({
 
   return (
     <div className="flex items-center justify-between">
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-muted-foreground text-nowrap">
         Showing {(currentPage - 1) * limit + 1}-
         {Math.min(currentPage * limit, total)} of {total} articles
       </div>

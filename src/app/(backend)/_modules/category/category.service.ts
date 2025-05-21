@@ -5,7 +5,7 @@ import Auth from "../../_core/error-handler/auth";
 import { Language, Role } from "@prisma/client";
 
 // create category
-const createCategory = async (req: Request) => {
+export const createCategory = async (req: Request) => {
   await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
 
   const { name } = await req.json();
@@ -15,12 +15,14 @@ const createCategory = async (req: Request) => {
       name: name,
     },
   });
-  if (isExistedCategory)
-    throw ApiErrors.BadRequest(
-      "This category name already existed.Please try another"
-    );
 
-  const translated = await translateContent({ name: name });
+  if (isExistedCategory) {
+    throw ApiErrors.BadRequest(
+      "This category name already exists. Please try another."
+    );
+  }
+
+  const translated = await translateContent({ name });
 
   const result = await prisma.$transaction(async (tx) => {
     const englishCategory = await tx.category.create({
@@ -30,7 +32,7 @@ const createCategory = async (req: Request) => {
       },
     });
 
-    const banglaCategory = await prisma.category.create({
+    const banglaCategory = await tx.category.create({
       data: {
         name: translated!.name,
         lang: "bn",

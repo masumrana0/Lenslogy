@@ -71,10 +71,10 @@ const ArticlesList = ({
                       : article.title}
                   </Link>
                 </TableCell>
-                <TableCell>{article?.category?.name || "N/A"}</TableCell>
+                <TableCell>{article?.Category?.name || "N/A"}</TableCell>
                 <TableCell>
                   <Badge
-                    variant={article.isPublished ? "success" : "secondary"}
+                    variant={article.isPublished ? "default" : "secondary"}
                     className="capitalize"
                   >
                     {article.isPublished ? "Published" : "Draft"}

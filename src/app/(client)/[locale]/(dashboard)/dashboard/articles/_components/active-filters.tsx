@@ -3,13 +3,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { ArticlesTableFilters } from "./article-table";
- 
+import { IArticlesTableFilters } from "../interface/article.interface";
+import { booleanFilterKeys } from "./utils";
 
 interface ActiveFiltersProps {
-  filters: ArticlesTableFilters;
+  filters: IArticlesTableFilters;
   categories: any[];
-  onRemoveFilter: (key: keyof ArticlesTableFilters) => void;
+  onRemoveFilter: (key: keyof IArticlesTableFilters) => void;
 }
 
 const ActiveFilters = ({
@@ -17,9 +17,13 @@ const ActiveFilters = ({
   categories,
   onRemoveFilter,
 }: ActiveFiltersProps) => {
-  const hasActiveFilters =
-    filters.searchTerm || filters.categoryId || filters.isPublished !== null;
-
+  const hasActiveFilters = Boolean(
+    filters.searchTerm ||
+      filters.categoryId ||
+      filters.sortBy ||
+      filters.sortOrder ||
+      booleanFilterKeys.some((key) => filters[key] === "true")
+  );
   if (!hasActiveFilters) return null;
 
   return (
@@ -58,7 +62,34 @@ const ActiveFilters = ({
         </Badge>
       )}
 
-      {filters.isPublished !== null && (
+      {booleanFilterKeys.map((key) => {
+        if (filters[key] === "true") {
+          console.log("key", key);
+          return (
+            <Badge
+              variant="secondary"
+              className="flex items-center gap-1"
+              key={key}
+            >
+              {key
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (str) => str.toUpperCase())}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-4 w-4 p-0 ml-1"
+                onClick={() => onRemoveFilter(key)}
+              >
+                <X className="h-3 w-3" />
+                <span className="sr-only">Remove</span>
+              </Button>
+            </Badge>
+          );
+        }
+        return null;
+      })}
+
+      {/* {filters.isPublished !== null && (
         <Badge variant="secondary" className="flex items-center gap-1">
           Status: {filters.isPublished === "true" ? "Published" : "Draft"}
           <Button
@@ -71,7 +102,7 @@ const ActiveFilters = ({
             <span className="sr-only">Remove</span>
           </Button>
         </Badge>
-      )}
+      )} */}
     </div>
   );
 };
