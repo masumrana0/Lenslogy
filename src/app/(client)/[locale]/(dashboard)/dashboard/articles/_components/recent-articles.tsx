@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatcreatedAt } from "@/lib/utils";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { any } from "zod";
+import { formatTimestampWithTranslation } from "@/lib/translator";
 
 // async function getRecentArticles() {
 //   try {
@@ -62,7 +63,9 @@ export async function RecentArticles() {
                   Published
                 </Badge>
               </TableCell>
-              <TableCell>{formatcreatedAt(article.createdAt, "en-US")}</TableCell>
+              <TableCell>
+                { formatTimestampWithTranslation(article.createdAt, "en")}
+              </TableCell>
             </TableRow>
           ))
         ) : (

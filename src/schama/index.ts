@@ -28,43 +28,64 @@ export const categorySchema = z.object({
   }),
 });
 
-export const articleSchema = z.object({
-  title: z.string().min(5, {
-    message: "Title must be at least 5 characters",
-  }),
-  excerpt: z.string().min(10, {
-    message: "Excerpt must be at least 10 characters",
-  }),
-  content: z.string().min(50, {
-    message: "Content must be at least 50 characters",
-  }),
-  image: z.union([z.instanceof(File), z.string().length(0)]).refine(
-    (value) => {
-      if (typeof value === "string") return value.length === 0;
-      return value instanceof File;
+export const articleSchema = z
+  .object({
+    title: z.string().min(5, {
+      message: "Title must be at least 5 characters",
+    }),
+    excerpt: z.string().min(10, {
+      message: "Excerpt must be at least 10 characters",
+    }),
+    content: z.string().min(50, {
+      message: "Content must be at least 50 characters",
+    }),
+    image: z.union([z.instanceof(File), z.string().length(0)]).refine(
+      (value) => {
+        if (typeof value === "string") return value.length === 0;
+        return value instanceof File;
+      },
+      {
+        message: "Image is required.",
+      }
+    ),
+    categoryBaseId: z.string({
+      required_error: "Please select a category",
+    }),
+    categoryId: z.string(),
+
+    // Boolean flags
+    isPublished: z.boolean().default(false),
+    isFeatured: z.boolean().default(false),
+    isPinFeatured: z.boolean().default(false),
+    isPinLatest: z.boolean().default(false),
+    isPinHero: z.boolean().default(false),
+    isUpComing: z.boolean().default(false),
+    isEmergingTech: z.boolean().default(false),
+    isHotTech: z.boolean().default(false),
+    isGadget: z.boolean().default(false),
+  })
+  .refine(
+    (data) => {
+      const pinOptions = [data.isPinFeatured, data.isPinLatest, data.isPinHero];
+      const pinCount = pinOptions.filter(Boolean).length;
+      return pinCount <= 1;
     },
     {
-      message: "Image is required.",
+      message: "You can only select one of: Pin to Featured, Latest, or Hero.",
+      path: ["isPinFeatured"], // Attach the error to one field or use a custom one
     }
-  ),
-  categoryBaseId: z.string({
-    required_error: "Please select a category",
-  }),
-  categoryId: z.string(),
+  )
+  .refine(
+    (data: any) => {
+      // You can allow either or both of EmergingTech / HotTech
+      // If you want at least one: return data.isEmergingTech || data.isHotTech;
+      return true; // allow both or none
+    },
+    {
+      message: "You can optionally choose Emerging Tech or Hot Tech.",
+    }
+  );
 
-  // ✅ Main boolean flags
-  isPublished: z.boolean().default(false),
-  isFeatured: z.boolean().default(false),
-  isPinFeatured: z.boolean().default(false),
-  isPinLatest: z.boolean().default(false),
-
-  // ✅ Additional boolean flags (added from your Settings tab)
-  isPinHero: z.boolean().default(false),
-  isUpComing: z.boolean().default(false),
-  isEmergingTech: z.boolean().default(false),
-  isHotTech: z.boolean().default(false),
-  isGadget: z.boolean().default(false),
-});
 export const editProfileSchema = z
   .object({
     name: z.string().optional(),

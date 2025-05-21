@@ -105,6 +105,7 @@ const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
           {/* article main content  */}
           <div className="md:flex-1 order-1 md:order-2">
             <div
+              contentEditable
               className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-a:text-red-500 dark:prose-a:text-red-400 prose-a:no-underline hover:prose-a:underline"
               dangerouslySetInnerHTML={{
                 __html: article.content,

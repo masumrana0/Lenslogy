@@ -545,6 +545,7 @@ export function RichTextEditor({
 
         <TabsContent value="preview" className="p-4 m-0 min-h-[300px]">
           <div
+            contentEditable
             className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-[#ff005b] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[#ff005b] prose-blockquote:text-gray-700 prose-blockquote:font-normal prose-blockquote:italic"
             dangerouslySetInnerHTML={{ __html: internalContent }}
           />

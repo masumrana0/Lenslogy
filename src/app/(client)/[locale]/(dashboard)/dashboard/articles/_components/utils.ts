@@ -1,3 +1,5 @@
+"use client";
+
 import { IArticlesTableFilters } from "../interface/article.interface";
 
 export const articleBooleanFields = [
@@ -45,7 +47,6 @@ export const booleanFilterKeys: (keyof IArticlesTableFilters)[] = [
   "isUpComing",
   "isEmergingTech",
   "isHotTech",
-  "isGadget",
 ];
 
 export const filterInitialState: IArticlesTableFilters = {
@@ -54,7 +55,6 @@ export const filterInitialState: IArticlesTableFilters = {
   isPublished: null,
   isEmergingTech: null,
   isFeatured: null,
-  isGadget: null,
   isHotTech: null,
   isPinFeatured: null,
   isPinHero: null,
@@ -62,4 +62,64 @@ export const filterInitialState: IArticlesTableFilters = {
   isUpComing: null,
   sortBy: "createdAt",
   sortOrder: "desc",
+};
+
+export const articleBooleanFieldsForUI = [
+  {
+    name: "isPublished",
+    label: "is article published",
+    desc: "Make article publicly visible",
+  },
+  {
+    name: "isFeatured",
+    label: "is article featured",
+    desc: "Highlight in featured section",
+  },
+  {
+    name: "isPinFeatured",
+    label: "is article pinned to featured",
+    desc: "Feature in featured for showing featured articles",
+  },
+  {
+    name: "isPinLatest",
+    label: "Pin to Latest",
+    desc: "Highlight in latest news",
+  },
+  {
+    name: "isPinHero",
+    label: "is article pinned to hero",
+    desc: "Feature in top hero banner",
+  },
+  {
+    name: "isEmergingTech",
+    label: "is article emerging tech",
+    desc: "Tag as emerging tech article",
+  },
+  {
+    name: "isHotTech",
+    label: "is article hot tech",
+    desc: "Tag as hot tech article",
+  },
+  {
+    name: "isUpComing",
+    label: "is article upcoming",
+    desc: "Tag as upcoming release",
+  },
+];
+
+export const articleResetState = {
+  title: "",
+  excerpt: "",
+  content: "",
+  image: "",
+  categoryBaseId: "",
+  categoryId: "",
+  isPublished: false,
+  isFeatured: false,
+  isPinFeatured: false,
+  isPinLatest: false,
+  isPinHero: false,
+  isUpComing: false,
+  isEmergingTech: false,
+  isHotTech: false,
 };

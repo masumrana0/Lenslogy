@@ -251,6 +251,7 @@ Lightness (0%-100%) → How light or dark the color is (0% = black, 100% = white
 .prose blockquote {
   border-left-color: #ff005b;
   font-style: italic;
+  background: #000000;
   color: #4b5563;
   padding-left: 1rem;
   margin-left: 0;
@@ -258,14 +259,17 @@ Lightness (0%-100%) → How light or dark the color is (0% = black, 100% = white
 }
 
 b {
-  font: bold;
+  font: bolder;
 }
 
-.prose pre {
+/* .prose pre {
   background-color: #f3f4f6;
   padding: 1rem;
   border-radius: 0.375rem;
   overflow-x: auto;
+} */
+.prose pre {
+  @apply bg-gray-100 dark:bg-gray-200  text-gray-700 dark:text-gray-500  p-4 overflow-x-auto;
 }
 
 [contenteditable]:empty:before {

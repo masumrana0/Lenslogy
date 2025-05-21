@@ -57,7 +57,6 @@ const FilterPanel = ({
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  console.log("Local Filters:", localFilters);
   // Toggle boolean filter
   const toggleBooleanFilter = (key: keyof IArticlesTableFilters) => {
     setLocalFilters((prev) => ({

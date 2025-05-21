@@ -8,7 +8,6 @@ export interface IArticlesTableFilters {
   isUpComing: string | null;
   isEmergingTech: string | null;
   isHotTech: string | null;
-  isGadget: string | null;
   isFeatured: string | null;
   sortBy: string;
   sortOrder: string;
