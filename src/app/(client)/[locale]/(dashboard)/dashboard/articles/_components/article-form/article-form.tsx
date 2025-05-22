@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { status } from "http-status";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 // UI Components
@@ -44,17 +44,14 @@ const ArticleForm = ({ article, onSuccess }: ArticleFormProps) => {
   const [updateArticle, { isLoading: isUpdating }] = useUpdateArticleMutation();
   const isLoading = isCreating || isUpdating;
 
-  // Initialize form with explicit default values for all boolean fields
-  const form = useForm<Article>({
-    resolver: zodResolver(articleSchema) as any,
-    defaultValues: {
+  const initialValues = useMemo(
+    () => ({
       title: article?.title || "",
       excerpt: article?.excerpt || "",
       content: article?.content || "",
       image: "",
       categoryBaseId: article?.categoryBaseId || "",
       categoryId: article?.categoryId || "",
-
       isPublished: article?.isPublished || false,
       isFeatured: article?.isFeatured || false,
       isPinFeatured: article?.isPinFeatured || false,
@@ -63,27 +60,69 @@ const ArticleForm = ({ article, onSuccess }: ArticleFormProps) => {
       isUpComing: article?.isUpComing || false,
       isEmergingTech: article?.isEmergingTech || false,
       isHotTech: article?.isHotTech || false,
-    },
+    }),
+    [article]
+  );
+
+  // Initialize form with explicit default values for all boolean fields
+  const form = useForm<Article>({
+    resolver: zodResolver(articleSchema) as any,
+    defaultValues: initialValues,
   });
 
   // Submit handler
   const onSubmit = async (values: Article) => {
     try {
-      const formData = new FormData();
-      const { image, ...payloadData } = values;
-
-      formData.append("payload", JSON.stringify(payloadData));
-
-      if ((image as any) instanceof File) {
-        formData.append("imgFile", image);
-      }
-
       let response;
 
       if (isEditMode && article?.id) {
-        formData.append("id", article.id.toString());
-        response = await updateArticle(formData).unwrap();
+        // Compare current form values to initial values
+        const getChangedFields = (
+          current: Article,
+          initial: typeof initialValues
+        ): Partial<Article> => {
+          const changed: Partial<Article> = {};
+          for (const key in current) {
+            const value = current[key as keyof Article];
+            const initialValue = initial[key as keyof typeof initialValues];
+            if (
+              key === "image" ||
+              JSON.stringify(value) !== JSON.stringify(initialValue)
+            ) {
+              (changed as any)[key] = value;
+            }
+          }
+          return changed;
+        };
+
+        const changedFields = getChangedFields(values, initialValues);
+
+        if (Object.keys(changedFields).length === 0) {
+          toast({ title: "No changes", description: "Nothing to update." });
+          return;
+        }
+
+        // Now build formData from only changed fields
+        const formData = new FormData();
+        const { image, ...payloadData } = changedFields;
+
+        formData.append("payload", JSON.stringify(payloadData));
+
+        if ((image as any) instanceof File) {
+          formData.append("imgFile", image as any);
+        }
+
+        response = await updateArticle({ formData, id: article.id }).unwrap();
       } else {
+        // For create, send all values
+        const formData = new FormData();
+        const { image, ...payloadData } = values;
+
+        formData.append("payload", JSON.stringify(payloadData));
+        if ((image as any) instanceof File) {
+          formData.append("imgFile", image);
+        }
+
         response = await createArticle(formData).unwrap();
       }
 

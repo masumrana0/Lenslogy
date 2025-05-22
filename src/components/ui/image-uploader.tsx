@@ -97,6 +97,8 @@ export const ImageUploader = ({
           <Image
             src={previewUrl || "/placeholder.svg"}
             alt="Preview"
+            width={500}
+            height={500}
             className="w-full h-48 object-cover"
           />
           <Button

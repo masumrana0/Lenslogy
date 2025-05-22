@@ -97,6 +97,7 @@ const updateArticle = async (req: Request) => {
 
   // Get form data
   const formData = await req.formData();
+
   const file = formData.get("imgFile") as File | null;
   const payloadStr = formData.get("payload") as string | null;
   const updatedBase: any = {};
@@ -120,15 +121,19 @@ const updateArticle = async (req: Request) => {
   }
 
   const { title, excerpt, content, ...others } = updatedBase;
+  let translatedContent: any = {};
+  if (!title || !excerpt || !content) {
+    translatedContent = await translateContent({
+      title: title,
+      excerpt: excerpt,
+      content: content,
+    });
+  }
 
-  const translatedContent = await translateContent({
-    title: title,
-    excerpt: excerpt,
-    content: content,
-  });
+  Object.assign(updatedBangla, others);
 
-  if (translatedContent) {
-    const allData = { ...others, translatedContent };
+  if (Object.keys(translatedContent).length > 0) {
+    const allData = { ...translatedContent };
     Object.assign(updatedBangla, allData);
   }
 
@@ -199,7 +204,7 @@ const deleteArticle = async (req: Request) => {
 // getAllArticle for admin
 const getAllArticle = async (req: Request) => {
   // Auth guard (optional)
-  // await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
+  await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
 
   const { searchParams } = new URL(req.url);
 
@@ -217,10 +222,6 @@ const getAllArticle = async (req: Request) => {
 
   const where: any = {
     lang: lang,
-
-    Category: {
-      lang,
-    },
   };
 
   // Search logic
@@ -244,8 +245,6 @@ const getAllArticle = async (req: Request) => {
     }
   }
 
-  console.log(where);
-  // Sorting
   const orderBy: any = {};
   if (sortBy && sortOrder) {
     orderBy[sortBy] = sortOrder.toLowerCase();
@@ -254,7 +253,7 @@ const getAllArticle = async (req: Request) => {
   }
 
   // Fetch articles with populated Category
-  const result = await prisma.article.findMany({
+  const articles = await prisma.article.findMany({
     where,
     skip,
     take: limit,
@@ -264,12 +263,25 @@ const getAllArticle = async (req: Request) => {
     },
   });
 
+  const result = articles.map(async (article) => {
+    const { Category, ...rest } = article;
+    const category = await prisma.category.findFirst({
+      where: { baseId: Category!.baseId, lang: lang },
+    });
+
+    return {
+      ...rest,
+      category,
+    };
+  });
+  const formattedResultPromise = await Promise.all(result);
+
   // Count for pagination
   const total = await prisma.article.count({ where });
   const totalPage = Math.ceil(total / limit);
 
   return {
-    result,
+    result: formattedResultPromise,
     meta: {
       total,
       page,

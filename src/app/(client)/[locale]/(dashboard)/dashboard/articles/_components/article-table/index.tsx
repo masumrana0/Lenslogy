@@ -43,7 +43,7 @@ const ArticlesTable = () => {
       isPublished: params.get("isPublished") || null,
       isEmergingTech: params.get("isEmergingTech") || null,
       isFeatured: params.get("isFeatured") || null,
-      isGadget: params.get("isGadget") || null,
+   
       isHotTech: params.get("isHotTech") || null,
       isPinFeatured: params.get("isPinFeatured") || null,
       isPinHero: params.get("isPinHero") || null,

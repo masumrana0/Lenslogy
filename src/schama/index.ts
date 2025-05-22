@@ -62,7 +62,6 @@ export const articleSchema = z
     isUpComing: z.boolean().default(false),
     isEmergingTech: z.boolean().default(false),
     isHotTech: z.boolean().default(false),
-    isGadget: z.boolean().default(false),
   })
   .refine(
     (data) => {

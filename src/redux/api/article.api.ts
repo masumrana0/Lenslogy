@@ -22,10 +22,11 @@ const articleApi: any = baseApi.injectEndpoints({
     }),
 
     updateArticle: build.mutation({
-      query: ({ data, id }: { data: any; id: string }) => ({
+      query: ({ formData, id }: { formData: any; id: string }) => ({
         url: `${url}?id=${id}`,
         method: "PATCH",
-        data: data,
+        body: formData,
+        contentType: "multipart/form-data",
       }),
       invalidatesTags: ["article"],
     }),
