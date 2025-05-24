@@ -30,8 +30,17 @@ const deleteArticle = catchAsync(async (req: Request) => {
   });
 });
 
+// for admin
 const getAllArticle = catchAsync(async (req: Request) => {
   const result = await ArticleService.getAllArticle(req);
+  return sendResponse({
+    statusCode: status.OK,
+    message: "Article retrieved successfully",
+    data: result,
+  });
+});
+const getAllFeaturedArticle = catchAsync(async (req: Request) => {
+  const result = await ArticleService.getAllFeaturedArticle(req);
   return sendResponse({
     statusCode: status.OK,
     message: "Article retrieved successfully",
@@ -58,7 +67,6 @@ const getForHomePage = catchAsync(async (req: Request) => {
 });
 
 const getForNavbar = catchAsync(async (req: Request) => {
-  console.log("getForNavbar");
   const result = await ArticleService.getForNavbar(req);
   return sendResponse({
     statusCode: status.OK,
@@ -75,4 +83,5 @@ export const ArticleController = {
   getForHomePage,
   getForNavbar,
   getOneArticle,
+  getAllFeaturedArticle,
 };

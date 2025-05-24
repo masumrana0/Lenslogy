@@ -1,5 +1,5 @@
+import { IMeta } from "@/interface/common";
 import { ArticleAttachment, Category } from "@prisma/client";
-import { JSX } from "react";
 
 export type IPageProps = {
   params: Promise<{ locale: "bn" | "en"; baseId: string }>;
@@ -44,12 +44,13 @@ export interface RelatedArticlesProps {
 export interface ArticlesPageLayoutProps {
   title: string;
   articles: IArticle[];
-  categories: string[];
+  categories: Category[];
   columns?: 1 | 2 | 3 | 4;
   variant?: "default" | "featured" | "compact" | "horizontal";
   lang: "en" | "bn";
   showCategory?: boolean;
   showExcerpt?: boolean;
+  meta?: IMeta;
 }
 
 export interface ArticleGridProps {
@@ -59,10 +60,11 @@ export interface ArticleGridProps {
   showCategory?: boolean;
   showExcerpt?: boolean;
   lang: "en" | "bn";
+  meta?: IMeta;
 }
 
 export interface ArticleCardProps {
-  article: IArticle[];
+  article: IArticle;
   variant?: "default" | "featured" | "compact" | "horizontal";
   showCategory?: boolean;
   showExcerpt?: boolean;

@@ -1,4 +1,4 @@
-import ArticleSkeleton from "../_components/skeleton";
+import ArticleSkeleton from "../_components/skeleton/article-detail";
 
 export default function Loading() {
   return (

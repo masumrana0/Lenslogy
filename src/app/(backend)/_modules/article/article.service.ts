@@ -289,6 +289,94 @@ const getAllArticle = async (req: Request) => {
   };
 };
 
+// get all article  for all
+const getAllFeaturedArticle = async (req: Request) => {
+  const { searchParams } = new URL(req.url);
+  const searchParamsObj = Object.fromEntries(searchParams.entries());
+
+  const filters = pick(searchParamsObj, articleFilterAbleFields);
+
+  const paginationOptions = pick(searchParamsObj, paginationFields);
+
+  const { limit, page, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
+
+  const searchTerm = searchParamsObj.searchTerm || "";
+  const sort = searchParamsObj.sort || "newest";
+  const lang = (searchParamsObj.lang || "en") as Language;
+
+  const where: any = {
+    lang: lang,
+    isFeatured: true,
+  };
+
+  // Search logic
+  if (searchTerm) {
+    where.OR = articleSearchableFields.map((field) => ({
+      [field]: {
+        contains: searchTerm,
+        mode: "insensitive",
+      },
+    }));
+  }
+
+  // Apply filters
+  for (const [key, value] of Object.entries(filters)) {
+    if (value && key !== "searchTerm") {
+      if (value === "true" || value === "false") {
+        where[key] = value === "true";
+      } else {
+        where[key] = value;
+      }
+    }
+  }
+
+  const orderBy: any = {};
+  if (sort == "newest") {
+    orderBy.createdAt = "desc";
+  } else if (sort == "oldest") {
+    orderBy.createdAt = "asc";
+  }
+
+  // Fetch articles with populated Category
+  const articles = await prisma.article.findMany({
+    where,
+    skip,
+    take: limit,
+    orderBy,
+    include: {
+      category: true,
+    },
+  });
+
+  const result = articles.map(async (article) => {
+    const { category, ...rest } = article;
+    const Category = await prisma.category.findFirst({
+      where: { baseId: category!.baseId, lang: lang },
+    });
+
+    return {
+      ...rest,
+      category: Category,
+    };
+  });
+  const formattedResultPromise = await Promise.all(result);
+
+  // Count for pagination
+  const total = await prisma.article.count({ where });
+  const totalPage = Math.ceil(total / limit);
+
+  return {
+    result: formattedResultPromise,
+    meta: {
+      total,
+      page,
+      limit,
+      totalPage,
+    },
+  };
+};
+
 const getOneArticle = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const articleId = searchParams.get("baseId");
@@ -419,6 +507,7 @@ export const ArticleService = {
   deleteArticle,
   updateArticle,
   getAllArticle,
+  getAllFeaturedArticle,
   getForHomePage,
   getForNavbar,
   getOneArticle,

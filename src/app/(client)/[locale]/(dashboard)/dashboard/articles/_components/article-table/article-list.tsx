@@ -99,7 +99,7 @@ const ArticlesList = ({
                 <TableRow key={article.id}>
                   <TableCell className="font-medium">
                     <Link
-                      href={`/article/${article.id}`}
+                      href={`/article/${article.baseId}`}
                       className="hover:underline"
                     >
                       {article.title.length > 50
@@ -120,7 +120,6 @@ const ArticlesList = ({
                             className="capitalize"
                           >
                             {value ? "Published" : "Draft"}
-                            {/* {article.isPinHero && " • isPinHero"} */}
                           </Badge>
                         );
                       }

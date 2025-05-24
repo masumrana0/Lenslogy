@@ -1,3 +1,4 @@
+import { Language } from "@prisma/client";
 import { notFound } from "next/navigation";
 
 // lib/get-article.ts
@@ -20,6 +21,34 @@ export async function getHomeAllArticles(lang: string) {
   );
 
   if (!res.ok) notFound();
+
+  const data = await res.json();
+  return data.data;
+}
+
+export async function getCategories(lang: Language) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/categories?lang=${lang}`,
+    { method: "GET", cache: "force-cache", next: { revalidate: 60 } }
+  );
+
+  if (!res.ok) {
+    return [];
+  }
+
+  const data = await res.json();
+  return data.data;
+}
+
+export async function getAllArticleWithFilter(query: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/articles/featured${query}`,
+    { method: "GET", cache: "no-cache" }
+  );
+
+  if (!res.ok) {
+    return [];
+  }
 
   const data = await res.json();
   return data.data;

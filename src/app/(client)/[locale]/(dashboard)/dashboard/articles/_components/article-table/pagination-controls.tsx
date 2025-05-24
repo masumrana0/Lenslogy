@@ -56,7 +56,7 @@ const PaginationControls = ({
       i <= Math.min(totalPages - 1, currentPage + 1);
       i++
     ) {
-      if (i === 1 || i === totalPages) continue; // Skip first and last as they're always shown
+      if (i === 1 || i === totalPages) continue;
       items.push(
         <PaginationItem key={i}>
           <PaginationLink

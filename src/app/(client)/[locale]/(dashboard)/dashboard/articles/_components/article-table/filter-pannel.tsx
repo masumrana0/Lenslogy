@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sheet";
 import { IArticlesTableFilters } from "../../interface/article.interface";
 import { booleanFilterKeys } from "../utils";
+import Limit from "@/components/shared/pagination/limit";
 
 interface FilterPanelProps {
   filters: IArticlesTableFilters;
@@ -182,20 +183,10 @@ const FilterPanel = ({
       </Sheet>
 
       {/* Pagination Limit */}
-      <Select
-        value={limit.toString()}
-        onValueChange={(value) => onLimitChange(Number(value))}
-      >
-        <SelectTrigger className="w-[130px] h-9">
-          <SelectValue placeholder="10 per page" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="5">5 per page</SelectItem>
-          <SelectItem value="10">10 per page</SelectItem>
-          <SelectItem value="20">20 per page</SelectItem>
-          <SelectItem value="50">50 per page</SelectItem>
-        </SelectContent>
-      </Select>
+      <Limit
+        limit={limit}
+        onLimitChange={(value) => onLimitChange(Number(value))}
+      />
 
       {/* Clear Filters */}
       <Button

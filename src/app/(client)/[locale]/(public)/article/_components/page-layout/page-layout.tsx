@@ -12,6 +12,7 @@ const ArticlesPageLayout = async ({
   variant = "default",
   showCategory = true,
   showExcerpt = true,
+  meta,
 }: ArticlesPageLayoutProps) => {
   // for Translation language in server side
   const { t } = await getServerTranslation(lang);
@@ -26,7 +27,9 @@ const ArticlesPageLayout = async ({
         <FilterSortBar categories={categories} />
 
         <ArticleGrid
+          lang={lang}
           articles={articles}
+          meta={meta}
           columns={columns}
           variant={variant}
           showCategory={showCategory}
