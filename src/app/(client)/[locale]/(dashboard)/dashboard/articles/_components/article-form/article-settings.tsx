@@ -25,7 +25,7 @@ const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {articleBooleanFieldsForUI.map(({ name, label, desc }) => {
+      {articleBooleanFieldsForUI.map(({ name, desc }) => {
         const isPinField = pinFields.includes(name);
         const isTechField = techFields.includes(name);
         const isChecked = watch[name as keyof Article];
@@ -76,7 +76,7 @@ const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
                     htmlFor={name}
                     className={shouldDisable ? "text-gray-500" : ""}
                   >
-                    {label}
+                    {name}
                   </FormLabel>
                   <FormDescription
                     className={shouldDisable ? "text-gray-400" : ""}

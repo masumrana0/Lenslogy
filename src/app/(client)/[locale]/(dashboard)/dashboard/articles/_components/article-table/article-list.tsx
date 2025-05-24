@@ -23,8 +23,20 @@ import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { formatTimestampWithTranslation } from "@/lib/translator";
 import type { Article, Language } from "@prisma/client";
 import { useState } from "react";
-import { boolean } from "zod";
+
 import ArticleForm from "../article-form/article-form";
+
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import { articleBooleanFieldsForUI } from "../utils";
 
 interface ArticlesListProps {
   articles: any[];
@@ -43,6 +55,15 @@ const ArticlesList = ({
     state: boolean;
     article: Article | null;
   }>({ state: false, article: null });
+  const [showLangAlert, setShowLangAlert] = useState(false);
+  const handleEdit = (article: Article) => {
+    if (lang === "en" && article) {
+      setIsEditOpen({ state: true, article });
+    } else {
+      setShowLangAlert(true);
+    }
+  };
+
   return (
     <div className="rounded-md border">
       {isEditOpen.state ? (
@@ -87,14 +108,39 @@ const ArticlesList = ({
                     </Link>
                   </TableCell>
                   <TableCell>{article?.category?.name || "N/A"}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={article.isPublished ? "default" : "secondary"}
-                      className="capitalize"
-                    >
-                      {article.isPublished ? "Published" : "Draft"}
-                    </Badge>
+                  <TableCell className="flex flex-wrap gap-2">
+                    {articleBooleanFieldsForUI.map(({ name }) => {
+                      const value = article[name];
+
+                      if (name === "isPublished") {
+                        return (
+                          <Badge
+                            key={name}
+                            variant={value ? "default" : "secondary"}
+                            className="capitalize"
+                          >
+                            {value ? "Published" : "Draft"}
+                            {/* {article.isPinHero && " • isPinHero"} */}
+                          </Badge>
+                        );
+                      }
+
+                      if (value) {
+                        return (
+                          <Badge
+                            key={name}
+                            variant="default"
+                            className="capitalize"
+                          >
+                            {name}
+                          </Badge>
+                        );
+                      }
+
+                      return null;
+                    })}
                   </TableCell>
+
                   <TableCell>
                     {formatTimestampWithTranslation(article.createdAt, lang)}
                   </TableCell>
@@ -109,11 +155,7 @@ const ArticlesList = ({
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() =>
-                            setIsEditOpen({ state: true, article })
-                          }
-                        >
+                        <DropdownMenuItem onClick={() => handleEdit(article)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
@@ -139,6 +181,23 @@ const ArticlesList = ({
           </TableBody>
         </Table>
       )}
+
+      <AlertDialog open={showLangAlert} onOpenChange={setShowLangAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Language Restriction</AlertDialogTitle>
+            <AlertDialogDescription>
+              Article editing is only supported in English. Please switch the
+              language to English to continue editing.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowLangAlert(false)}>
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

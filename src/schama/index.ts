@@ -58,10 +58,12 @@ export const articleSchema = z
     isFeatured: z.boolean().default(false),
     isPinFeatured: z.boolean().default(false),
     isPinLatest: z.boolean().default(false),
+    isLatest: z.boolean().default(false),
     isPinHero: z.boolean().default(false),
     isUpComing: z.boolean().default(false),
     isEmergingTech: z.boolean().default(false),
     isHotTech: z.boolean().default(false),
+    isGadget: z.boolean().default(false),
   })
   .refine(
     (data) => {

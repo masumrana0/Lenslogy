@@ -1,9 +1,18 @@
+import { Language } from "@prisma/client";
 import { baseApi } from "./baseApi";
 
 const url = "/articles";
 
 const articleApi: any = baseApi.injectEndpoints({
   endpoints: (build: any) => ({
+    getOneArticle: build.query({
+      query: ({ baseId, lang }: { baseId: string; lang: "en" | "bn" }) => ({
+        url: `${url}?baseId=${baseId}&lang=${lang}`,
+        method: "GET",
+      }),
+      providesTags: ["article"],
+    }),
+
     getAllArticles: build.query({
       query: (query: string) => ({
         url: `${url}?${query}`,
@@ -43,6 +52,7 @@ const articleApi: any = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetOneArticleQuery,
   useGetAllArticlesQuery,
   useCreateArticleMutation,
   useUpdateArticleMutation,

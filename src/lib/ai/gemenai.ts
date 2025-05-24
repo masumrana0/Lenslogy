@@ -18,18 +18,22 @@ export async function translateContent(data: TranslationInput) {
       .join("\n");
 
     const prompt = `
-Translate the following key-value pairs from English to Bengali (Bangla).
-- Only translate the values.
-- If a value is null, exclude that key-value pair from the output.
-- Keep the keys unchanged.
-- Return the result as valid JSON. 
+Translate the values of the following key-value pairs from English to Bengali (Bangla), following these rules:
 
+1. Only translate the **values**; keep the **keys unchanged**.
+2. **Exclude** any key-value pair where the value is **null**.
+3. If a value contains **HTML**, preserve the exact HTML structure and translate **only the text content inside the tags**.
+4. If a value contains **code**, leave it **unchanged**.
+5. Return the result as **valid JSON**.
+
+Input:
 ${formattedInput}
 
-Example format:
+Example output format:
 {
   "title": "বাংলা অনুবাদ",
   "excerpt": "এটি একটি সংক্ষিপ্তসার"
+  "content": "<p>এটি একটি <strong>HTML</strong> উদাহরণ।</p>",
 }
 `.trim();
 

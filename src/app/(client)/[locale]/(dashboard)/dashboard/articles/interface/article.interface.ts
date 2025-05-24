@@ -9,6 +9,8 @@ export interface IArticlesTableFilters {
   isEmergingTech: string | null;
   isHotTech: string | null;
   isFeatured: string | null;
+  isGadget: string | null;
+  isLatest: string | null;
   sortBy: string;
   sortOrder: string;
 }

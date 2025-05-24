@@ -10,15 +10,23 @@ const ArticleCard = ({
   variant = "default",
   showCategory = true,
   showExcerpt = true,
+  lang = "en",
 }: ArticleCardProps) => {
   // Different layouts based on variant
   if (variant === "compact") {
-    return <CompactArticleCard article={article} showCategory={showCategory} />;
+    return (
+      <CompactArticleCard
+        lang={lang}
+        article={article}
+        showCategory={showCategory}
+      />
+    );
   }
 
   if (variant === "horizontal") {
     return (
       <HorizontalArticleCard
+        lang={lang}
         article={article}
         showCategory={showCategory}
         showExcerpt={showExcerpt}
@@ -29,6 +37,7 @@ const ArticleCard = ({
   if (variant === "featured") {
     return (
       <FeaturedArticleCard
+        lang={lang}
         article={article}
         showCategory={showCategory}
         showExcerpt={showExcerpt}
@@ -39,6 +48,7 @@ const ArticleCard = ({
   // Default card
   return (
     <DefaultArticleCard
+      lang={lang}
       article={article}
       showCategory={showCategory}
       showExcerpt={showExcerpt}

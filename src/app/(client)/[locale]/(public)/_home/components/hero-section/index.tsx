@@ -1,70 +1,15 @@
+import { formatTimestampWithTranslation } from "@/lib/translator";
 import Image from "next/image";
 import Link from "next/link";
+import { IArticle } from "../../../article/_interface/interface";
 
-const heroArticles = {
-  en: [
-    {
-      id: 1,
-      title: "Meta's Quest 3 Headset: Review & Feature Breakdown",
-      excerpt:
-        "A deep dive into Meta's latest VR technology with our comprehensive hands-on review.",
-      image:
-        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/04/Lip-Bu-Tan.jpg",
-      category: "VR & AR",
-      createdAt: "June 15, 2023",
-    },
-    {
-      id: 2,
-      title:
-        "Google's AI-Powered Search Overhaul Aims to Enhance User Experience",
-      image:
-        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/03/smartphone-security.jpg",
-      category: "AI",
-      createdAt: "June 14, 2023",
-    },
-    {
-      id: 3,
-      title:
-        "Apple's WWDC 2023: Everything Announced for Developers and Consumers",
-      image:
-        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
-      category: "Apple",
-      createdAt: "June 13, 2023",
-    },
-  ],
-  bn: [
-    {
-      id: 1,
-      title: "মেটার কোয়েস্ট ৩ হেডসেট: রিভিউ ও ফিচার বিশ্লেষণ",
-      excerpt:
-        "মেটার সর্বশেষ ভার্চুয়াল রিয়েলিটি প্রযুক্তি নিয়ে আমাদের বিস্তারিত হ্যান্ডস-অন রিভিউ।",
-      image:
-        "https://www.technewsworld.com/wp-content/uploads/sites/3/2025/04/Lip-Bu-Tan.jpg",
-      category: "ভিআর ও এআর",
-      createdAt: "১৫ জুন, ২০২৩",
-    },
-    {
-      id: 2,
-      title:
-        "গুগলের এআই চালিত সার্চ সংস্কার ব্যবহারকারীদের অভিজ্ঞতা উন্নত করবে",
-      image:
-        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/03/smartphone-security.jpg",
-      category: "এআই",
-      createdAt: "১৪ জুন, ২০২৩",
-    },
-    {
-      id: 3,
-      title: "অ্যাপলের WWDC ২০২৩: ডেভেলপার ও ব্যবহারকারীদের জন্য ঘোষিত সবকিছু",
-      image:
-        "https://www.ecommercetimes.com/wp-content/uploads/sites/5/2025/02/online-shopper-credit-card.jpg",
-      category: "অ্যাপল",
-      createdAt: "১৩ জুন, ২০২৩",
-    },
-  ],
-};
-
-const HeroSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
-  const articles = heroArticles[lang];
+const HeroSection = ({
+  lang = "en",
+  articles,
+}: {
+  lang?: "en" | "bn";
+  articles: IArticle[];
+}) => {
   const mainArticle = articles[0];
   const sideArticles = articles.slice(1);
 
@@ -84,17 +29,21 @@ const HeroSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
 
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <span className="inline-block bg-red-500 text-white text-xs px-2 py-1 mb-2">
-            {mainArticle.category}
+            {mainArticle?.category?.name}
           </span>
           <h2 className="text-2xl md:text-3xl font-bold mb-2 group-hover:text-red-400 transition-colors">
-            <Link href={`/article/${mainArticle.id}`}>{mainArticle.title}</Link>
+            <Link href={`/article/${mainArticle?.baseId}`}>
+              {mainArticle?.title}
+            </Link>
           </h2>
           {mainArticle.excerpt && (
             <p className="text-gray-200 mb-2 line-clamp-2">
               {mainArticle.excerpt}
             </p>
           )}
-          <span className="text-sm text-gray-300">{mainArticle.createdAt}</span>
+          <span className="text-sm text-gray-300">
+            {formatTimestampWithTranslation(mainArticle.createdAt, lang)}
+          </span>
         </div>
       </div>
 
@@ -114,12 +63,16 @@ const HeroSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
 
             <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
               <span className="inline-block bg-red-500 text-white text-xs px-2 py-1 mb-2">
-                {article.category}
+                {article?.category?.name}
               </span>
               <h3 className="text-lg font-bold group-hover:text-red-400 transition-colors">
-                <Link href={`/article/${article.id}`}>{article.title}</Link>
+                <Link href={`/article/${article?.baseId}`}>
+                  {article.title}
+                </Link>
               </h3>
-              <span className="text-sm text-gray-300">{article.createdAt}</span>
+              <span className="text-sm text-gray-300">
+                {formatTimestampWithTranslation(article.createdAt, lang)}
+              </span>
             </div>
           </div>
         ))}

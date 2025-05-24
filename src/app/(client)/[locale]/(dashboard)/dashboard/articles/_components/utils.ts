@@ -60,6 +60,8 @@ export const filterInitialState: IArticlesTableFilters = {
   isPinHero: null,
   isPinLatest: null,
   isUpComing: null,
+  isGadget: null,
+  isLatest: null,
   sortBy: "createdAt",
   sortOrder: "desc",
 };
@@ -89,6 +91,16 @@ export const articleBooleanFieldsForUI = [
     name: "isPinHero",
     label: "is article pinned to hero",
     desc: "Feature in top hero banner",
+  },
+  {
+    name: "isGadget",
+    label: "is article gadget",
+    desc: "Tag as gadget article",
+  },
+  {
+    name: "isLatest",
+    label: "is article latest",
+    desc: "Tag as latest article",
   },
   {
     name: "isEmergingTech",
@@ -122,4 +134,6 @@ export const articleResetState = {
   isUpComing: false,
   isEmergingTech: false,
   isHotTech: false,
+  isGadget: false,
+  isLatest: false,
 };

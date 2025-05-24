@@ -2,11 +2,15 @@ import React from "react";
 import Image from "next/image";
 import { Eye, ThumbsUp } from "lucide-react";
 import { getServerTranslation } from "@/lib/i18n/i18n.server";
-import { translateNumber } from "@/lib/translator";
-import { IArticle } from "../../_interface/interface";
+import {
+  formatTimestampWithTranslation,
+  translateNumber,
+} from "@/lib/translator";
+
+import { Article } from "@prisma/client";
 
 const ArticleHeader: React.FC<{
-  article: IArticle;
+  article: any;
   lang: "en" | "bn";
 }> = async ({ article, lang = "en" }) => {
   const { t } = await getServerTranslation(lang);
@@ -15,11 +19,12 @@ const ArticleHeader: React.FC<{
     <header className="mb-8">
       <div className="flex items-center space-x-2 mb-4">
         <span className="inline-block bg-red-500 dark:bg-red-600 text-white text-sm px-3 py-1 rounded-sm">
-          {article.category}
+          {article.category.name}
         </span>
 
         <span className="text-gray-500 dark:text-gray-400 text-sm  ">
-          {t("articleDetailsPage.publishedOn")} {article.createdAt}
+          {t("articleDetailsPage.publishedOn")}{" "}
+          {formatTimestampWithTranslation(article.createdAt, lang)}
         </span>
       </div>
 
@@ -43,15 +48,17 @@ const ArticleHeader: React.FC<{
           </div>
           <div>
             <h3 className="font-medium dark:text-white">
-              {article.author?.name}
+              {article!.author?.name}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {article.author?.designation}
-            </p>
+            {article!.author?.designation && (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {article.author?.designation}
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+        {/* <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-1">
             <Eye size={16} className="mr-1" />
             <span>
@@ -67,7 +74,7 @@ const ArticleHeader: React.FC<{
               {t("articleDetailsPage.likes")}
             </span>
           </div>
-        </div>
+        </div> */}
       </div>
     </header>
   );

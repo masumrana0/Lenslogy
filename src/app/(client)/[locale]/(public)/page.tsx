@@ -4,28 +4,26 @@ import PopularSection from "./_home/components/popular-section";
 import ReviewsSection from "./_home/components/reviews-section";
 import HeroSection from "./_home/components/hero-section";
 import FeaturedSection from "./_home/components/featured-section/featured-section";
+import { getHomeAllArticles } from "@/lib/api";
+import { notFound } from "next/navigation";
 
 const HomePage = async ({ params }: IParamsProps) => {
   // Language
   const resolvedParams = await params;
   const lang = resolvedParams.locale;
-  // const res = await fetch(
-  //   `${process.env.NEXT_PUBLIC_API_URL}/articles/nav?lang=${lang}`,
-  //   {
-  //     next: { revalicreatedAt: 60 },
-  //   }
-  // );
+  const data = await getHomeAllArticles(lang);
 
-  // const data = await res.json();
-  // console.log("data from navbar", data);
+  // if (!data) {
+  //   notFound();
+  // }
 
   return (
     <div className="min-h-screen">
-      <HeroSection lang={lang} />
-      <FeaturedSection lang={lang} />
-      <PopularSection lang={lang} />
-      <LatestNews lang={lang} />
-      <ReviewsSection lang={lang} />
+      <HeroSection articles={data?.isPinHero} lang={lang} />
+      <FeaturedSection articles={data?.isPinFeatured} lang={lang} />
+      {/* <PopularSection articles={data?.isPupular} lang={lang} /> */}
+      <LatestNews articles={data?.isPinLatest} lang={lang} />
+      {/* <ReviewsSection lang={lang} /> */}
     </div>
   );
 };

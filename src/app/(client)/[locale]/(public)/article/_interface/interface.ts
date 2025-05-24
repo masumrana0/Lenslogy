@@ -1,5 +1,8 @@
+import { ArticleAttachment, Category } from "@prisma/client";
+import { JSX } from "react";
+
 export type IPageProps = {
-  params: Promise<{ locale: "bn" | "en"; id: string }>;
+  params: Promise<{ locale: "bn" | "en"; baseId: string }>;
 };
 
 interface Author {
@@ -19,14 +22,15 @@ interface IArticleAttachment {
 export interface IArticle {
   id: string | number;
   title: string;
+  baseId: string;
   excerpt: string;
   content: string;
   image: string;
-  category: string;
+  category: Category;
   author: Author;
   createdAt: string;
   tags?: string[];
-  articleAttachment: IArticleAttachment;
+  articleAttachment: ArticleAttachment;
 }
 
 export interface RelatedArticlesProps {
@@ -37,18 +41,9 @@ export interface RelatedArticlesProps {
 
 // for Card
 
-export interface IArticleForCard {
-  id: string | number;
-  title: string;
-  excerpt: string;
-  image: string;
-  category: string;
-  createdAt: string;
-}
-
 export interface ArticlesPageLayoutProps {
   title: string;
-  articles: IArticleForCard[];
+  articles: IArticle[];
   categories: string[];
   columns?: 1 | 2 | 3 | 4;
   variant?: "default" | "featured" | "compact" | "horizontal";
@@ -58,22 +53,25 @@ export interface ArticlesPageLayoutProps {
 }
 
 export interface ArticleGridProps {
-  articles: IArticleForCard[];
+  articles: IArticle[];
   columns?: 1 | 2 | 3 | 4;
   variant?: "default" | "featured" | "compact" | "horizontal";
   showCategory?: boolean;
   showExcerpt?: boolean;
+  lang: "en" | "bn";
 }
 
 export interface ArticleCardProps {
-  article: IArticleForCard;
+  article: IArticle[];
   variant?: "default" | "featured" | "compact" | "horizontal";
   showCategory?: boolean;
   showExcerpt?: boolean;
+  lang: "en" | "bn";
 }
 
 export interface IArticleVariantCardProps {
-  article: IArticleForCard;
+  article: IArticle;
   showCategory?: boolean;
   showExcerpt?: boolean;
+  lang: "en" | "bn";
 }

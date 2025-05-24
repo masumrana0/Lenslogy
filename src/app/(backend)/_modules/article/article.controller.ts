@@ -39,9 +39,40 @@ const getAllArticle = catchAsync(async (req: Request) => {
   });
 });
 
+const getOneArticle = catchAsync(async (req: Request) => {
+  const result = await ArticleService.getOneArticle(req);
+  return sendResponse({
+    statusCode: status.OK,
+    message: "Article retrieved successfully",
+    data: result,
+  });
+});
+
+const getForHomePage = catchAsync(async (req: Request) => {
+  const result = await ArticleService.getForHomePage(req);
+  return sendResponse({
+    statusCode: status.OK,
+    message: "Home articles retrieved successfully",
+    data: result,
+  });
+});
+
+const getForNavbar = catchAsync(async (req: Request) => {
+  console.log("getForNavbar");
+  const result = await ArticleService.getForNavbar(req);
+  return sendResponse({
+    statusCode: status.OK,
+    message: "Navbar articles retrieved successfully",
+    data: result,
+  });
+});
+
 export const ArticleController = {
   createArticle,
   updateArticle,
   deleteArticle,
   getAllArticle,
+  getForHomePage,
+  getForNavbar,
+  getOneArticle,
 };

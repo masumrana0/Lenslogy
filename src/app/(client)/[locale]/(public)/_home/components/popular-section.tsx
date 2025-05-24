@@ -1,5 +1,6 @@
 import CompactArticleCard from "../../article/_components/article-card/compact-card";
-import { IArticleForCard } from "../../article/_interface/interface";
+import { IArticle } from "../../article/_interface/interface";
+
 import ViewAll from "./vew-all";
 
 const popularArticlesCore = {
@@ -87,15 +88,22 @@ const popularArticlesCore = {
   ],
 };
 
-const PopularSection = ({ lang = "en" }: { lang?: "en" | "bn" }) => {
+const PopularSection = ({
+  lang = "en",
+  articles = [],
+}: {
+  lang?: "en" | "bn";
+  articles: IArticle;
+}) => {
   const popularArticles = popularArticlesCore[lang];
   return (
     <section className="py-8">
       <ViewAll href="popular" title="Popular This Week" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
-        {popularArticles.map((article: IArticleForCard) => (
+        {articles.map((article: IArticle) => (
           <CompactArticleCard
+            lang={lang}
             article={article}
             key={article.id}
             showCategory

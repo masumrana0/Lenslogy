@@ -1,4 +1,5 @@
 import { IArticleVariantCardProps } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
+import { formatTimestampWithTranslation } from "@/lib/translator";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -6,34 +7,38 @@ const FeaturedArticleCard = ({
   article,
   showCategory = true,
   showExcerpt = true,
+  lang = "en",
 }: IArticleVariantCardProps) => {
-  const { title, category, createdAt, excerpt, image, id } = article;
-
   return (
-    <Link href={`/article/${id}`} className="group block">
+    <Link href={`/article/${article?.baseId}`} className="group block">
       <div className="relative h-64 mb-4 overflow-hidden">
         <Image
-          src={image || "/placeholder.svg"}
+          src={article?.image || "/placeholder.svg"}
           fill
-          alt={title}
+          alt={article?.title}
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        {showCategory && category && (
+        {showCategory && article?.category && (
           <div className="absolute top-3 left-3">
             <span className="inline-block bg-red-500 text-white text-xs px-2 py-1">
-              {category}
+              {article?.category?.name}
             </span>
           </div>
         )}
       </div>
       <h3 className="text-xl font-bold mb-3 group-hover:text-red-500 dark:text-white dark:group-hover:text-red-400 transition-colors">
-        {title}
+        {article?.title}
       </h3>
-      {showExcerpt && excerpt && (
-        <p className="text-gray-600 dark:text-gray-300 mb-3">{excerpt}</p>
+      {showExcerpt && article?.excerpt && (
+        <p className="text-gray-600 dark:text-gray-300 mb-3">
+          {article?.excerpt}
+        </p>
       )}
       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-        <span>{createdAt}</span>
+        <span>
+          {article?.createdAt &&
+            formatTimestampWithTranslation(article?.createdAt, lang)}
+        </span>
       </div>
     </Link>
   );

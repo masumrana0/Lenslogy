@@ -12,6 +12,7 @@ import {
   articleSearchableFields,
 } from "../../_core/constants/article.constant";
 import { paginationFields } from "../../_core/constants/patination.constant";
+import { fetchArticle } from "./article.utils";
 
 // create article
 const createArticle = async (req: Request) => {
@@ -53,8 +54,6 @@ const createArticle = async (req: Request) => {
     authorId: session!.user.id,
     lang: "bn",
   };
-
-  console.log("Base Article:", baseArticle);
 
   // Save both articles in a transaction
   const result = await prisma.$transaction(async (tx) => {
@@ -196,7 +195,6 @@ const deleteArticle = async (req: Request) => {
   await prisma.article.deleteMany({
     where: { baseId: isExistArticle.baseId },
   });
-  console.log("Deleting file:", isExistArticle.image);
 
   await cleanUpFile(isExistArticle.image);
 };
@@ -259,19 +257,19 @@ const getAllArticle = async (req: Request) => {
     take: limit,
     orderBy,
     include: {
-      Category: true,
+      category: true,
     },
   });
 
   const result = articles.map(async (article) => {
-    const { Category, ...rest } = article;
-    const category = await prisma.category.findFirst({
-      where: { baseId: Category!.baseId, lang: lang },
+    const { category, ...rest } = article;
+    const Category = await prisma.category.findFirst({
+      where: { baseId: category!.baseId, lang: lang },
     });
 
     return {
       ...rest,
-      category,
+      category: Category,
     };
   });
   const formattedResultPromise = await Promise.all(result);
@@ -291,9 +289,137 @@ const getAllArticle = async (req: Request) => {
   };
 };
 
+const getOneArticle = async (req: Request) => {
+  const { searchParams } = new URL(req.url);
+  const articleId = searchParams.get("baseId");
+  const lang = (searchParams.get("lang") || "en") as Language;
+
+  if (!articleId) throw ApiErrors.BadRequest("Article baseID is missing");
+
+  // Check if article exists
+  const isExistArticle = await prisma.article.findUnique({
+    where: {
+      baseId_lang_unique: { baseId: articleId, lang },
+    },
+
+    include: {
+      category: true,
+      author: true,
+    },
+  });
+
+  if (!isExistArticle) throw ApiErrors.NotFound("Article not found");
+
+  return isExistArticle;
+};
+
+// get Pin Featured Article
+const getForHomePage = async (req: Request) => {
+  const { searchParams } = new URL(req.url);
+  const searchParamsObj = Object.fromEntries(searchParams.entries());
+
+  const lang = (searchParamsObj.lang || "en") as Language;
+
+  const isPinHero = await fetchArticle(
+    {
+      isPublished: true,
+      isPinHero: true,
+    },
+    lang,
+    3
+  );
+
+  const getFeatured = await fetchArticle(
+    {
+      isPublished: true,
+      isPinFeatured: true,
+
+      OR: [
+        {
+          isFeatured: true,
+        },
+      ],
+    },
+    lang,
+    4
+  );
+
+  const getLatest = await fetchArticle(
+    {
+      isPublished: true,
+      isPinLatest: true,
+      OR: [
+        {
+          isLatest: true,
+        },
+      ],
+    },
+    lang,
+    5
+  );
+
+  return {
+    isPinHero: isPinHero,
+    isPinFeatured: getFeatured,
+    isPinLatest: getLatest,
+  };
+};
+
+// getForNavbar
+const getForNavbar = async (req: Request) => {
+  const { searchParams } = new URL(req.url);
+  const lang = (searchParams.get("lang") || "en") as Language;
+
+  const fetchArticles = async (
+    filters: Partial<(typeof prisma.article.findMany)["arguments"]["where"]>,
+    take: number
+  ) =>
+    prisma.article.findMany({
+      where: { ...filters, lang, isPublished: true },
+      orderBy: { createdAt: "desc" },
+      take,
+      include: { category: true },
+    });
+
+  const formatArticlesWithCategory = async (
+    articles: Awaited<ReturnType<typeof fetchArticles>>
+  ) =>
+    Promise.all(
+      articles.map(async ({ category, ...rest }) => {
+        const Category = await prisma.category.findFirst({
+          where: { baseId: category!.baseId, lang },
+        });
+        return { ...rest, category: Category };
+      })
+    );
+
+  const [upcomingRaw, latestRaw, hotTechRaw] = await Promise.all([
+    fetchArticles({ isGadget: true, isUpComing: true }, 3),
+    fetchArticles({ isGadget: true, isLatest: true, isUpComing: false }, 3),
+    fetchArticles({ isHotTech: true }, 6),
+  ]);
+
+  const [upcoming, latest, hotTech] = await Promise.all([
+    formatArticlesWithCategory(upcomingRaw),
+    formatArticlesWithCategory(latestRaw),
+    formatArticlesWithCategory(hotTechRaw),
+  ]);
+
+  return {
+    navHotTech: hotTech,
+    navGadget: {
+      upcoming,
+      latest,
+    },
+  };
+};
+
 export const ArticleService = {
   createArticle,
   deleteArticle,
   updateArticle,
   getAllArticle,
+  getForHomePage,
+  getForNavbar,
+  getOneArticle,
 };
