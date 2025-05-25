@@ -90,6 +90,7 @@ model Article {
     isPinLatest    Boolean            @default(false)
     isLatest       Boolean            @default(false)
     isPinHero      Boolean            @default(false)
+    isPinNav       Boolean            @default(false)
     isPublished    Boolean            @default(false)
     isUpComing     Boolean            @default(false)
     isEmergingTech Boolean            @default(false)

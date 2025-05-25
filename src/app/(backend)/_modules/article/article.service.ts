@@ -13,6 +13,7 @@ import {
 } from "../../_core/constants/article.constant";
 import { paginationFields } from "../../_core/constants/patination.constant";
 import { fetchArticle } from "./article.utils";
+import { INavContent } from "@/interface/nav-interface";
 
 // create article
 const createArticle = async (req: Request) => {
@@ -376,6 +377,7 @@ const getAllFeaturedArticle = async (req: Request) => {
     },
   };
 };
+
 // get all article  for all
 const getAllLatestArticle = async (req: Request) => {
   const { searchParams } = new URL(req.url);
@@ -545,48 +547,44 @@ const getForNavbar = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const lang = (searchParams.get("lang") || "en") as Language;
 
-  const fetchArticles = async (
-    filters: Partial<(typeof prisma.article.findMany)["arguments"]["where"]>,
-    take: number
-  ) =>
-    prisma.article.findMany({
-      where: { ...filters, lang, isPublished: true },
-      orderBy: { createdAt: "desc" },
-      take,
-      include: { category: true },
-    });
+  const [upcomingRaw, latestRaw, emerging, ai] = await Promise.all([
+    fetchArticle({ isGadget: true, isUpComing: true, isPinNav: true }, lang, 3),
+    fetchArticle({ isGadget: true, isLatest: true, isPinNav: true }, lang, 3),
+    fetchArticle(
+      { isHotTech: true, isEmergingTech: true, isPinNav: true },
+      lang,
+      6
+    ),
+    fetchArticle(
+      {
+        isHotTech: true,
+        isPinNav: true,
 
-  const formatArticlesWithCategory = async (
-    articles: Awaited<ReturnType<typeof fetchArticles>>
-  ) =>
-    Promise.all(
-      articles.map(async ({ category, ...rest }) => {
-        const Category = await prisma.category.findFirst({
-          where: { baseId: category!.baseId, lang },
-        });
-        return { ...rest, category: Category };
-      })
-    );
-
-  const [upcomingRaw, latestRaw, hotTechRaw] = await Promise.all([
-    fetchArticles({ isGadget: true, isUpComing: true }, 3),
-    fetchArticles({ isGadget: true, isLatest: true, isUpComing: false }, 3),
-    fetchArticles({ isHotTech: true }, 6),
+        OR: [
+          {
+            category: {
+              name: "ai",
+            },
+          },
+        ],
+      },
+      lang,
+      6
+    ),
   ]);
 
-  const [upcoming, latest, hotTech] = await Promise.all([
-    formatArticlesWithCategory(upcomingRaw),
-    formatArticlesWithCategory(latestRaw),
-    formatArticlesWithCategory(hotTechRaw),
-  ]);
-
-  return {
-    navHotTech: hotTech,
+  const data = {
     navGadget: {
-      upcoming,
-      latest,
+      latest: latestRaw,
+      upcoming: upcomingRaw,
+    },
+    navHotTech: {
+      emerging,
+      ai,
     },
   };
+
+  return data;
 };
 
 export const ArticleService = {

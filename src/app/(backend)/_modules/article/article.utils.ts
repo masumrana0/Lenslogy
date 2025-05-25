@@ -4,7 +4,7 @@ import { Language } from "@prisma/client";
 export const fetchArticle = async (
   filters: Partial<(typeof prisma.article.findFirst)["arguments"]["where"]>,
   lang: Language,
-  take: number
+  take: number,
 ) => {
   const article = await prisma.article.findMany({
     where: { ...filters, lang: lang },

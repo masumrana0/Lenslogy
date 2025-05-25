@@ -1,19 +1,20 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { INavDropdown } from "../interface";
+import { INavDropdown } from "@/interface/nav-interface";
+import { usePathname, useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { toggleMobileMenu } from "@/redux/features/nav-states/nav-slice";
 
 const NavMobileDropdown: React.FC<{
   menu: INavDropdown;
-  lang: "en" | "bn";
-}> = ({ menu, lang = "en" }) => {
+}> = ({ menu }) => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  const menuKey = menu.type === "dropdown" ? menu.label.en : null;
-  const isOpen = activeMenu === menuKey;
 
-  
+  const menuKey = menu.type === "dropdown" ? menu.label : null;
+  const isOpen = activeMenu === menuKey;
 
   // Toggle for mobile, hover for desktop
   const handleToggle = () => setActiveMenu(isOpen ? null : menuKey);
@@ -23,7 +24,7 @@ const NavMobileDropdown: React.FC<{
         onClick={handleToggle}
         className="flex items-center justify-between w-full px-4 py-2 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 dark:text-gray-200"
       >
-        {menu.label[lang]}
+        {menu.label}
         <ChevronDown
           size={16}
           className={cn("transition-transform", isOpen && "rotate-180")}
@@ -35,18 +36,16 @@ const NavMobileDropdown: React.FC<{
           {menu.sections.map((section, idx) => (
             <div key={idx} className="mb-4">
               <h4 className="px-4 py-1 font-bold text-sm dark:text-gray-300">
-                {" "}
-                {section.title[lang]}
+                {section.title}
               </h4>
               <div className="space-y-2 mt-2">
                 {section.items.map((item) => (
                   <Link
                     key={item.id}
-                    href={`/gadgets/${item.id}`}
+                    href={`/article/${item.baseId}`}
                     className="block px-4 py-1 hover:text-red-500 dark:text-gray-300 dark:hover:text-red-400"
-                    // onClick={() => setMobileMenuOpen(false)}
                   >
-                    {item.title[lang]}
+                    {item.title}
                   </Link>
                 ))}
               </div>

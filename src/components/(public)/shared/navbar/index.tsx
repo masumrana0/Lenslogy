@@ -11,7 +11,7 @@ import { ReadyNavMenu } from "./content";
 
 const Navbar = async ({ lang = "en" }: { lang: "en" | "bn" }) => {
   const data = await getAllNavArticle(lang);
-  const navContent = ReadyNavMenu(data);
+  const navContent = await ReadyNavMenu(data, lang);
 
   return (
     <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors duration-200">
@@ -34,14 +34,14 @@ const Navbar = async ({ lang = "en" }: { lang: "en" | "bn" }) => {
           {/* Logo */}
           <Logo />
           {/* Desktop  nav menu */}
-          <DesktopNav items={navContent} />
+          <DesktopNav items={navContent} lang={lang} />
 
           {/* Mobile menu button */}
           <NavMobileToggle />
         </div>
 
         {/* Mobile  Nav    */}
-        {/* <MobileNav items={navMenu} /> */}
+        <MobileNav items={navContent} />
       </div>
     </header>
   );

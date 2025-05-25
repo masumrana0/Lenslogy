@@ -19,15 +19,18 @@ interface ArticleSettingsProps {
 }
 const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
   const watch = form.watch();
+  console.log("line 22", watch);
 
-  const pinFields = ["isPinFeatured", "isPinLatest", "isPinHero"];
-  const techFields = ["isEmergingTech", "isHotTech"];
+  const pinFields = ["isPinFeatured", "isPinLatest", "isPinHero", "isPinNav"];
+  const techFields = ["isLatest", "isUpComing"];
+  const anoFields = ["isGadget", "isHotTech"];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {articleBooleanFieldsForUI.map(({ name, desc }) => {
         const isPinField = pinFields.includes(name);
         const isTechField = techFields.includes(name);
+        const isAnoFields = anoFields.includes(name);
         const isChecked = watch[name as keyof Article];
 
         let shouldDisable = false;
@@ -48,6 +51,14 @@ const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
             .some((field) => watch[field as keyof Article]);
 
           shouldDisable = otherPinChecked && !isChecked;
+        }
+        if (isAnoFields) {
+          // If another ano field is selected and this one is not
+          const otherAnoChecked = anoFields
+            .filter((field) => field !== name)
+            .some((field) => watch[field as keyof Article]);
+
+          shouldDisable = otherAnoChecked && !isChecked;
         }
 
         return (

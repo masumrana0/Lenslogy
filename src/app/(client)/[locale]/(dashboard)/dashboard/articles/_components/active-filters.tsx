@@ -45,16 +45,16 @@ const ActiveFilters = ({
         </Badge>
       )}
 
-      {filters.categoryId && (
+      {filters.categoryBaseId && (
         <Badge variant="secondary" className="flex items-center gap-1">
           Category:{" "}
-          {categories.find((c: any) => c.id === filters.categoryId)?.name ||
-            filters.categoryId}
+          {categories.find((c: any) => c.id === filters.categoryBaseId)?.name ||
+            filters.categoryBaseId}
           <Button
             variant="ghost"
             size="sm"
             className="h-4 w-4 p-0 ml-1"
-            onClick={() => onRemoveFilter("categoryId")}
+            onClick={() => onRemoveFilter("categoryBaseId")}
           >
             <X className="h-3 w-3" />
             <span className="sr-only">Remove</span>
@@ -64,7 +64,7 @@ const ActiveFilters = ({
 
       {booleanFilterKeys.map((key) => {
         if (filters[key] === "true") {
-          console.log("key", key);
+ 
           return (
             <Badge
               variant="secondary"

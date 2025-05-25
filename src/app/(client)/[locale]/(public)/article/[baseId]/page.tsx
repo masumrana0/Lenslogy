@@ -45,10 +45,7 @@ export async function generateMetadata({
         (strippedContent.length > 160 ? "..." : "");
     }
 
-    console.log(
-      "Article found, generating metadata with title:",
-      article.title
-    );
+ 
 
     // Generate metadata with article-specific information
     return generateSeoMetadata({

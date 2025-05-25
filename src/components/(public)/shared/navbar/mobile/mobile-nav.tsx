@@ -1,11 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import Link from "next/link";
 import { toggleMobileMenu } from "@/redux/features/nav-states/nav-slice";
-import { INavItem } from "../interface";
 import NavMobileDropdown from "./nav-mob-dropdown";
-import { useParams } from "next/navigation";
+import { INavItem } from "@/interface/nav-interface";
+import { usePathname } from "next/navigation";
 
 const MobileNav: React.FC<{ items: INavItem[] }> = ({ items }) => {
   // Redux state to control mobile menu visibility
@@ -13,10 +13,13 @@ const MobileNav: React.FC<{ items: INavItem[] }> = ({ items }) => {
     (state) => state.navSlice.isMobileMenuOpen
   );
   const dispatch = useAppDispatch();
-
-  // param
-  const { locale } = useParams();
-  const lang = locale === "en" || locale === "bn" ? locale : "en";
+  const pathname = usePathname();
+  useEffect(() => {
+    const handleRouteChange = () => {
+      dispatch(toggleMobileMenu());
+    };
+    handleRouteChange();
+  }, [dispatch, pathname]);
 
   return (
     <>
@@ -32,13 +35,11 @@ const MobileNav: React.FC<{ items: INavItem[] }> = ({ items }) => {
                     className="block px-4 py-2 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 dark:text-gray-200"
                     onClick={() => dispatch(toggleMobileMenu())}
                   >
-                    {item.label[lang]}
+                    {item.label}
                   </Link>
                 );
               } else if (item.type === "dropdown") {
-                return (
-                  <NavMobileDropdown lang={lang} menu={item} key={index} />
-                );
+                return <NavMobileDropdown menu={item} key={index} />;
               }
             })}
           </nav>

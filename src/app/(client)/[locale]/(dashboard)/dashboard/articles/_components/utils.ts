@@ -93,6 +93,10 @@ export const articleBooleanFieldsForUI = [
     desc: "Feature in top hero banner",
   },
   {
+   name:"isPinNav",
+   label:"is article pinned to navbar"
+  },
+  {
     name: "isGadget",
     label: "is article gadget",
     desc: "Tag as gadget article",

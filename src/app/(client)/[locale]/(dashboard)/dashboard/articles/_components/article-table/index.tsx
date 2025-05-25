@@ -182,7 +182,7 @@ const ArticlesTable = () => {
 
     try {
       const res = await deleteArticle(articleToDelete);
-      console.log(res);
+    
       if (res.statusCode === status.OK) {
         toast({
           title: "Deleted",

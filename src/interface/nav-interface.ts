@@ -1,11 +1,10 @@
 import { IArticle } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
-
-interface MenuSection {
+ interface MenuSection {
   title: string;
   items: IArticle[];
 }
 
-// A nav entry is either a simple link or a dropdown
+ 
 interface NavLink {
   type: "link";
   label: string;
@@ -19,3 +18,18 @@ export interface INavDropdown {
 }
 
 export type INavItem = NavLink | INavDropdown;
+
+export interface INavGadget {
+  upcoming: IArticle[];
+  latest: IArticle[];
+}
+
+export interface INavHotTech {
+  ai: IArticle[];
+  emerging: IArticle[];
+}
+
+export interface INavContent {
+  navHotTech: INavHotTech;
+  navGadget: INavGadget;
+}

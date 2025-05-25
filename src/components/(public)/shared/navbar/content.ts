@@ -1,63 +1,54 @@
-import { IArticle } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
-import { INavItem } from "./interface";
+import { getServerTranslation } from "@/lib/i18n/i18n.server";
+import { INavContent, INavItem } from "@/interface/nav-interface";
 
-interface NavGadget {
-  upcoming: IArticle[];
-  latest: IArticle[];
-}
+export const ReadyNavMenu = async (
+  data: INavContent,
+  locale: string = "en"
+): Promise<INavItem[]> => {
+  const { t } = await getServerTranslation(locale);
 
-interface NavHotTech {
-  ai: IArticle[];
-  emerging: IArticle[];
-}
+  const ai = data?.navHotTech?.ai || [];
+  const em = data?.navHotTech?.emerging || [];
+  const upcoming = data?.navGadget?.upcoming || [];
+  const latest = data?.navGadget?.latest || [];
 
-interface IPram {
-  navHotTech: NavHotTech;
-  navGadget: NavGadget;
-}
-
-export const ReadyNavMenu = (data: IPram): INavItem[] => {
-  const ai = data.navHotTech.ai || [];
-  const em = data.navHotTech.emerging || [];
-  const upcoming = data.navGadget.upcoming || [];
-  const latest = data.navGadget.latest || [];
   const navMenu: INavItem[] = [
     {
       type: "link",
-      label: "mobiles",
+      label: t("navbar.mobiles"),
       href: "/mobiles",
     },
     {
       type: "dropdown",
-      label: "gadgets",
+      label: t("navbar.gadgets.label"),
       sections: [
         {
-          title: "latest",
-          items: [...latest],
+          title: t("navbar.gadgets.sub.latest"),
+          items: latest,
         },
         {
-          title: "upcoming",
-          items: [...upcoming],
+          title: t("navbar.gadgets.sub.upcoming"),
+          items: upcoming,
         },
       ],
     },
     {
       type: "dropdown",
-      label: "hotTech",
+      label: t("navbar.hotTech.label"),
       sections: [
         {
-          title: "ai",
-          items: [...ai],
+          title: t("navbar.hotTech.sub.ai"),
+          items: ai,
         },
         {
-          title: "emerging",
-          items: [...em],
+          title: t("navbar.hotTech.sub.emerging"),
+          items: em,
         },
       ],
     },
     {
       type: "link",
-      label: "contact",
+      label: t("navbar.contact"),
       href: "/contact",
     },
   ];
