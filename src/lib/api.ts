@@ -40,11 +40,28 @@ export async function getCategories(lang: Language) {
   return data.data;
 }
 
-export async function getAllArticleWithFilter(query: string) {
+export async function getAllArticleWithFilter(query: string, url: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/articles/featured${query}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/articles/${url}${query}`,
     { method: "GET", cache: "no-cache" }
   );
+
+  if (!res.ok) {
+    return [];
+  }
+
+  const data = await res.json();
+  return data.data;
+}
+
+export async function getAllNavArticle(lang: Language) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/nav`, {
+    method: "GET",
+    cache: "force-cache",
+    next: {
+      revalidate: 120,
+    },
+  });
 
   if (!res.ok) {
     return [];

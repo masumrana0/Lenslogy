@@ -39,7 +39,19 @@ const getAllArticle = catchAsync(async (req: Request) => {
     data: result,
   });
 });
+
+// get all featured article
 const getAllFeaturedArticle = catchAsync(async (req: Request) => {
+  const result = await ArticleService.getAllFeaturedArticle(req);
+  return sendResponse({
+    statusCode: status.OK,
+    message: "Article retrieved successfully",
+    data: result,
+  });
+});
+
+// get all Latest article
+const getAllLatestArticle = catchAsync(async (req: Request) => {
   const result = await ArticleService.getAllFeaturedArticle(req);
   return sendResponse({
     statusCode: status.OK,
@@ -84,4 +96,5 @@ export const ArticleController = {
   getForNavbar,
   getOneArticle,
   getAllFeaturedArticle,
+  getAllLatestArticle,
 };

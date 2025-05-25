@@ -42,17 +42,19 @@ const ArticleGrid = ({
   };
 
   return (
-    <div className={`grid ${gridCols[columns]} gap-6`}>
-      {articles.map((article) => (
-        <ArticleCard
-          lang={lang}
-          key={article.id}
-          article={article}
-          variant={variant}
-          showCategory={showCategory}
-          showExcerpt={showExcerpt}
-        />
-      ))}
+    <div className="w-full">
+      <div className={`grid ${gridCols[columns]} gap-6`}>
+        {articles.map((article) => (
+          <ArticleCard
+            lang={lang}
+            key={article.id}
+            article={article}
+            variant={variant}
+            showCategory={showCategory}
+            showExcerpt={showExcerpt}
+          />
+        ))}
+      </div>
 
       {articles.length > 0 && meta?.total && (
         <PaginationControls

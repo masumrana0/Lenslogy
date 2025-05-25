@@ -10,7 +10,24 @@
     "allCategories": "সমস্ত বিভাগ",
     "noArticlesFound": "আপনার মানদণ্ড অনুযায়ী কোন নিবন্ধ পাওয়া যায়নি"
   },
-
+  "navbar": {
+    "mobiles": "মোবাইল",
+    "gadgets": {
+      "label": "গ্যাজেট",
+      "sub": {
+        "latest": "সর্বশেষ গ্যাজেট",
+        "upcoming": "আসন্ন গ্যাজেট"
+      }
+    },
+    "hotTech": {
+      "label": "হট টেক",
+      "sub": {
+        "ai": "এআই এবং মেশিন লার্নিং",
+        "emerging": "উদীয়মান প্রযুক্তি"
+      }
+    },
+    "contact": "যোগাযোগ করুন"
+  },
   "homePage": {
     "featuredStories": "বৈশিষ্ট্যযুক্ত গল্প",
     "popularThisWeek": "এই সপ্তাহে জনপ্রিয়",

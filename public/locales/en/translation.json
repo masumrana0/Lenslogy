@@ -10,6 +10,24 @@
     "allCategories": "All Categories",
     "noArticlesFound": "No articles found matching your criteria"
   },
+  "navbar": {
+    "mobiles": "Mobiles",
+    "gadgets": {
+      "label": "Gadgets",
+      "sub": {
+        "latest": "LATEST GADGETS",
+        "upcoming": "UPCOMING GADGETS"
+      }
+    },
+    "hotTech": {
+      "label": "Hot Tech",
+      "sub": {
+        "ai": "AI & MACHINE LEARNING",
+        "emerging": "EMERGING TECHNOLOGIES"
+      }
+    },
+    "contact": "Contact Us"
+  },
 
   "homePage": {
     "featuredStories": "Featured Stories",

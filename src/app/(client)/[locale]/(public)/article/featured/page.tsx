@@ -16,7 +16,7 @@ const FeaturedPage = async ({
   const query = objectToQuery(filter);
 
   const categories = (await getCategories(lang)) || [];
-  const data = await getAllArticleWithFilter(query);
+  const data = await getAllArticleWithFilter(query, "featured");
 
   return (
     <ArticlesPageLayout

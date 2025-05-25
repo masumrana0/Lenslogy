@@ -1,31 +1,20 @@
-type LocalizedString = {
-  en: string;
-  bn: string;
-};
-
-interface MenuItem {
-  id: number;
-  title: LocalizedString;
-  image: string;
-  category: LocalizedString;
-  createdAt: string;
-}
+import { IArticle } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
 
 interface MenuSection {
-  title: LocalizedString;
-  items: MenuItem[];
+  title: string;
+  items: IArticle[];
 }
 
 // A nav entry is either a simple link or a dropdown
 interface NavLink {
   type: "link";
-  label: LocalizedString;
+  label: string;
   href: string;
 }
 
 export interface INavDropdown {
   type: "dropdown";
-  label: LocalizedString;
+  label: string;
   sections: MenuSection[];
 }
 
