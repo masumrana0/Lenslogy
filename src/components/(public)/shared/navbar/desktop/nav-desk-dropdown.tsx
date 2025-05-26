@@ -136,8 +136,8 @@ const DeskNavDropdown: React.FC<{ menu: INavDropdown; lang: "en" | "bn" }> = ({
                           <span className="text-xs text-red-500 dark:text-red-400">
                             {item?.category.name}
                           </span>
-                          <h4 className="text-sm font-medium leading-tight group-hover:text-red-500 dark:text-gray-200 dark:group-hover:text-red-400">
-                            {item?.title}
+                          <h4 className="text-sm font-medium leading-tight group-hover:text-red-500 dark:text-gray-200 dark:group-hover:text-red-400 text-wrap">
+                            {item?.title.slice(0, 90)}...
                           </h4>
                           <span className="text-xs text-gray-500 dark:text-gray-400">
                             {formatTimestampWithTranslation(item?.createdAt)}

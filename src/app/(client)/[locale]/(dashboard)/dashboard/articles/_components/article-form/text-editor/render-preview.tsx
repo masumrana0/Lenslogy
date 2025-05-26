@@ -1,16 +1,17 @@
+"use client";
 import React from "react";
 import { cn } from "@/lib/utils";
 
 interface RenderPreviewProps {
   content: string;
-  isFullscreen: boolean;
-  viewMode: "edit" | "preview" | "split";
+  isFullscreen?: boolean;
+  viewMode?: "edit" | "preview" | "split";
 }
 
 const RenderPreview: React.FC<RenderPreviewProps> = ({
   content,
-  isFullscreen,
-  viewMode,
+  isFullscreen = false,
+  viewMode = "preview",
 }) => {
   // If content is empty, show placeholder
   if (!content || content.trim() === "") {

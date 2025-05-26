@@ -1,12 +1,9 @@
-// "use client";
 import Link from "next/link";
 import React from "react";
 import DeskNavDropdown from "./nav-desk-dropdown";
-import { INavItem } from "../interface";
-// import { useParams } from "next/navigation";
-// import { useTranslation } from "react-i18next";
-// import { useTranslationReady } from "@/hooks/use-translation-ready";
+
 import { Language } from "@prisma/client";
+import { INavItem } from "@/interface/nav-interface";
 
 const DesktopNav: React.FC<{
   items: INavItem[];
@@ -22,7 +19,6 @@ const DesktopNav: React.FC<{
               href={item.href}
               className="font-medium hover:text-red-500 dark:text-gray-200 dark:hover:text-red-400"
             >
-              {/* {t(`navbar.${item.label}`)} */}
               {item.label}
             </Link>
           );

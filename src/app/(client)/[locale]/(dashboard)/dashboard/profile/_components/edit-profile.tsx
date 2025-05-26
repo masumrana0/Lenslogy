@@ -1,12 +1,14 @@
 "use client";
-import React, { SetStateAction, useState } from "react";
-import { IUser } from "../../users/_interface/user.interface";
-import z from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
+import React, { SetStateAction, useState } from "react";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { IUser } from "../../users/_interface/user.interface";
 // components
-import { toast } from "@/components/ui/toast";
+import { AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { CardFooter } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -16,13 +18,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-import { AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { CardFooter } from "@/components/ui/card";
-import { editProfileSchema } from "@/schama";
+import { toast } from "@/components/ui/toast";
 import { useUpdateUserMutation } from "@/redux/api/user.api";
+import { editProfileSchema } from "@/schama/validation-schema";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import status from "http-status";
 
 import { useRouter } from "next/navigation";

@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,9 +11,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
-import { categorySchema } from "@/schama";
 import { useCreateCategoryMutation } from "@/redux/api/category.api";
+import { categorySchema } from "@/schama/validation-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import status from "http-status";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 type FormValues = z.infer<typeof categorySchema>;
 const CategoryForm = () => {

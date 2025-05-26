@@ -1,13 +1,14 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import status from "http-status";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 // Components
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -18,7 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -29,10 +29,10 @@ import {
 
 // Utils & Redux
 import { toast } from "@/components/ui/toast";
-import { userSchema } from "@/schama";
-import { availableRoles } from "../_utils";
-import { IRole } from "../_interface/user.interface";
 import { useCreateUserMutation } from "@/redux/api/user.api";
+import { userSchema } from "@/schama/validation-schema";
+import { IRole } from "../_interface/user.interface";
+import { availableRoles } from "../_utils";
 
 type FormValues = z.infer<typeof userSchema>;
 

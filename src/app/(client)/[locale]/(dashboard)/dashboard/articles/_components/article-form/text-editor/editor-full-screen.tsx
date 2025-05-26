@@ -10,6 +10,7 @@ const EditorFullScreen: React.FC<IFullScreenEditorProps> = ({
   wordCount,
   value,
   setIsFullscreen,
+  isFullscreen,
   setViewMode,
   viewMode,
   latestValueRef,
@@ -99,7 +100,7 @@ const EditorFullScreen: React.FC<IFullScreenEditorProps> = ({
         <CustomToolBar
           charCount={charCount}
           wordCount={wordCount}
-          isFullscreen
+          isFullscreen={isFullscreen}
           setIsFullscreen={setIsFullscreen}
           setViewMode={setViewMode}
           viewMode={viewMode}
@@ -112,6 +113,7 @@ const EditorFullScreen: React.FC<IFullScreenEditorProps> = ({
             value={value}
             viewMode={viewMode}
             config={config}
+            isFullscreen={isFullscreen}
           />
         </div>
 

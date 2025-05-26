@@ -29,6 +29,7 @@ export interface IFullScreenEditorProps {
   value: string;
   setViewMode: (mode: IViewMode) => void;
   setIsFullscreen: (value: boolean) => void;
+  isFullscreen: boolean;
   charCount: number;
   wordCount: number;
   onChange: (value: string) => void;
@@ -47,6 +48,7 @@ export interface ISmallScreenEditorProps {
   latestValueRef: RefObject<any>;
   config?: object;
   className?: string;
+  isFullscreen: boolean;
 }
 
 export interface IEditorContentProps {
@@ -55,6 +57,7 @@ export interface IEditorContentProps {
   onChange: (value: string) => void;
   latestValueRef: RefObject<any>;
   config?: object;
+  isFullscreen: boolean;
 }
 
 export interface IGetEditorConfigProps {

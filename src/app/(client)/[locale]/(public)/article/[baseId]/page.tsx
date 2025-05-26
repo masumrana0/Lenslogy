@@ -7,6 +7,7 @@ import ArticleHeader from "./_components/article-header";
 import { generateSeoMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { getOneArticle } from "@/lib/api";
+import RenderPreview from "../../../(dashboard)/dashboard/articles/_components/article-form/text-editor/render-preview";
 
 // Generate metadata for the article page
 export async function generateMetadata({
@@ -44,8 +45,6 @@ export async function generateMetadata({
         strippedContent.substring(0, 160) +
         (strippedContent.length > 160 ? "..." : "");
     }
-
- 
 
     // Generate metadata with article-specific information
     return generateSeoMetadata({
@@ -107,12 +106,7 @@ const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
 
           {/* article main content  */}
           <div className="md:flex-1 order-1 md:order-2">
-            <div
-              className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-a:text-red-500 dark:prose-a:text-red-400 prose-a:no-underline hover:prose-a:underline"
-              dangerouslySetInnerHTML={{
-                __html: article?.content,
-              }}
-            />
+            <RenderPreview  content={article?.content as string} />
           </div>
         </div>
       </article>

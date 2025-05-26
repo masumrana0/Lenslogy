@@ -30,13 +30,23 @@ export const categorySchema = z.object({
 
 export const articleSchema = z
   .object({
-    title: z.string().min(5, {
-      message: "Title must be at least 5 characters",
-    }),
-    excerpt: z.string().min(10, {
-      message: "Excerpt must be at least 10 characters",
-    }),
-    content: z.string().min(50, {
+    title: z
+      .string()
+      .min(10, {
+        message: "Title must be at least 5 characters",
+      })
+      .max(150, {
+        message: "Title must be max 250 characters",
+      }),
+    excerpt: z
+      .string()
+      .min(20, {
+        message: "Excerpt must be at least 10 characters",
+      })
+      .max(250, {
+        message: "Title must be max 350 characters",
+      }),
+    content: z.string().min(100, {
       message: "Content must be at least 50 characters",
     }),
     image: z.union([z.instanceof(File), z.string().length(0)]).refine(

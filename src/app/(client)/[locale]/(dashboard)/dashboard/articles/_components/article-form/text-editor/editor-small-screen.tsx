@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import React from "react";
 import EditorContent from "./editor-content";
@@ -16,6 +17,7 @@ const EditorSmallScreenView: React.FC<ISmallScreenEditorProps> = ({
   onChange,
   config,
   setIsFullscreen,
+  isFullscreen,
 }) => {
   return (
     <div className={cn("jodit-editor-wrapper", className)}>
@@ -163,7 +165,7 @@ const EditorSmallScreenView: React.FC<ISmallScreenEditorProps> = ({
       <CustomToolBar
         charCount={charCount}
         wordCount={wordCount}
-        isFullscreen
+        isFullscreen={isFullscreen}
         setIsFullscreen={setIsFullscreen}
         setViewMode={setViewMode}
         viewMode={viewMode}
@@ -176,6 +178,7 @@ const EditorSmallScreenView: React.FC<ISmallScreenEditorProps> = ({
         value={value}
         viewMode={viewMode}
         config={config}
+        isFullscreen={isFullscreen}
       />
 
       {/* Status Bar */}

@@ -1,11 +1,20 @@
 "use client";
+
 import type React from "react";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { useTheme } from "next-themes";
 import EditorFullScreen from "./editor-full-screen";
 import EditorSmallScreenView from "./editor-small-screen";
 import { IEditorProps, IViewMode } from "./interface/editor-interface";
 import getEditorConfig from "./editor-config";
+
+const debounce = (func: (...args: any[]) => void, wait: number) => {
+  let timeout: ReturnType<typeof setTimeout>;
+  return (...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
 
 const TextEditorWithPreview: React.FC<IEditorProps> = ({
   value,
@@ -20,32 +29,71 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [editorInitialized, setEditorInitialized] = useState(false);
   const latestValueRef = useRef(value);
-  const isInternalUpdateRef = useRef(false);
+  const hasExternalValueChanged = useRef(false);
 
-  const config: Record<string, any> = getEditorConfig({
-    editorRef,
-    isDark,
-    isFullscreen,
-    setEditorInitialized,
-    viewMode,
-    placeholder,
-  });
+  const config = useMemo(
+    () =>
+      getEditorConfig({
+        editorRef,
+        isDark,
+        isFullscreen,
+        setEditorInitialized,
+        viewMode,
+        placeholder,
+      }),
+    [isDark, isFullscreen, viewMode, placeholder]
+  );
 
-  // Auto-save to localStorage
+  // Restore from localStorage once
   useEffect(() => {
-    const savedContent = localStorage.getItem("jodit-editor-content");
-    if (savedContent && !value) {
-      onChange(savedContent);
+    const saved = localStorage.getItem("jodit-editor-content");
+    if (saved && !value) {
+      onChange(saved);
     }
   }, []);
 
+  // Update localStorage only on true external change
   useEffect(() => {
-    if (value && !isInternalUpdateRef.current) {
-      localStorage.setItem("jodit-editor-content", value);
+    if (latestValueRef.current !== value) {
+      hasExternalValueChanged.current = true;
+      latestValueRef.current = value;
     }
   }, [value]);
 
-  // Handle fullscreen mode
+  // Sync external value only if it’s different and editor is initialized
+  useEffect(() => {
+    if (
+      editorRef.current &&
+      editorInitialized &&
+      hasExternalValueChanged.current
+    ) {
+      const editor = editorRef.current;
+      if (editor.value !== value) {
+        const selection = editor.selection?.save();
+        editor.value = value;
+        if (selection) editor.selection?.restore(selection);
+      }
+      hasExternalValueChanged.current = false;
+    }
+  }, [value, editorInitialized]);
+
+  // Save to localStorage on user change
+  const debouncedSave = useCallback(
+    debounce((newContent: string) => {
+      localStorage.setItem("jodit-editor-content", newContent);
+      onChange(newContent);
+    }, 300),
+    [onChange]
+  );
+
+  const handleEditorChange = useCallback(
+    (newContent: string) => {
+      latestValueRef.current = newContent;
+      debouncedSave(newContent);
+    },
+    [debouncedSave]
+  );
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isFullscreen) {
@@ -66,78 +114,31 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
     };
   }, [isFullscreen]);
 
-  // Update editor content only when value changes externally
-  useEffect(() => {
-    if (
-      editorRef.current &&
-      editorInitialized &&
-      !isInternalUpdateRef.current
-    ) {
-      const editor = editorRef.current;
-      if (editor.value !== value) {
-        const selection = editor.selection?.save();
-        editor.value = value;
-        if (selection) {
-          editor.selection?.restore(selection);
-        }
-      }
-    }
-    latestValueRef.current = value;
-  }, [value, editorInitialized]);
+  const plainText = latestValueRef.current.replace(/<[^>]*>/g, "");
+  const wordCount = plainText.trim().split(/\s+/).filter(Boolean).length;
+  const charCount = plainText.length;
 
-  // Handle editor changes without causing re-renders
-  const handleEditorChange = useCallback(
-    (newContent: string) => {
-      if (isInternalUpdateRef.current) return;
+  const editorProps = {
+    charCount,
+    latestValueRef,
+    onChange: handleEditorChange,
+    setIsFullscreen,
+    setViewMode,
+    value,
+    viewMode,
+    wordCount,
+    config,
+  };
 
-      isInternalUpdateRef.current = true;
-      latestValueRef.current = newContent;
-
-      // Use requestAnimationFrame to ensure this runs after the current render cycle
-      requestAnimationFrame(() => {
-        onChange(newContent);
-        isInternalUpdateRef.current = false;
-      });
-    },
-    [onChange]
+  return isFullscreen ? (
+    <EditorFullScreen {...editorProps} />
+  ) : (
+    <EditorSmallScreenView
+      {...editorProps}
+      isFullscreen={isFullscreen}
+      className={className}
+    />
   );
-
-  const wordCount = value
-    .replace(/<[^>]*>/g, "")
-    .split(/\s+/)
-    .filter((word) => word.length > 0).length;
-  const charCount = value.replace(/<[^>]*>/g, "").length;
-
-  if (isFullscreen) {
-    return (
-      <EditorFullScreen
-        charCount={charCount}
-        latestValueRef={latestValueRef}
-        onChange={handleEditorChange}
-        setIsFullscreen={setIsFullscreen}
-        setViewMode={setViewMode}
-        value={value}
-        viewMode={viewMode}
-        wordCount={wordCount}
-        config={config}
-      />
-    );
-  } else {
-    return (
-      <EditorSmallScreenView
-        charCount={charCount}
-        latestValueRef={latestValueRef}
-        onChange={handleEditorChange}
-        setIsFullscreen={setIsFullscreen}
-        setViewMode={setViewMode}
-        value={value}
-        viewMode={viewMode}
-        wordCount={wordCount}
-        config={config}
-        className={className}
-      />
-    );
-  }
 };
 
 export default TextEditorWithPreview;
