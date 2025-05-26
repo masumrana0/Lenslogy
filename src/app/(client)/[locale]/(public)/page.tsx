@@ -13,10 +13,6 @@ const HomePage = async ({ params }: IParamsProps) => {
   const lang = resolvedParams.locale;
   const data = await getHomeAllArticles(lang);
 
-  // if (!data) {
-  //   notFound();
-  // }
-
   return (
     <div className="min-h-screen">
       <HeroSection articles={data?.isPinHero} lang={lang} />

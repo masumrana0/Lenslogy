@@ -19,7 +19,7 @@ const ActiveFilters = ({
 }: ActiveFiltersProps) => {
   const hasActiveFilters = Boolean(
     filters.searchTerm ||
-      filters.categoryId ||
+      filters.categoryBaseId ||
       filters.sortBy ||
       filters.sortOrder ||
       booleanFilterKeys.some((key) => filters[key] === "true")
@@ -64,7 +64,6 @@ const ActiveFilters = ({
 
       {booleanFilterKeys.map((key) => {
         if (filters[key] === "true") {
- 
           return (
             <Badge
               variant="secondary"

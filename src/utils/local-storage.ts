@@ -7,7 +7,7 @@ export const setToLocalStorageAsStringify = (key: string, data: any) => {
   return localStorage.setItem(key, JSON.stringify(data));
 };
 
-export const getFromLocalStorageAsParse = (key: string) => {
+export const getFromLocalStorageAsParse = (key: string, p0: string) => {
   if (!key || typeof window === "undefined") {
     return "";
   }

@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 // UI Components
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
 import { Loader2, Save } from "lucide-react";
@@ -26,6 +26,7 @@ import ArticleTextInputs from "./article-content-form";
 import ArticleMediaCategoryInputs from "./article-media-form";
 import ArticleSettings from "./article-settings";
 import { articleResetState } from "../utils";
+import TextEditorWithPreview from "./text-editor";
 
 interface ArticleFormProps {
   article?: Partial<Article>;
@@ -183,6 +184,25 @@ const ArticleForm = ({ article, onSuccess }: ArticleFormProps) => {
                     setImagePreview={setImagePreview}
                   />
                 </div>
+                {/* Content */}
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Content</FormLabel>
+                      <FormControl>
+                        <TextEditorWithPreview
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Write your article content..."
+                          className="min-h-[500px]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </TabsContent>
 
               {/* Settings Tab */}

@@ -103,3 +103,6 @@
 //     return NextResponse.json({ error: "Failed to reset password" }, { status: 500 })
 //   }
 // }
+export async function GET(req: Request) {
+  return new Response("Popular articles");
+}

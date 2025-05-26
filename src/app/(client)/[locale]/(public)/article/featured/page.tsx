@@ -2,19 +2,14 @@ import { Language } from "@prisma/client";
 import ArticlesPageLayout from "../_components/page-layout/page-layout";
 import { getAllArticleWithFilter, getCategories } from "@/lib/api";
 import { objectToQuery } from "@/utils/query";
+import { PageProps } from "@/interface/common";
 
-const FeaturedPage = async ({
-  searchParams,
-  params,
-}: {
-  params: { locale: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
-  const lang = params.locale as Language;
-  const filter = { ...searchParams, lang: lang, isFeatured: true };
 
+const FeaturedPage = async ({ searchParams, params }: PageProps) => {
+  const lang = (await params).locale as Language;
+  const resolvedSearchParams = await searchParams;
+  const filter = { ...resolvedSearchParams, lang: lang, isFeatured: true };
   const query = objectToQuery(filter);
-
   const categories = (await getCategories(lang)) || [];
   const data = await getAllArticleWithFilter(query, "featured");
 

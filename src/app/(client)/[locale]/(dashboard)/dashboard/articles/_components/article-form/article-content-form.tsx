@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Article } from "@prisma/client";
 import { UseFormReturn } from "react-hook-form";
-import { RichTextEditor } from "./editor";
 
 type Props = {
   form: UseFormReturn<Article>;
@@ -48,26 +47,6 @@ const ArticleTextInputs = ({ form }: Props) => (
               placeholder="Brief summary..."
               className="min-h-[100px]"
               {...field}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-
-    {/* Content */}
-    <FormField
-      control={form.control}
-      name="content"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Content</FormLabel>
-          <FormControl>
-            <RichTextEditor
-              value={field.value}
-              onChange={field.onChange}
-              placeholder="Write your article content..."
-              className="min-h-[500px]"
             />
           </FormControl>
           <FormMessage />
