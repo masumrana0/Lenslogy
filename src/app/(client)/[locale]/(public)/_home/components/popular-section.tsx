@@ -90,7 +90,7 @@ const popularArticlesCore = {
 
 const PopularSection = ({
   lang = "en",
-  articles = [],
+  articles,
 }: {
   lang?: "en" | "bn";
   articles: IArticle;
@@ -101,15 +101,16 @@ const PopularSection = ({
       <ViewAll href="popular" title="Popular This Week" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
-        {articles.map((article: IArticle) => (
-          <CompactArticleCard
-            lang={lang}
-            article={article}
-            key={article.id}
-            showCategory
-            showExcerpt={true}
-          />
-        ))}
+        {Array.isArray(articles) &&
+          articles.map((article: IArticle) => (
+            <CompactArticleCard
+              lang={lang}
+              article={article}
+              key={article.id}
+              showCategory
+              showExcerpt={true}
+            />
+          ))}
       </div>
     </section>
   );

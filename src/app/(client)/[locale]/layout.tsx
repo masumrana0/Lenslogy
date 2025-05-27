@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 // import { notFound } from "next/navigation";
 import { dir } from "i18next";
+import { Language } from "@prisma/client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,24 +17,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WiRE - Technology Blog",
+  title: "Lenslogy - Technology Blog",
   description: "Your source for the latest tech news, reviews, and insights",
 };
 
-export async function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "bn" }];
+interface LayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: Language }>;
 }
 
-type RootLayoutProps = {
-  children: React.ReactNode;
-  params: { locale: string };
-};
-
-export default async function RootLayout({
-  children,
-  params = { locale: "en" },
-}: RootLayoutProps) {
-  const locale = params?.locale;
+export default async function RootLayout({ children, params }: LayoutProps) {
+  const locale = (await params)?.locale;
 
   return (
     <html lang={locale} dir={dir(locale)} suppressHydrationWarning>

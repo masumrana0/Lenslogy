@@ -4,7 +4,7 @@ import ProfilePage from "./_components";
 
 const Page = async () => {
   const session = await getServerSession(authOptions);
-  return <ProfilePage user={session?.user} />;
+  return <ProfilePage user={session?.user as any} />;
 };
 
 export default Page;

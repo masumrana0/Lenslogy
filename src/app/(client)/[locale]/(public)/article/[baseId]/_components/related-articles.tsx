@@ -1,10 +1,7 @@
 import DefaultArticleCard from "../../_components/article-card/default-card";
-import {
-  IArticleForCard,
-  RelatedArticlesProps,
-} from "../../_interface/interface";
+import { RelatedArticlesProps } from "../../_interface/interface";
 
-const relatedArticles: IArticleForCard[] = [
+const relatedArticles = [
   {
     id: "1",
     title: "অ্যাপলের ভিশন প্রো: এটি কীভাবে মেটা কোয়েস্ট ৩ এর সাথে তুলনা করে",
@@ -49,14 +46,14 @@ const RelatedArticles = ({
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article) => (
+          {/* {articles.map((article) => (
             <DefaultArticleCard
               article={article}
               key={article.id}
               showCategory
               showExcerpt
             />
-          ))}
+          ))} */}
         </div>
       </div>
     </section>

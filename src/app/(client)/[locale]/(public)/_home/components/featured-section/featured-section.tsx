@@ -16,15 +16,16 @@ const FeaturedSection = ({
       <ViewAll title="Featured Blog" href="featured" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {featuredArticles?.map((article: IArticle) => (
-          <DefaultArticleCard
-            lang={lang}
-            article={article}
-            key={article.id}
-            showCategory
-            showExcerpt
-          />
-        ))}
+        {Array.isArray(featuredArticles) &&
+          featuredArticles.map((article: IArticle) => (
+            <DefaultArticleCard
+              lang={lang}
+              article={article}
+              key={article.id}
+              showCategory
+              showExcerpt
+            />
+          ))}
       </div>
     </section>
   );

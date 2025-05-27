@@ -50,7 +50,7 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
     if (saved && !value) {
       onChange(saved);
     }
-  }, []);
+  }, [onChange, value]);
 
   // Update localStorage only on true external change
   useEffect(() => {
@@ -78,6 +78,7 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
   }, [value, editorInitialized]);
 
   // Save to localStorage on user change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
     debounce((newContent: string) => {
       localStorage.setItem("jodit-editor-content", newContent);
@@ -123,6 +124,7 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
     latestValueRef,
     onChange: handleEditorChange,
     setIsFullscreen,
+    isFullscreen,
     setViewMode,
     value,
     viewMode,
