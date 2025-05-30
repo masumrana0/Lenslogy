@@ -19,9 +19,9 @@ const HeroSection = ({
       <div className="md:col-span-2 relative group">
         <div className="relative h-[400px] overflow-hidden">
           <Image
-            src={mainArticle.image || "/placeholder.svg"}
+            src={mainArticle?.image || "/placeholder.svg"}
             fill
-            alt={mainArticle.title}
+            alt={mainArticle?.title}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
@@ -36,13 +36,13 @@ const HeroSection = ({
               {mainArticle?.title}
             </Link>
           </h2>
-          {mainArticle.excerpt && (
+          {mainArticle?.excerpt && (
             <p className="text-gray-200 mb-2 line-clamp-2">
-              {mainArticle.excerpt}
+              {mainArticle?.excerpt}
             </p>
           )}
           <span className="text-sm text-gray-300">
-            {formatTimestampWithTranslation(mainArticle.createdAt, lang)}
+            {formatTimestampWithTranslation(mainArticle?.createdAt, lang)}
           </span>
         </div>
       </div>
