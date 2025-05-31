@@ -4,6 +4,13 @@ import { Role } from "@prisma/client";
 import Auth from "../../_core/error-handler/auth";
 import { ApiErrors } from "../../_core/errors/api-error";
 import { passwordHelper } from "../../_core/helper/password-security";
+/**
+ * Title: ''
+ * Description: ''
+ * Author: 'Masum Rana'
+ * Date: 31-05-2025
+ *
+*/
 
 const createUser = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
