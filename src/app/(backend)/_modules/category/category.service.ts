@@ -3,18 +3,23 @@ import prisma from "@/lib/prisma";
 import { ApiErrors } from "../../_core/errors/api-error";
 import Auth from "../../_core/error-handler/auth";
 import { Language, Role } from "@prisma/client";
+import { log } from "console";
 
 // create category
 export const createCategory = async (req: Request) => {
   await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
 
   const { name } = await req.json();
+  console.log("category_name payload", name);
 
   const isExistedCategory = await prisma.category.findUnique({
     where: {
       name: name,
+      lang: "en",
     },
   });
+
+   
 
   if (isExistedCategory) {
     throw ApiErrors.BadRequest(
@@ -23,6 +28,7 @@ export const createCategory = async (req: Request) => {
   }
 
   const translated = await translateContent({ name });
+  console.log(translated);
 
   const result = await prisma.$transaction(async (tx) => {
     const englishCategory = await tx.category.create({
@@ -42,6 +48,8 @@ export const createCategory = async (req: Request) => {
 
     return { en: englishCategory, bn: banglaCategory };
   });
+
+  console.log("result", result);
 
   return result;
 };

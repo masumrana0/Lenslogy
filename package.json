@@ -50,6 +50,7 @@
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
     "formidable": "^3.5.4",
     "html-react-parser": "^5.2.5",
     "http-status": "^2.1.0",
