@@ -21,6 +21,8 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
   placeholder,
   className,
 }) => {
+
+  
   const editorRef = useRef<any>(null);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";

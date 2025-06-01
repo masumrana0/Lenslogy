@@ -1,16 +1,17 @@
-// import { authOptions } from "@/lib/next-auth/auth";
-// import { getServerSession } from "next-auth/next";
-// import { redirect } from "next/navigation";
-
+"use client";
 import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
-import ArticleFormWrapper from "./_components/article-form/form-wrapper";
+import { useEffect, useState } from "react";
+import ArticleForm from "./_components/article-form/article-form";
+import ArticleFormSkeleton from "./_components/skeleton/article-form-skeleton";
+
+// Import a simple placeholder instead of the complex form
 
 const NewArticlePage = () => {
-  // const session = getServerSession(authOptions);
+  const [showForm, setShowForm] = useState(false);
 
-  // if (!session) {
-  //   redirect("/auth/login");
-  // }
+  useEffect(() => {
+    setShowForm(true);
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -19,7 +20,7 @@ const NewArticlePage = () => {
         text="Create a new article for your blog"
       />
 
-      <ArticleFormWrapper />
+      {!showForm ? <ArticleFormSkeleton /> : <ArticleForm />}
     </div>
   );
 };
