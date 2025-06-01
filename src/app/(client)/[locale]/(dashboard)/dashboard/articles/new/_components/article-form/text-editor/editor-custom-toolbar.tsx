@@ -14,7 +14,6 @@ const CustomToolBar: React.FC<ICustomToolBarProps> = ({
   charCount,
   wordCount,
 }) => {
-  console.log('isFullScren',isFullscreen);
   return (
     <div className="flex items-center gap-1 p-3 border border-b-0 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-t-lg">
       {/* View Mode Toggle */}

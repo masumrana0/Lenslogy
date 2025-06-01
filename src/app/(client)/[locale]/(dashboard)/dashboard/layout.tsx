@@ -1,13 +1,13 @@
 import { authOptions } from "@/lib/next-auth/auth";
 import { getServerSession } from "next-auth/next";
 import type React from "react";
-
 import { DashboardNav } from "@/components/(dashboard)/shared/nav";
 import { UserNav } from "@/components/(dashboard)/shared/nav/user-nav";
 import Logo from "@/components/(public)/shared/navbar/logo";
 import LanguageSwitcher from "@/components/(public)/shared/navbar/switch-lang";
 import Theme from "@/components/(public)/shared/navbar/theme";
 import { IRole } from "./users/_interface/user.interface";
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
@@ -23,9 +23,9 @@ export default async function DashboardLayout({
     };
   };
 
-  // if (!session) {
-  //   redirect("/auth/login");
-  // }
+  if (!session) {
+    redirect("/auth/login");
+  }
 
   return (
     <div className="flex min-h-screen flex-col">

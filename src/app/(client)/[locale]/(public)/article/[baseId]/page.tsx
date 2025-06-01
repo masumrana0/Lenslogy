@@ -7,7 +7,8 @@ import ArticleHeader from "./_components/article-header";
 import { generateSeoMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import { getOneArticle } from "@/lib/api";
-import RenderPreview from "../../../(dashboard)/dashboard/articles/_components/article-form/text-editor/render-preview";
+import RenderPreview from "../../../(dashboard)/dashboard/articles/new/_components/article-form/text-editor/render-preview";
+ 
 
 // Generate metadata for the article page
 export async function generateMetadata({
