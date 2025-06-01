@@ -3,7 +3,8 @@ import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 
 import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
-import ArticleForm from "../_components/article-form/article-form";
+import ArticleForm from "../_components/article-form/article-form-client";
+
 
 export default async function NewArticlePage() {
   const session = await getServerSession(authOptions);

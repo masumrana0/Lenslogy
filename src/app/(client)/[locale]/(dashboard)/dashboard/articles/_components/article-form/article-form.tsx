@@ -1,5 +1,4 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { status } from "http-status";
 import { useMemo, useState } from "react";
@@ -33,7 +32,10 @@ import { articleResetState } from "../utils";
 import ArticleTextInputs from "./article-content-form";
 import ArticleMediaCategoryInputs from "./article-media-form";
 import ArticleSettings from "./article-settings";
-import TextEditorWithPreview from "./text-editor";
+import dynamic from "next/dynamic";
+const TextEditorWithPreview = dynamic(() => import("./text-editor"), {
+  ssr: false, // Important!
+});
 
 interface ArticleFormProps {
   article?: Partial<Article>;
@@ -238,15 +240,15 @@ const ArticleForm = ({ article, onSuccess }: ArticleFormProps) => {
                 className="gap-2 bg-red-500 hover:bg-red-600 text-white"
               >
                 {isLoading ? (
-                  <>
+                  <span className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
                     {isEditMode ? "Updating..." : "Saving..."}
-                  </>
+                  </span>
                 ) : (
-                  <>
+                  <span className="flex items-center gap-2">
                     <Save className="h-4 w-4" />
                     {isEditMode ? "Update Article" : "Save Article"}
-                  </>
+                  </span>
                 )}
               </Button>
             </div>

@@ -4,6 +4,7 @@ import catchAsync from "../../_core/shared/catch-async";
 import sendResponse from "../../_core/shared/api-response";
 
 const createCategory = catchAsync(async (req: Request) => {
+ 
   const result = await CategoryService.createCategory(req);
 
   return sendResponse({
