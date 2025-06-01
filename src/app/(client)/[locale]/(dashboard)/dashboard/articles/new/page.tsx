@@ -1,17 +1,16 @@
-import { authOptions } from "@/lib/next-auth/auth";
-import { getServerSession } from "next-auth/next";
-import { redirect } from "next/navigation";
+// import { authOptions } from "@/lib/next-auth/auth";
+// import { getServerSession } from "next-auth/next";
+// import { redirect } from "next/navigation";
 
 import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
-import ArticleForm from "../_components/article-form/article-form-client";
+import ArticleFormWrapper from "./_components/article-form/form-wrapper";
 
+const NewArticlePage = () => {
+  // const session = getServerSession(authOptions);
 
-export default async function NewArticlePage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect("/auth/login");
-  }
+  // if (!session) {
+  //   redirect("/auth/login");
+  // }
 
   return (
     <div className="flex flex-col gap-4">
@@ -20,7 +19,9 @@ export default async function NewArticlePage() {
         text="Create a new article for your blog"
       />
 
-      <ArticleForm />
+      <ArticleFormWrapper />
     </div>
   );
-}
+};
+
+export default NewArticlePage;

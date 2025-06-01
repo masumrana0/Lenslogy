@@ -12,14 +12,13 @@ import React from "react";
 
 import { Article } from "@prisma/client";
 import type { UseFormReturn } from "react-hook-form";
-import { articleBooleanFieldsForUI } from "../utils";
+import { articleBooleanFieldsForUI } from "../../../_components/utils";
 
 interface ArticleSettingsProps {
   form: UseFormReturn<Article>;
 }
 const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
   const watch = form.watch();
-  console.log("line 22", watch);
 
   const pinFields = ["isPinFeatured", "isPinLatest", "isPinHero", "isPinNav"];
   const techFields = ["isLatest", "isUpComing"];

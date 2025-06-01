@@ -28,11 +28,12 @@ import {
 // Schema & Types
 import { articleSchema } from "@/schama/validation-schema";
 import type { Article } from "@prisma/client";
-import { articleResetState } from "../utils";
+
 import ArticleTextInputs from "./article-content-form";
 import ArticleMediaCategoryInputs from "./article-media-form";
 import ArticleSettings from "./article-settings";
 import dynamic from "next/dynamic";
+import { articleResetState } from "../../../_components/utils";
 const TextEditorWithPreview = dynamic(() => import("./text-editor"), {
   ssr: false, // Important!
 });

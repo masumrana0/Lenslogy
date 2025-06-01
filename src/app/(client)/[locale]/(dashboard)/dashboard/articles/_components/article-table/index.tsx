@@ -1,23 +1,23 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import type { Language } from "@prisma/client";
+import { toast } from "@/components/ui/toast";
 import {
   useDeleteArticleMutation,
   useGetAllArticlesQuery,
 } from "@/redux/api/article.api";
 import { useGetAllCategoriesQuery } from "@/redux/api/category.api";
-import { toast } from "@/components/ui/toast";
+import type { Language } from "@prisma/client";
 import status from "http-status";
-import SearchBar from "./search-bar";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import FilterPanel from "./filter-pannel";
+import SearchBar from "./search-bar";
 
 import ArticlesList from "./article-list";
-import PaginationControls from "./pagination-controls";
 import DeleteDialog from "./delete-dialog";
+import PaginationControls from "./pagination-controls";
 
-import ActiveFilters from "../active-filters";
 import { IArticlesTableFilters } from "../../interface/article.interface";
+import ActiveFilters from "../active-filters";
 import { booleanFilterKeys, filterInitialState } from "../utils";
 
 const ArticlesTable = () => {
@@ -182,7 +182,7 @@ const ArticlesTable = () => {
 
     try {
       const res = await deleteArticle(articleToDelete);
-    
+
       if (res.statusCode === status.OK) {
         toast({
           title: "Deleted",

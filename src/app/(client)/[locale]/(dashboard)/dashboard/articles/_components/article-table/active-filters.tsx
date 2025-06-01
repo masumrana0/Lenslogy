@@ -3,9 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import React from "react";
-import { IArticlesTableFilters } from "../../interface/article.interface";
 import { booleanFilterKeys } from "../utils";
+import { IArticlesTableFilters } from "../../interface/article.interface";
 
 interface ActiveFiltersProps {
   filters: IArticlesTableFilters;

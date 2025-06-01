@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import Limit from "@/components/shared/pagination/limit";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,20 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Filter, X } from "lucide-react";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
 } from "@/components/ui/sheet";
+import { Filter, X } from "lucide-react";
 import { IArticlesTableFilters } from "../../interface/article.interface";
 import { booleanFilterKeys } from "../utils";
-import Limit from "@/components/shared/pagination/limit";
 
 interface FilterPanelProps {
   filters: IArticlesTableFilters;

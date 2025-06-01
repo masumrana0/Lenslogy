@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,24 +18,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { formatTimestampWithTranslation } from "@/lib/translator";
 import type { Article, Language } from "@prisma/client";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
-
-import ArticleForm from "../article-form/article-form";
 
 import {
   AlertDialog,
-  AlertDialogTrigger,
+  AlertDialogAction,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogAction,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { articleBooleanFieldsForUI } from "../utils";
+import ArticleFormWrapper from "../../new/_components/article-form/form-wrapper";
 
 interface ArticlesListProps {
   articles: any[];
@@ -67,8 +65,8 @@ const ArticlesList = ({
   return (
     <div className="rounded-md border">
       {isEditOpen.state ? (
-        <ArticleForm
-          article={isEditOpen.article as Article}
+        <ArticleFormWrapper
+          article={isEditOpen.article as any}
           onSuccess={(updatedArticle) => {
             setIsEditOpen({ state: false, article: null });
           }}
