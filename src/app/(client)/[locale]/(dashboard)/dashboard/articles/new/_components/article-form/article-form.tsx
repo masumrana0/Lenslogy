@@ -41,7 +41,7 @@ import { useRouter } from "next/navigation";
 
 interface ArticleFormProps {
   article?: Article;
-  setIsEditOpen: Dispatch<
+  setIsEditOpen?: Dispatch<
     SetStateAction<{ state: boolean; article: any | null }>
   >;
 }
@@ -161,7 +161,7 @@ const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
         if (!isEditMode) {
           form.reset(articleResetState);
           setImagePreview(null);
-        } else if (isEditMode) {
+        } else if (isEditMode && setIsEditOpen) {
           setIsEditOpen({ state: false, article: null });
         }
       }
