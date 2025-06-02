@@ -1,7 +1,6 @@
 import { Role } from "@/app/(client)/[locale]/(dashboard)/dashboard/users/_interface/user.interface";
 import { translateContent } from "@/lib/ai/gemenai";
 import prisma from "@/lib/prisma";
-// import { cleanUpFile, saveFileToLocal } from "@/lib/uploader/uploader";
 import Auth from "../../_core/error-handler/auth";
 import { ApiErrors } from "../../_core/errors/api-error";
 import { Language } from "@prisma/client";
@@ -13,7 +12,6 @@ import {
 } from "../../_core/constants/article.constant";
 import { paginationFields } from "../../_core/constants/patination.constant";
 import { fetchArticle } from "./article.utils";
-import { INavContent } from "@/interface/nav-interface";
 import { uploader } from "@/lib/uploader/uploader";
 
 // create article
@@ -101,8 +99,8 @@ const updateArticle = async (req: Request) => {
 
   const file = formData.get("imgFile") as File | null;
   const payloadStr = formData.get("payload") as string | null;
-  const updatedBase:  Record<string, any> = {};
-  const updatedBangla:  Record<string, any> = {};
+  const updatedBase: Record<string, any> = {};
+  const updatedBangla: Record<string, any> = {};
 
   if (!file && !payloadStr) {
     throw ApiErrors.BadRequest("Required data is missing");
@@ -110,8 +108,9 @@ const updateArticle = async (req: Request) => {
 
   if (file) {
     const savedFile = await uploader.uploadImages([file]),
-    updatedBase.image = savedFile as string;
+      image = savedFile as string;
     updatedBangla.image = savedFile as string;
+    updatedBase.image = savedFile as string;
   }
 
   if (payloadStr) {
@@ -485,6 +484,11 @@ const getOneArticle = async (req: Request) => {
   });
 
   if (!isExistArticle) throw ApiErrors.NotFound("Article not found");
+  const Category = await prisma.category.findFirst({
+    where: { baseId: isExistArticle!.category!.baseId, lang: lang },
+  });
+
+  isExistArticle.category = Category;
 
   return isExistArticle;
 };

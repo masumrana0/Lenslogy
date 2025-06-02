@@ -1,13 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import { Eye, ThumbsUp } from "lucide-react";
+// import { Eye, ThumbsUp } from "lucide-react";
 import { getServerTranslation } from "@/lib/i18n/i18n.server";
 import {
-  formatTimestampWithTranslation,
-  translateNumber,
+  formatTimestampWithTranslation
+ 
 } from "@/lib/translator";
-
-import { Article } from "@prisma/client";
 
 const ArticleHeader: React.FC<{
   article: any;

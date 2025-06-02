@@ -11,11 +11,9 @@ const HeroSection = ({
   articles: IArticle[];
 }) => {
   const mainArticle = articles[0];
-  console.log("line 14 from hero section", mainArticle.image);
 
   const sideArticles = articles.slice(1);
-  console.log(sideArticles[0].image);
-
+ 
   return (
     <section className="grid items-center grid-cols-1 md:grid-cols-3 gap-4 pt-6 pb-10">
       {/* Main featured article */}

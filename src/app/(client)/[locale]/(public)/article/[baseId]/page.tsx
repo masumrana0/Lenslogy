@@ -86,7 +86,7 @@ const ArticlePage: React.FC<IPageProps> = async ({ params }) => {
     <main className="min-h-screen bg-white dark:bg-gray-900">
       <article className="container mx-auto px-4 py-8">
         {/* Article header */}
-        <ArticleHeader article={article} lang={language} />
+        <ArticleHeader article={article} lang={lang} />
 
         {/* Featured image */}
         {article?.image && (

@@ -1,4 +1,4 @@
-import { saveFileToLocal } from "@/lib/uploader/uploader";
+import { saveFileToLocal, uploader } from "@/lib/uploader/uploader";
 import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import Auth from "../../_core/error-handler/auth";
@@ -82,10 +82,8 @@ const updateUser = async (req: Request) => {
 
   // ✅ Handle file if uploaded
   if (file) {
-    const savedFile = await saveFileToLocal(file, {
-      directory: "public/uploads/users", // adjust this path as needed
-    });
-    readyData.avatar = savedFile.url;
+    const savedFile = await uploader.uploadImages([file])
+    readyData.avatar = savedFile 
   }
 
   // ✅ Verify old password
