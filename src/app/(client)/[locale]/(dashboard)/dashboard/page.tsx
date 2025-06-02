@@ -3,16 +3,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, FileText, Eye, Heart } from "lucide-react";
 import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
 import { RecentArticles } from "./articles/_components/recent-articles";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/next-auth/auth";
 
 export default async function DashboardPage() {
-  // const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
   return (
     <div className="flex flex-col gap-4">
       <DashboardHeader
         heading="Dashboard"
-        // text={`Welcome back, ${session?.user?.name || "User"}`}
-        text={`Welcome back,  Masum Rana`}
+        text={`Welcome back, ${session?.user?.name || "User"}`}
+        // text={`Welcome back,  Masum Rana`}
       />
 
       <Tabs defaultValue="overview" className="space-y-4">

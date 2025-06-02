@@ -32,7 +32,7 @@ import ArticleTextInputs from "./article-content-form";
 import ArticleMediaCategoryInputs from "./article-media-form";
 import ArticleSettings from "./article-settings";
 import { articleResetState } from "../../../_components/utils";
-import { IArticle } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
+
 import { Article } from "@prisma/client";
 import TextEditorWithPreview from "./text-editor";
 import ArticleFormSkeleton from "../skeleton/article-form-skeleton";
@@ -174,11 +174,20 @@ const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
     }
   };
 
+  const handleCanceling = () => {
+    if (!isEditMode) {
+      form.reset(articleResetState);
+      setImagePreview(null);
+    } else if (isEditMode && setIsEditOpen) {
+      setIsEditOpen({ state: false, article: null });
+    }
+  };
+
   return (
     <Card className="border-none shadow-none p-5">
       <CardHeader className="px-0">
         <CardTitle className="text-2xl font-bold">
-          {isEditMode ? "Edit Article" : "Create New Article"}
+          {isEditMode && "Edit Article"}
         </CardTitle>
       </CardHeader>
 
@@ -231,17 +240,16 @@ const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
 
             {/* Submit Button */}
             <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  form.reset(articleResetState);
-                  setImagePreview(null);
-                }}
-                disabled={isLoading}
-              >
-                Cancel
-              </Button>
+              {isEditMode && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCanceling}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+              )}
 
               <Button
                 type="submit"

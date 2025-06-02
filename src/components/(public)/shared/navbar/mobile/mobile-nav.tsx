@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import Link from "next/link";
 import { toggleMobileMenu } from "@/redux/features/nav-states/nav-slice";
@@ -14,12 +14,17 @@ const MobileNav: React.FC<{ items: INavItem[] }> = ({ items }) => {
   );
   const dispatch = useAppDispatch();
   const pathname = usePathname();
+
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
-    const handleRouteChange = () => {
-      dispatch(toggleMobileMenu());
-    };
-    handleRouteChange();
-  }, [dispatch, pathname]);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    dispatch(toggleMobileMenu());
+  }, [pathname, dispatch]);
 
   return (
     <>

@@ -30,9 +30,9 @@
   },
 
   "homePage": {
-    "featuredStories": "Featured Stories",
+    "featuredBlog": "Featured Stories",
     "popularThisWeek": "Popular This Week",
-    "latestNews": "Latest News",
+    "latestBlog": "Latest Blog",
     "latestReviews": "Latest Reviews",
     "viewAllFeatured": "View All Featured",
     "viewAllPopular": "View All Popular",

@@ -29,9 +29,9 @@
     "contact": "যোগাযোগ করুন"
   },
   "homePage": {
-    "featuredStories": "বৈশিষ্ট্যযুক্ত গল্প",
+    "featuredBlog": "বৈশিষ্ট্যযুক্ত ব্লগ",
     "popularThisWeek": "এই সপ্তাহে জনপ্রিয়",
-    "latestNews": "সর্বশেষ খবর",
+    "latestBlog": "সর্বশেষ ব্লগ",
     "latestReviews": "সর্বশেষ পর্যালোচনা",
     "viewAllFeatured": "সমস্ত বৈশিষ্ট্যযুক্ত দেখুন",
     "viewAllPopular": "সমস্ত জনপ্রিয় দেখুন",

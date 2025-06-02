@@ -1,5 +1,4 @@
 "use client";
-
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
@@ -19,6 +18,7 @@ interface ArticleSettingsProps {
 }
 const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
   const watch = form.watch();
+  const { setValue, control } = form;
 
   const pinFields = ["isPinFeatured", "isPinLatest", "isPinHero", "isPinNav"];
   const techFields = ["isLatest", "isUpComing"];
@@ -76,7 +76,18 @@ const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
                 <FormControl>
                   <Checkbox
                     checked={field.value as boolean}
-                    onCheckedChange={field.onChange}
+                    // onCheckedChange={field.onChange}
+                    onCheckedChange={(checked) => {
+                      field.onChange(checked);
+
+                      // 🔁 Auto-check related fields
+                      if (name === "isPinFeatured" && checked) {
+                        setValue("isFeatured", true);
+                      }
+                      if (name === "isPinLatest" && checked) {
+                        setValue("isLatest", true);
+                      }
+                    }}
                     id={name}
                     disabled={shouldDisable}
                   />
