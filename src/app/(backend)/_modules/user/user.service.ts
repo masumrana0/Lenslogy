@@ -1,4 +1,4 @@
-import { saveFileToLocal, uploader } from "@/lib/uploader/uploader";
+import { uploader } from "@/lib/uploader/uploader";
 import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import Auth from "../../_core/error-handler/auth";
@@ -10,7 +10,7 @@ import { passwordHelper } from "../../_core/helper/password-security";
  * Author: 'Masum Rana'
  * Date: 31-05-2025
  *
-*/
+ */
 
 const createUser = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
@@ -82,8 +82,8 @@ const updateUser = async (req: Request) => {
 
   // ✅ Handle file if uploaded
   if (file) {
-    const savedFile = await uploader.uploadImages([file])
-    readyData.avatar = savedFile 
+    const savedFile = await uploader.uploadImages([file]);
+    readyData.avatar = savedFile;
   }
 
   // ✅ Verify old password
@@ -110,8 +110,9 @@ const updateUser = async (req: Request) => {
     where: { id },
   });
 
-  // ✅ Exclude sensitive fields before returning
- 
+  if (file) {
+    await uploader.deleteImage(isExistUser.avatar as string);
+  }
   const { password, ...safeUser } = updatedUser;
   return safeUser;
 };

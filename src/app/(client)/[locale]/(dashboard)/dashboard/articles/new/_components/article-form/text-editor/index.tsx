@@ -21,8 +21,6 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
   placeholder,
   className,
 }) => {
-
-  
   const editorRef = useRef<any>(null);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
@@ -44,14 +42,6 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
       }),
     [isDark, isFullscreen, viewMode, placeholder]
   );
-
-  // Restore from localStorage once
-  useEffect(() => {
-    const saved = localStorage.getItem("jodit-editor-content");
-    if (saved && !value) {
-      onChange(saved);
-    }
-  }, [onChange, value]);
 
   // Update localStorage only on true external change
   useEffect(() => {
@@ -79,21 +69,13 @@ const TextEditorWithPreview: React.FC<IEditorProps> = ({
   }, [value, editorInitialized]);
 
   // Save to localStorage on user change
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSave = useCallback(
-    debounce((newContent: string) => {
-      localStorage.setItem("jodit-editor-content", newContent);
-      onChange(newContent);
-    }, 300),
-    [onChange]
-  );
 
   const handleEditorChange = useCallback(
     (newContent: string) => {
       latestValueRef.current = newContent;
-      debouncedSave(newContent);
+      onChange(newContent);
     },
-    [debouncedSave]
+    [onChange]
   );
 
   useEffect(() => {

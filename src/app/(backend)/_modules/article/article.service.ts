@@ -165,6 +165,10 @@ const updateArticle = async (req: Request) => {
     return { base: updatedBaseArticle, bn: updatedBanglaArticle };
   });
 
+ if(file){
+   await uploader.deleteImage(isExistArticle.image as string);
+ }
+
   return result;
 };
 
@@ -195,7 +199,7 @@ const deleteArticle = async (req: Request) => {
     where: { baseId: isExistArticle.baseId },
   });
 
-  await cleanUpFile(isExistArticle.image);
+  await uploader.deleteImage(isExistArticle.image);
 };
 
 // getAllArticle for admin
