@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { status } from "http-status";
-import { useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 // UI Components
@@ -41,16 +41,16 @@ import { useRouter } from "next/navigation";
 
 interface ArticleFormProps {
   article?: Article;
-  onSuccess?: (article: IArticle) => void;
+  setIsEditOpen: Dispatch<
+    SetStateAction<{ state: boolean; article: any | null }>
+  >;
 }
 
-const ArticleForm = ({ article, onSuccess }: ArticleFormProps) => {
+const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
   const isEditMode = !!article?.id;
   const [imagePreview, setImagePreview] = useState<string | null>(
     article?.image || null
   );
-
-  const router = useRouter();
 
   const [isMounted, setIsMounted] = useState(false);
   // API mutations
@@ -158,15 +158,11 @@ const ArticleForm = ({ article, onSuccess }: ArticleFormProps) => {
             : "Article created successfully",
         });
 
-        if (onSuccess && response.data) {
-          onSuccess(response.data);
-        }
-
         if (!isEditMode) {
           form.reset(articleResetState);
           setImagePreview(null);
-        } else {
-          router.refresh();
+        } else if (isEditMode) {
+          setIsEditOpen({ state: false, article: null });
         }
       }
     } catch (error: any) {

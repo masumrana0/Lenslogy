@@ -40,19 +40,21 @@
 "use client";
 import type { IArticle } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
 import ArticleFormSkeleton from "../skeleton/article-form-skeleton";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 
 // Import directly instead of dynamic import to avoid hydration issues
 import ArticleForm from "./article-form";
 
 interface ArticleFormWrapperProps {
   article?: IArticle;
-  onSuccess?: (article: IArticle) => void;
+  setIsEditOpen: Dispatch<
+    SetStateAction<{ state: boolean; article: any | null }>
+  >;
 }
 
 const ArticleFormWrapper = ({
   article,
-  onSuccess,
+  setIsEditOpen,
 }: ArticleFormWrapperProps) => {
   const [isClient, setIsClient] = useState(false);
 
@@ -66,7 +68,7 @@ const ArticleFormWrapper = ({
     return <ArticleFormSkeleton />;
   }
 
-  return <ArticleForm article={article as any} onSuccess={() => onSuccess} />;
+  return <ArticleForm article={article as any} setIsEditOpen={setIsEditOpen} />;
 };
 
 export default ArticleFormWrapper;

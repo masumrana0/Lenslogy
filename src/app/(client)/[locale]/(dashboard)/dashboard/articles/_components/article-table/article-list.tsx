@@ -67,9 +67,7 @@ const ArticlesList = ({
       {isEditOpen.state ? (
         <ArticleFormWrapper
           article={isEditOpen.article as any}
-          onSuccess={(updatedArticle) => {
-            setIsEditOpen({ state: false, article: null });
-          }}
+          setIsEditOpen={setIsEditOpen}
         />
       ) : (
         <Table>
