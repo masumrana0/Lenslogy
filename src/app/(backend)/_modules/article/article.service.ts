@@ -1,7 +1,7 @@
 import { Role } from "@/app/(client)/[locale]/(dashboard)/dashboard/users/_interface/user.interface";
 import { translateContent } from "@/lib/ai/gemenai";
 import prisma from "@/lib/prisma";
-import { cleanUpFile, saveFileToLocal } from "@/lib/uploader/uploader";
+// import { cleanUpFile, saveFileToLocal } from "@/lib/uploader/uploader";
 import Auth from "../../_core/error-handler/auth";
 import { ApiErrors } from "../../_core/errors/api-error";
 import { Language } from "@prisma/client";
@@ -14,6 +14,7 @@ import {
 import { paginationFields } from "../../_core/constants/patination.constant";
 import { fetchArticle } from "./article.utils";
 import { INavContent } from "@/interface/nav-interface";
+import { uploader } from "@/lib/uploader/uploader";
 
 // create article
 const createArticle = async (req: Request) => {
@@ -29,11 +30,11 @@ const createArticle = async (req: Request) => {
 
   // Parallel tasks
   const [savedFile, payload] = await Promise.all([
-    saveFileToLocal(file, { directory: "public/uploads/articles" }),
+    uploader.uploadImages([file]),
     Promise.resolve(JSON.parse(payloadStr)),
   ]);
 
-  const image = savedFile.url;
+  const image = savedFile;
   const { title, excerpt, content, ...rest } = payload;
 
   // Base (English) article
@@ -100,19 +101,17 @@ const updateArticle = async (req: Request) => {
 
   const file = formData.get("imgFile") as File | null;
   const payloadStr = formData.get("payload") as string | null;
-  const updatedBase: any = {};
-  const updatedBangla: any = {};
+  const updatedBase:  Record<string, any> = {};
+  const updatedBangla:  Record<string, any> = {};
 
   if (!file && !payloadStr) {
     throw ApiErrors.BadRequest("Required data is missing");
   }
 
   if (file) {
-    const savedFile = await saveFileToLocal(file, {
-      directory: "public/uploads/articles",
-    });
-    updatedBase.image = savedFile.url;
-    updatedBangla.image = savedFile.url;
+    const savedFile = await uploader.uploadImages([file]),
+    updatedBase.image = savedFile as string;
+    updatedBangla.image = savedFile as string;
   }
 
   if (payloadStr) {

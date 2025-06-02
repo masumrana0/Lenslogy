@@ -3,12 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: [
-      "www.ecommercetimes.com",
-      "www.technewsworld.com",
-      "www.linuxinsider.com",
-      "media.licdn.com",
-    ],
+    domains: ["lenslogy.s3.us-east-1.amazonaws.com"],
   },
 };
 
