@@ -165,9 +165,9 @@ const updateArticle = async (req: Request) => {
     return { base: updatedBaseArticle, bn: updatedBanglaArticle };
   });
 
- if(file){
-   await uploader.deleteImage(isExistArticle.image as string);
- }
+  if (file) {
+    await uploader.deleteImage(isExistArticle.image as string);
+  }
 
   return result;
 };
@@ -570,7 +570,16 @@ const getForNavbar = async (req: Request) => {
         OR: [
           {
             category: {
-              name: "ai",
+              is: {
+                name: { equals: "Ai", mode: "insensitive" },
+              },
+            },
+          },
+          {
+            category: {
+              is: {
+                name: { equals: "Machine Learning", mode: "insensitive" },
+              },
             },
           },
         ],
