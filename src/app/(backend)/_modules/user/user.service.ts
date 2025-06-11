@@ -83,7 +83,8 @@ const updateUser = async (req: Request) => {
   // ✅ Handle file if uploaded
   if (file) {
     const savedFile = await uploader.uploadImages([file]);
-    readyData.avatar = savedFile;
+    const url = savedFile[0].fileUrl;
+    readyData.avatar = url;
   }
 
   // ✅ Verify old password

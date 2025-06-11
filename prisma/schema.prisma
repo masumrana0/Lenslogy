@@ -33,6 +33,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     resetToken    ResetToken?
+    Gadget        Gadget[]
 }
 
 // it's need for  reset password
@@ -74,45 +75,35 @@ model Session {
 }
 
 model Article {
-    id             String             @id @default(cuid())
-    baseId         String             @default(cuid())
+    id             String      @id @default(cuid())
+    baseId         String      @default(cuid())
     title          String
     excerpt        String
     content        String
     image          String
     authorId       String
-    author         User               @relation(fields: [authorId], references: [id])
+    author         User        @relation(fields: [authorId], references: [id])
     lang           Language
-    attachment     ArticleAttachment?
+    attachmentId   String?
+    attachment     Attachment? @relation(fields: [attachmentId], references: [id])
     categoryBaseId String
-    isFeatured     Boolean            @default(false)
-    isPinFeatured  Boolean            @default(false)
-    isPinLatest    Boolean            @default(false)
-    isLatest       Boolean            @default(false)
-    isPinHero      Boolean            @default(false)
-    isPinNav       Boolean            @default(false)
-    isPublished    Boolean            @default(false)
-    isUpComing     Boolean            @default(false)
-    isEmergingTech Boolean            @default(false)
-    isHotTech      Boolean            @default(false)
-    isGadget       Boolean            @default(false)
-    createdAt      DateTime           @default(now())
-    updatedAt      DateTime           @updatedAt
-    category       Category?          @relation(fields: [categoryId], references: [id])
+    isFeatured     Boolean     @default(false)
+    isPinFeatured  Boolean     @default(false)
+    isPinLatest    Boolean     @default(false)
+    isLatest       Boolean     @default(false)
+    isPinHero      Boolean     @default(false)
+    isPinNav       Boolean     @default(false)
+    isPublished    Boolean     @default(false)
+    isUpComing     Boolean     @default(false)
+    isEmergingTech Boolean     @default(false)
+    isHotTech      Boolean     @default(false)
+    isGadget       Boolean     @default(false)
+    createdAt      DateTime    @default(now())
+    updatedAt      DateTime    @updatedAt
+    category       Category?   @relation(fields: [categoryId], references: [id])
     categoryId     String
 
     @@unique([baseId, lang], name: "baseId_lang_unique")
-}
-
-model ArticleAttachment {
-    id        String   @id @default(cuid())
-    views     Int      @default(0)
-    likes     Int      @default(0)
-    ipAddress String
-    articleId String   @unique
-    article   Article  @relation(fields: [articleId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
 }
 
 model Category {
@@ -123,6 +114,82 @@ model Category {
     articles  Article[]
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
+
+    @@unique([baseId, lang], name: "baseId_lang_unique")
+}
+
+model Gadget {
+    id         String     @id @default(cuid())
+    typeId     String
+    type       GadgetType @relation(fields: [typeId], references: [id])
+    typeBaseId String
+
+    brandId     String
+    brand       GadgetBrand @relation(fields: [brandId], references: [id])
+    brandBaseId String
+
+    model       String
+    releaseDate DateTime?
+
+    baseId         String      @default(cuid())
+    title          String
+    excerpt        String
+    content        String
+    images         String[]
+    image          String
+    authorId       String
+    author         User        @relation(fields: [authorId], references: [id])
+    lang           Language
+    attachmentId   String?
+    attachment     Attachment? @relation(fields: [attachmentId], references: [id])
+    isGadget       Boolean     @default(true)
+    isFeatured     Boolean     @default(false)
+    isPinFeatured  Boolean     @default(false)
+    isPinLatest    Boolean     @default(false)
+    isLatest       Boolean     @default(false)
+    isPinHero      Boolean     @default(false)
+    isPinNav       Boolean     @default(false)
+    isPublished    Boolean     @default(false)
+    isUpComing     Boolean     @default(false)
+    isEmergingTech Boolean     @default(false)
+    isHotTech      Boolean     @default(false)
+    createdAt      DateTime    @default(now())
+    updatedAt      DateTime    @updatedAt
+}
+
+model Attachment {
+    id        String   @id @default(cuid())
+    views     Int      @default(0)
+    likes     Int      @default(0)
+    ipAddress String
+    articleId String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    Article Article[]
+    Gadget  Gadget[]
+}
+
+model GadgetType {
+    id        String   @id @default(cuid())
+    baseId    String   @default(cuid())
+    name      String   @unique
+    lang      Language
+    Gadget    Gadget[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([baseId, lang], name: "baseId_lang_unique")
+}
+
+model GadgetBrand {
+    id        String   @id @default(cuid())
+    baseId    String   @default(cuid())
+    name      String   @unique
+    lang      Language
+    Gadget    Gadget[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@unique([baseId, lang], name: "baseId_lang_unique")
 }

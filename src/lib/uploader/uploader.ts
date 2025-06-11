@@ -175,7 +175,7 @@ async function uploadImages(files: FileList | File[]): Promise<any> {
   if (!response.ok) {
     throw new Error(jsonRes.message || "Upload failed");
   }
-  const result = jsonRes.successful[0].fileUrl as string;
+  const result = jsonRes.successful;
 
   return result;
 }

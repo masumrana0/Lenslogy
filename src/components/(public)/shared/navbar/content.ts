@@ -7,7 +7,7 @@ export const ReadyNavMenu = async (
 ): Promise<INavItem[]> => {
   const { t } = await getServerTranslation(locale);
 
-  const ai = data?.navHotTech?.ai || [];
+  const aiAndMachineLeaning = data?.navHotTech?.ai || [];
   const em = data?.navHotTech?.emerging || [];
   const upcoming = data?.navGadget?.upcoming || [];
   const latest = data?.navGadget?.latest || [];
@@ -38,7 +38,7 @@ export const ReadyNavMenu = async (
       sections: [
         {
           title: t("navbar.hotTech.sub.ai"),
-          items: ai,
+          items: aiAndMachineLeaning,
         },
         {
           title: t("navbar.hotTech.sub.emerging"),

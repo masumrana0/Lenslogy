@@ -32,7 +32,7 @@ const createArticle = async (req: Request) => {
     Promise.resolve(JSON.parse(payloadStr)),
   ]);
 
-  const image = savedFile;
+  const image = savedFile[0].fileUrl;
   const { title, excerpt, content, ...rest } = payload;
 
   // Base (English) article
@@ -108,9 +108,9 @@ const updateArticle = async (req: Request) => {
 
   if (file) {
     const savedFile = await uploader.uploadImages([file]),
-      image = savedFile as string;
-    updatedBangla.image = savedFile as string;
-    updatedBase.image = savedFile as string;
+      image = savedFile[0].fileUrl as string;
+    updatedBangla.image = savedFile[0].fileUrl as string;
+    updatedBase.image = savedFile[0].fileUrl as string;
   }
 
   if (payloadStr) {
