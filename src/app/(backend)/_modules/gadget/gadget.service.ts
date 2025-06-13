@@ -1,9 +1,17 @@
-import { Role } from "@prisma/client";
+import { Language, Role } from "@prisma/client";
 import Auth from "../../_core/error-handler/auth";
 import { ApiErrors } from "../../_core/errors/api-error";
 import { uploader } from "@/lib/uploader/uploader";
 import { translateContent } from "@/lib/ai/gemenai";
 import prisma from "@/lib/prisma";
+import { File } from "buffer";
+import {
+  gadgetFilterAbleFields,
+  gadgetSearchableFields,
+} from "../../_core/constants/gadget.constant";
+import { paginationFields } from "../../_core/constants/patination.constant";
+import pick from "../../_core/shared/pick";
+import { paginationHelpers } from "../../_core/helper/pagination-helper";
 
 const createGadget = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
@@ -31,7 +39,7 @@ const createGadget = async (req: Request) => {
   );
   const { title, excerpt, content, ...rest } = payload;
 
-  // Base (English) article
+  // Base (English) Gadget
   const baseGadget = {
     ...payload,
     image,
@@ -43,8 +51,8 @@ const createGadget = async (req: Request) => {
   // Translate content to Bangla
   const translated = await translateContent({ title, excerpt, content });
 
-  // Bangla article
-  const banglaArticle = {
+  // Bangla Gadget
+  const banglaGadget = {
     ...rest,
     ...translated,
     image,
@@ -52,12 +60,12 @@ const createGadget = async (req: Request) => {
     lang: "bn",
   };
 
-  // Save both articles in a transaction
+  // Save both Gadgets in a transaction
   const result = await prisma.$transaction(async (tx) => {
-    const baseData = await tx.article.create({ data: baseArticle });
-    const banglaData = await tx.article.create({
+    const baseData = await tx.gadget.create({ data: baseGadget });
+    const banglaData = await tx.gadget.create({
       data: {
-        ...banglaArticle,
+        ...banglaGadget,
         baseId: baseData.baseId,
       },
     });
@@ -68,227 +76,289 @@ const createGadget = async (req: Request) => {
   return result;
 };
 
-// // update Article
-// const updateArticle = async (req: Request) => {
-//   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
+// update Gadget
+const updateGadget = async (req: Request) => {
+  const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
 
-//   const { searchParams } = new URL(req.url);
-//   const articleId = searchParams.get("id");
-//   if (!articleId) throw ApiErrors.BadRequest("Article ID is missing");
+  const { searchParams } = new URL(req.url);
+  const GadgetId = searchParams.get("id");
+  if (!GadgetId) throw ApiErrors.BadRequest("Gadget ID is missing");
 
-//   // Check if article exists
-//   const isExistArticle = await prisma.article.findFirst({
-//     where: { id: articleId },
-//   });
+  // Check if Gadget exists
+  const isExistGadget = await prisma.gadget.findFirst({
+    where: { id: GadgetId },
+  });
 
-//   if (!isExistArticle) throw ApiErrors.NotFound("Article not found");
+  if (!isExistGadget) throw ApiErrors.NotFound("Gadget not found");
 
-//   // Only allow SUPER_ADMIN or the author to update the article
-//   if (
-//     session.user.role !== Role.SUPER_ADMIN &&
-//     isExistArticle.authorId !== session.user.id
-//   ) {
-//     throw ApiErrors.BadRequest("You're not authorized to update this article");
-//   }
+  // Only allow SUPER_ADMIN or the author to update the Gadget
+  if (
+    session.user.role !== Role.SUPER_ADMIN &&
+    isExistGadget.authorId !== session.user.id
+  ) {
+    throw ApiErrors.BadRequest("You're not authorized to update this Gadget");
+  }
 
-//   // Get form data
-//   const formData = await req.formData();
+  // Get form data
+  const formData = await req.formData();
 
-//   const file = formData.get("imgFile") as File | null;
-//   const payloadStr = formData.get("payload") as string | null;
-//   const updatedBase: Record<string, any> = {};
-//   const updatedBangla: Record<string, any> = {};
+  const file = formData.get("imgFile") as File | null;
+  const files = formData.get("imgFiles");
+  const payloadStr = formData.get("payload") as string | null;
+  const updatedBase: Record<string, any> = {};
+  const updatedBangla: Record<string, any> = {};
 
-//   if (!file && !payloadStr) {
-//     throw ApiErrors.BadRequest("Required data is missing");
-//   }
+  if (!file && !files && !payloadStr) {
+    throw ApiErrors.BadRequest("Required data is missing");
+  }
 
-//   if (file) {
-//     const savedFile = await uploader.uploadImages([file]),
-//       image = savedFile as string;
-//     updatedBangla.image = savedFile as string;
-//     updatedBase.image = savedFile as string;
-//   }
+  if (file) {
+    const savedFile = await uploader.uploadImages([file as any]),
+      image = savedFile as string;
+    updatedBangla.image = savedFile as string;
+    updatedBase.image = savedFile as string;
+  }
 
-//   if (payloadStr) {
-//     const basePayload = JSON.parse(payloadStr);
-//     Object.assign(updatedBase, basePayload);
-//   }
+  if (files) {
+    const savedFiles = await uploader.uploadImages(files as any),
+      images = savedFiles as string;
+    updatedBangla.images = savedFiles as string;
+    updatedBase.images = savedFiles as string;
+  }
 
-//   const { title, excerpt, content, ...others } = updatedBase;
-//   let translatedContent: any = {};
-//   if (!title || !excerpt || !content) {
-//     translatedContent = await translateContent({
-//       title: title,
-//       excerpt: excerpt,
-//       content: content,
-//     });
-//   }
+  if (payloadStr) {
+    const basePayload = JSON.parse(payloadStr);
+    Object.assign(updatedBase, basePayload);
+  }
 
-//   Object.assign(updatedBangla, others);
+  const { title, excerpt, content, ...others } = updatedBase;
+  let translatedContent: any = {};
+  if (!title || !excerpt || !content) {
+    translatedContent = await translateContent({
+      title: title,
+      excerpt: excerpt,
+      content: content,
+    });
+  }
 
-//   if (Object.keys(translatedContent).length > 0) {
-//     const allData = { ...translatedContent };
-//     Object.assign(updatedBangla, allData);
-//   }
+  Object.assign(updatedBangla, others);
 
-//   const result = await prisma.$transaction(async (tx) => {
-//     // Update base (English) article
-//     const updatedBaseArticle = await tx.article.update({
-//       where: {
-//         baseId_lang_unique: {
-//           baseId: isExistArticle.baseId,
-//           lang: "en",
-//         },
-//       },
-//       data: {
-//         ...updatedBase,
-//       },
-//     });
+  if (Object.keys(translatedContent).length > 0) {
+    const allData = { ...translatedContent };
+    Object.assign(updatedBangla, allData);
+  }
 
-//     // Update Bangla version
-//     const updatedBanglaArticle = await tx.article.update({
-//       where: {
-//         baseId_lang_unique: {
-//           baseId: isExistArticle.baseId,
-//           lang: "bn",
-//         },
-//       },
-//       data: {
-//         ...updatedBangla,
-//       },
-//     });
+  const result = await prisma.$transaction(async (tx) => {
+    // Update base (English) Gadget
+    const updatedBaseGadget = await tx.gadget.update({
+      where: {
+        baseId_lang_unique: {
+          baseId: isExistGadget.baseId,
+          lang: "en",
+        },
+      },
+      data: {
+        ...updatedBase,
+      },
+    });
 
-//     return { base: updatedBaseArticle, bn: updatedBanglaArticle };
-//   });
+    // Update Bangla version
+    const updatedBanglaGadget = await tx.gadget.update({
+      where: {
+        baseId_lang_unique: {
+          baseId: isExistGadget.baseId,
+          lang: "bn",
+        },
+      },
+      data: {
+        ...updatedBangla,
+      },
+    });
 
-//   if (file) {
-//     await uploader.deleteImage(isExistArticle.image as string);
-//   }
+    return { base: updatedBaseGadget, bn: updatedBanglaGadget };
+  });
 
-//   return result;
-// };
+  if (file) {
+    await uploader.deleteImage(isExistGadget.image as string);
+  }
 
-// // delete Article
-// const deleteArticle = async (req: Request) => {
-//   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
-//   const { searchParams } = new URL(req.url);
-//   const articleId = searchParams.get("id");
+  return result;
+};
 
-//   if (!articleId) throw ApiErrors.BadRequest("Article ID is missing");
+// delete Gadget
+const deleteGadget = async (req: Request) => {
+  const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
+  const { searchParams } = new URL(req.url);
+  const GadgetId = searchParams.get("id");
 
-//   // Check if article exists
-//   const isExistArticle = await prisma.article.findFirst({
-//     where: { id: articleId },
-//   });
+  if (!GadgetId) throw ApiErrors.BadRequest("Gadget ID is missing");
 
-//   if (!isExistArticle) throw ApiErrors.NotFound("Article not found");
+  // Check if Gadget exists
+  const isExistGadget = await prisma.gadget.findFirst({
+    where: { id: GadgetId },
+  });
 
-//   // Only allow SUPER_ADMIN or the author to delete the article
-//   if (
-//     session.user.role !== Role.SUPER_ADMIN &&
-//     isExistArticle.authorId !== session.user.id
-//   ) {
-//     throw ApiErrors.BadRequest("You're not authorized to  delete this article");
-//   }
+  if (!isExistGadget) throw ApiErrors.NotFound("Gadget not found");
 
-//   await prisma.article.deleteMany({
-//     where: { baseId: isExistArticle.baseId },
-//   });
+  // Only allow SUPER_ADMIN or the author to delete the Gadget
+  if (
+    session.user.role !== Role.SUPER_ADMIN &&
+    isExistGadget.authorId !== session.user.id
+  ) {
+    throw ApiErrors.BadRequest("You're not authorized to  delete this Gadget");
+  }
 
-//   await uploader.deleteImage(isExistArticle.image);
-// };
+  await prisma.gadget.deleteMany({
+    where: { baseId: isExistGadget.baseId },
+  });
 
-// // getAllArticle for admin
-// const getAllArticle = async (req: Request) => {
-//   // Auth guard (optional)
-//   await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
+  await uploader.deleteImage(isExistGadget.image);
+  isExistGadget.images.forEach(async (img) => {
+    await uploader.deleteImage(img);
+  });
+};
 
-//   const { searchParams } = new URL(req.url);
+// getAllGadget for admin
+const getAllGadget = async (req: Request) => {
+  // Auth guard (optional)
+  await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
 
-//   const searchParamsObj = Object.fromEntries(searchParams.entries());
+  const { searchParams } = new URL(req.url);
 
-//   const filters = pick(searchParamsObj, articleFilterAbleFields);
+  const searchParamsObj = Object.fromEntries(searchParams.entries());
 
-//   const paginationOptions = pick(searchParamsObj, paginationFields);
+  const filters = pick(searchParamsObj, gadgetFilterAbleFields);
 
-//   const { limit, page, skip, sortBy, sortOrder } =
-//     paginationHelpers.calculatePagination(paginationOptions);
+  const paginationOptions = pick(searchParamsObj, paginationFields);
 
-//   const searchTerm = searchParamsObj.searchTerm || "";
-//   const lang = (searchParamsObj.lang || "en") as Language;
+  const { limit, page, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
 
-//   const where: any = {
-//     lang: lang,
-//   };
+  const searchTerm = searchParamsObj.searchTerm || "";
+  const lang = (searchParamsObj.lang || "en") as Language;
 
-//   // Search logic
-//   if (searchTerm) {
-//     where.OR = articleSearchableFields.map((field) => ({
-//       [field]: {
-//         contains: searchTerm,
-//         mode: "insensitive",
-//       },
-//     }));
-//   }
+  const where: any = {
+    lang: lang,
+  };
 
-//   // Apply filters
-//   for (const [key, value] of Object.entries(filters)) {
-//     if (value && key !== "searchTerm") {
-//       if (value === "true" || value === "false") {
-//         where[key] = value === "true";
-//       } else {
-//         where[key] = value;
-//       }
-//     }
-//   }
+  // Search logic
+  if (searchTerm) {
+    where.OR = gadgetSearchableFields.map((field) => ({
+      [field]: {
+        contains: searchTerm,
+        mode: "insensitive",
+      },
+    }));
+  }
 
-//   const orderBy: any = {};
-//   if (sortBy && sortOrder) {
-//     orderBy[sortBy] = sortOrder.toLowerCase();
-//   } else {
-//     orderBy.createdAt = "desc";
-//   }
+  // Apply filters
+  for (const [key, value] of Object.entries(filters)) {
+    if (value && key !== "searchTerm") {
+      if (value === "true" || value === "false") {
+        where[key] = value === "true";
+      } else {
+        where[key] = value;
+      }
+    }
+  }
 
-//   // Fetch articles with populated Category
-//   const articles = await prisma.article.findMany({
-//     where,
-//     skip,
-//     take: limit,
-//     orderBy,
-//     include: {
-//       category: true,
-//     },
-//   });
+  const orderBy: any = {};
+  if (sortBy && sortOrder) {
+    orderBy[sortBy] = sortOrder.toLowerCase();
+  } else {
+    orderBy.createdAt = "desc";
+  }
 
-//   const result = articles.map(async (article) => {
-//     const { category, ...rest } = article;
-//     const Category = await prisma.category.findFirst({
-//       where: { baseId: category!.baseId, lang: lang },
-//     });
+  // Fetch Gadgets with populated Category
+  const Gadgets = await prisma.gadget.findMany({
+    where,
+    skip,
+    take: limit,
+    orderBy,
+    include: {
+      brand: true,
+      type: true,
+    },
+  });
 
-//     return {
-//       ...rest,
-//       category: Category,
-//     };
-//   });
-//   const formattedResultPromise = await Promise.all(result);
+  const result = Gadgets.map(async (Gadget) => {
+    const { brand, type, ...rest } = Gadget;
+    const Brand = await prisma.gadgetBrand.findFirst({
+      where: { baseId: brand!.baseId, lang: lang },
+    });
+    const Type = await prisma.gadgetBrand.findFirst({
+      where: { baseId: type!.baseId, lang: lang },
+    });
 
-//   // Count for pagination
-//   const total = await prisma.article.count({ where });
-//   const totalPage = Math.ceil(total / limit);
+    return {
+      ...rest,
+      brand: Brand,
+      type: Type,
+    };
+  });
 
-//   return {
-//     result: formattedResultPromise,
-//     meta: {
-//       total,
-//       page,
-//       limit,
-//       totalPage,
-//     },
-//   };
-// };
+  const formattedResultPromise = await Promise.all(result);
 
-export const gadgetService = {
+  // Count for pagination
+  const total = await prisma.gadget.count({ where });
+  const totalPage = Math.ceil(total / limit);
+
+  return {
+    result: formattedResultPromise,
+    meta: {
+      total,
+      page,
+      limit,
+      totalPage,
+    },
+  };
+};
+
+const getOneGadget = async (req: Request) => {
+  const { searchParams } = new URL(req.url);
+  const baseId = searchParams.get("baseId");
+  const lang = (searchParams.get("lang") || "en") as Language;
+
+  if (!baseId) {
+    throw ApiErrors.BadRequest("Article baseID is missing");
+  }
+
+  const gadget = await prisma.gadget.findUnique({
+    where: {
+      baseId_lang_unique: { baseId, lang },
+    },
+    include: {
+      brand: true,
+      type: true,
+      author: true,
+    },
+  });
+
+  if (!gadget) {
+    throw ApiErrors.NotFound("Article not found");
+  }
+
+  // Fetch localized brand and type concurrently
+  const [localizedBrand, localizedType] = await Promise.all([
+    prisma.gadgetBrand.findFirst({
+      where: { baseId: gadget.brandBaseId, lang },
+    }),
+    prisma.gadgetType.findFirst({
+      where: { baseId: gadget.typeBaseId, lang },
+    }),
+  ]);
+
+  return {
+    ...gadget,
+    brand: localizedBrand ?? gadget.brand,
+    type: localizedType ?? gadget.type,
+  };
+};
+
+export const GadgetService = {
   createGadget,
+  getAllGadget,
+  updateGadget,
+  deleteGadget,
+  getOneGadget,
 };

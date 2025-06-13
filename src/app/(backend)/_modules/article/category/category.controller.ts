@@ -1,7 +1,8 @@
 import status from "http-status";
 import { CategoryService } from "./category.service";
-import catchAsync from "../../_core/shared/catch-async";
-import sendResponse from "../../_core/shared/api-response";
+import catchAsync from "@/app/(backend)/_core/shared/catch-async";
+import sendResponse from "@/app/(backend)/_core/shared/api-response";
+ 
 
 const createCategory = catchAsync(async (req: Request) => {
  

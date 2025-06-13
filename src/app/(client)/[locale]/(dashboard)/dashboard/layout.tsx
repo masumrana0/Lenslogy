@@ -1,49 +1,39 @@
+import type { ReactNode } from "react";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/next-auth/auth";
-import { getServerSession } from "next-auth/next";
-import type React from "react";
-import { DashboardNav } from "@/components/(dashboard)/shared/nav";
-import { UserNav } from "@/components/(dashboard)/shared/nav/user-nav";
-import Logo from "@/components/(public)/shared/navbar/logo";
-import LanguageSwitcher from "@/components/(public)/shared/navbar/switch-lang";
-import Theme from "@/components/(public)/shared/navbar/theme";
-import { IRole } from "./users/_interface/user.interface";
 import { redirect } from "next/navigation";
+import DashBoardSidebarNav from "@/components/(dashboard)/shared/nav";
+import DashboardTopNav from "@/components/(dashboard)/shared/nav/top-nav";
+import { IUser } from "./users/_interface/user.interface";
+
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
 
 export default async function DashboardLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const session = (await getServerSession(authOptions)) as {
-    user?: {
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      role?: string;
-    };
-  };
+}: DashboardLayoutProps) {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect("/login");
 
-  if (!session) {
-    redirect("/auth/login");
-  }
+  const userRole = session.user.role ?? "AUTHOR";
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-center">
-        <div className="container flex h-16 items-center justify-between">
-          <Logo />
-          <div className="flex items-center  gap-5">
-            <LanguageSwitcher />
-            <Theme />
-            {session.user && <UserNav user={session.user} />}
-          </div>
-        </div>
-      </header>
-      <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr] lg:grid-cols-[240px_1fr]">
-        <aside className="hidden w-[200px] flex-col md:flex lg:w-[240px] border-r py-6 pr-6">
-          {<DashboardNav role={session.user?.role as IRole} />}
+      <DashboardTopNav user={session.user as IUser} />
+      <div className="flex flex-1  container mx-auto ">
+        {/* Sidebar (desktop) */}
+        <aside className="hidden md:flex w-64 flex-col border-r bg-background px-4 py-6">
+          <DashBoardSidebarNav role={userRole} />
         </aside>
-        <main className="flex w-full flex-1 flex-col overflow-hidden py-6">
+
+        {/* Main content */}
+        <main className="flex-1 overflow-auto ">
+          {/* Top nav (mobile only) */}
+          <div className="md:hidden mb-6 p-2">
+            <DashBoardSidebarNav role={userRole} />
+          </div>
+
           {children}
         </main>
       </div>

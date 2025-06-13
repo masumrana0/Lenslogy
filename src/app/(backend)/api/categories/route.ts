@@ -1,4 +1,4 @@
-import { CategoryController } from "../../_modules/category/category.controller";
+import { CategoryController } from "../../_modules/article/category/category.controller";
 
 export const POST = CategoryController.createCategory;
 

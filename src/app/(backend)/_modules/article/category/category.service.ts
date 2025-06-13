@@ -1,7 +1,8 @@
+import Auth from "@/app/(backend)/_core/error-handler/auth";
+import { ApiErrors } from "@/app/(backend)/_core/errors/api-error";
 import { translateContent } from "@/lib/ai/gemenai";
 import prisma from "@/lib/prisma";
-import { ApiErrors } from "../../_core/errors/api-error";
-import Auth from "../../_core/error-handler/auth";
+ 
 import { Language, Role } from "@prisma/client";
 
 // create category

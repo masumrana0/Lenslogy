@@ -1,79 +1,83 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { BarChart3, FileText, FolderPlus, Home, Settings, Tag, Users } from "lucide-react"
+import React, { useEffect, useState } from "react";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import SideBarNavItem from "./side-navbar/sidebar-nav-item";
+import { sideNavItemsContent } from "@/content/dashboard/side-nav-content";
+import { toggleSidebarMobileMenu } from "@/redux/features/nav-states/nav-slice";
 
-interface DashboardNavProps {
-  role: string
-}
+const DashBoardSidebarNav: React.FC<{ role: string }> = ({ role }) => {
+  const [isMobile, setIsMobile] = useState(false);
+  const dispatch = useAppDispatch();
+  const isSidebarOpen = useAppSelector(
+    (state) => state.navSlice.isDashBoardSideBarOpen
+  );
 
-export function DashboardNav({ role }: DashboardNavProps) {
-  const pathname = usePathname()
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      setIsMobile(e.matches);
+    };
 
-  const navItems = [
-    {
-      title: "Overview",
-      href: "/dashboard",
-      icon: Home,
-      roles: ["SUPER_ADMIN", "ADMIN", "AUTHOR"],
-    },
-    {
-      title: "Articles",
-      href: "/dashboard/articles",
-      icon: FileText,
-      roles: ["SUPER_ADMIN", "ADMIN", "AUTHOR"],
-    },
-    {
-      title: "Categories",
-      href: "/dashboard/categories",
-      icon: FolderPlus,
-      roles: ["SUPER_ADMIN", "ADMIN"],
-    },
-    {
-      title: "Tags",
-      href: "/dashboard/tags",
-      icon: Tag,
-      roles: ["SUPER_ADMIN", "ADMIN"],
-    },
-    {
-      title: "Users",
-      href: "/dashboard/users",
-      icon: Users,
-      roles: ["SUPER_ADMIN", "ADMIN"],
-    },
-    {
-      title: "Analytics",
-      href: "/dashboard/analytics",
-      icon: BarChart3,
-      roles: ["SUPER_ADMIN", "ADMIN"],
-    },
-    {
-      title: "Settings",
-      href: "/dashboard/settings",
-      icon: Settings,
-      roles: ["SUPER_ADMIN", "ADMIN", "AUTHOR"],
-    },
-  ]
+    // Initial check
+    handleMediaChange(mediaQuery);
+
+    // Listen to changes
+    mediaQuery.addEventListener("change", handleMediaChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaChange);
+    };
+  }, []);
+
+  const filteredNavItems = sideNavItemsContent.filter((item) =>
+    item.roles.includes(role)
+  );
+
+  const handleToggleSidebar = () => {
+    dispatch(toggleSidebarMobileMenu());
+  };
+
+  const NavItems = () => (
+    <>
+      {filteredNavItems.map((item) => (
+        <SideBarNavItem key={item.href} item={item} isMobile={isMobile} />
+      ))}
+    </>
+  );
 
   return (
-    <nav className="flex flex-col space-y-1">
-      {navItems
-        .filter((item) => item.roles.includes(role))
-        .map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-              pathname === item.href ? "bg-accent text-accent-foreground" : "transparent",
-            )}
-          >
-            <item.icon className="mr-2 h-4 w-4" />
-            <span>{item.title}</span>
-          </Link>
-        ))}
-    </nav>
-  )
-}
+    <>
+      {/* Mobile Nav */}
+      {isMobile && (
+        <div className="md:hidden">
+          <Sheet open={isSidebarOpen} onOpenChange={handleToggleSidebar}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="md:hidden">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[80%] max-w-[300px] pt-10">
+              <nav className="flex flex-col space-y-1">
+                <NavItems />
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+      )}
+
+      {/* Desktop Nav */}
+      {!isMobile && (
+        <nav className="hidden md:flex md:flex-col space-y-1 w-full">
+          <NavItems />
+        </nav>
+      )}
+    </>
+  );
+};
+
+export default DashBoardSidebarNav;
