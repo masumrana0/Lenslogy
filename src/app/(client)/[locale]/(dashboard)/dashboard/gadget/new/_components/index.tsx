@@ -52,6 +52,7 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm<GadgetFormData>({
     resolver: zodResolver(gadgetSchema as any),
     defaultValues: initialValue,
@@ -61,14 +62,15 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
   const isCreate = mode === "create";
 
   const onFormSubmit = async (data: GadgetFormData) => {
+    console.log(data);
+
     try {
       if (isCreate) {
-        
         toast.success(
           `Gadget ${mode === "create" ? "created" : "updated"} successfully!`
         );
         if (mode === "create") {
-          reset();
+          // reset();
         }
       } else {
         // Default behavior - just log the data
@@ -128,7 +130,11 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
               </TabsList>
 
               <TabsContent value="content">
-                <ContentTab control={control} errors={errors as any} />
+                <ContentTab
+                  control={control}
+                  errors={errors as any}
+                  setValue={setValue}
+                />
               </TabsContent>
 
               <TabsContent value="settings">

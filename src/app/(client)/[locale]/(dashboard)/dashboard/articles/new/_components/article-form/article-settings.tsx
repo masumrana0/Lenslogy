@@ -63,7 +63,7 @@ const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
         return (
           <FormField
             key={name}
-            control={form.control}
+            control={control}
             name={name as keyof Article}
             render={({ field }) => (
               <FormItem

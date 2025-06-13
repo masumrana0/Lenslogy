@@ -80,7 +80,7 @@ const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
 
   // Initialize form with explicit default values for all boolean fields
   const form = useForm<Article>({
-    resolver: zodResolver(articleSchema as Schema),
+    resolver: zodResolver(articleSchema as any),
     defaultValues: initialValues,
   });
 

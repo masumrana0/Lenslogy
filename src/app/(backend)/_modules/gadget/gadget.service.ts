@@ -1,4 +1,4 @@
-import { Language, Role } from "@prisma/client";
+import { Gadget, Language, Role } from "@prisma/client";
 import Auth from "../../_core/error-handler/auth";
 import { ApiErrors } from "../../_core/errors/api-error";
 import { uploader } from "@/lib/uploader/uploader";
@@ -14,63 +14,73 @@ import pick from "../../_core/shared/pick";
 import { paginationHelpers } from "../../_core/helper/pagination-helper";
 
 const createGadget = async (req: Request) => {
+  // Auth check
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
-  const formData = await req.formData();
 
+  const formData = await req.formData();
   const file = formData.get("imgFile") as File | null;
-  const files = formData.get("imgFiles") as File | null;
+  const fileList = formData.getAll("imgFiles") as unknown as File[];
   const payloadStr = formData.get("payload") as string | null;
 
-  if (!file || !files || !payloadStr) {
-    throw ApiErrors.BadRequest("File and payload are required.");
+  // Validate input
+  if (!file || !fileList?.length || !payloadStr) {
+    throw ApiErrors.BadRequest("imgFile, imgFiles, and payload are required.");
   }
 
-  // Parallel tasks
-  const [savedFile, savedFiles, payload] = await Promise.all([
-    uploader.uploadImages([file]),
-    uploader.uploadImages(files as unknown as File[]),
+  // Parse payload
+  let payload: Gadget | Record<string, any>;
+  try {
+    payload = JSON.parse(payloadStr);
+  } catch {
+    throw ApiErrors.BadRequest("Invalid JSON payload.");
+  }
 
-    Promise.resolve(JSON.parse(payloadStr)),
+  // Upload images concurrently
+  const [singleImageUpload, multipleImageUpload] = await Promise.all([
+    uploader.uploadImages([file] as any),
+    uploader.uploadImages(fileList as any),
   ]);
 
-  const image = savedFile[0].fileUrl;
-  const images = savedFiles.filter.map(
-    (ele: Record<any, string>) => ele.fileUrl
-  );
+  const image = singleImageUpload[0]?.fileUrl;
+  const images = multipleImageUpload.map((f: any) => f.fileUrl);
+
+  if (!image || images.length === 0) {
+    throw ApiErrors.BadRequest("Image upload failed.");
+  }
+
   const { title, excerpt, content, ...rest } = payload;
 
-  // Base (English) Gadget
-  const baseGadget = {
+  // Prepare English gadget
+  const enGadget: any = {
     ...payload,
     image,
     images,
     authorId: session!.user.id,
-    lang: "en",
+    lang: "en" as const,
   };
 
   // Translate content to Bangla
   const translated = await translateContent({ title, excerpt, content });
 
-  // Bangla Gadget
-  const banglaGadget = {
+  // Prepare Bangla gadget
+  const bnGadget: any = {
     ...rest,
     ...translated,
     image,
     authorId: session!.user.id,
-    lang: "bn",
+    lang: "bn" as const,
   };
 
-  // Save both Gadgets in a transaction
+  // Save both entries in a transaction
   const result = await prisma.$transaction(async (tx) => {
-    const baseData = await tx.gadget.create({ data: baseGadget });
-    const banglaData = await tx.gadget.create({
+    const en = await tx.gadget.create({ data: enGadget });
+    const bn = await tx.gadget.create({
       data: {
-        ...banglaGadget,
-        baseId: baseData.baseId,
+        ...bnGadget,
+        baseId: en.baseId,
       },
     });
-
-    return { en: baseData, bn: banglaData };
+    return { en, bn };
   });
 
   return result;

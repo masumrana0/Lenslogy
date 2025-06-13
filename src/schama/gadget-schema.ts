@@ -14,6 +14,8 @@ export const gadgetSchema = z.object({
   // Content fields
   typeId: z.string().min(1, "Gadget type is required"),
   brandId: z.string().min(1, "Brand is required"),
+  brandBaseId: z.string().optional(),
+  typeBaseId: z.string().optional(),
   model: z.string().min(1, "Model is required"),
   releaseDate: z.date().optional().nullable(),
   title: z.string().min(1, "Title is required"),

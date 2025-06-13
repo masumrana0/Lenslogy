@@ -2,11 +2,11 @@ import Auth from "@/app/(backend)/_core/error-handler/auth";
 import { ApiErrors } from "@/app/(backend)/_core/errors/api-error";
 import { translateContent } from "@/lib/ai/gemenai";
 import prisma from "@/lib/prisma";
- 
+
 import { Language, Role } from "@prisma/client";
 
 // create category
-export const createCategory = async (req: Request) => {
+const createCategory = async (req: Request) => {
   await Auth([Role.ADMIN, Role.SUPER_ADMIN]);
 
   const { name } = await req.json();

@@ -16,6 +16,7 @@ type Props = {
   form: UseFormReturn<Article>;
 };
 
+
 const ArticleTextInputs = ({ form }: Props) => (
   <div className="space-y-8">
     {/* Title */}

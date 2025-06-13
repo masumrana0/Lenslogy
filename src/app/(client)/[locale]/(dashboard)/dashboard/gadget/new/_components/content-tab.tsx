@@ -1,5 +1,4 @@
 "use client";
-
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,28 +9,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
 
-import { Controller, type Control, type FieldErrors } from "react-hook-form";
+import {
+  Controller,
+  SetFieldValue,
+  type Control,
+  type FieldErrors,
+} from "react-hook-form";
 import { GadgetFormData } from "@/schama/gadget-schema";
 import { ImageUpload } from "./image-uploader";
 import { MultiImageUpload } from "./multi-upload";
 import TextEditorWithPreview from "../../../articles/new/_components/article-form/text-editor";
+import { useParams } from "next/navigation";
+import { useGetAllGadgetTypeQuery } from "@/redux/api/gadgetType.api";
+import { useGetAllBrandQuery } from "@/redux/api/brand.api";
+import { GadgetBrand, GadgetType } from "@prisma/client";
+import DatePicker from "@/components/ui/DatePicker";
 
 interface ContentTabProps {
   control: Control<GadgetFormData | any>;
   errors: FieldErrors<GadgetFormData | any>;
+  setValue: SetFieldValue<GadgetFormData | any>;
 }
 
-const ContentTab = ({ control, errors }: ContentTabProps) => {
+const ContentTab = ({ control, errors, setValue }: ContentTabProps) => {
+  const { locale: lang } = useParams();
+
+  const { data: typeData, isLoading: isTypeLoading } =
+    useGetAllGadgetTypeQuery(lang);
+  const { data: brandData, isLoading: isBrandLoading } =
+    useGetAllBrandQuery(lang);
+  const types =
+    (typeData && "data" in typeData ? (typeData as any).data : []) || [];
+  const brands =
+    (brandData &&
+    typeof brandData === "object" &&
+    brandData !== null &&
+    "data" in brandData
+      ? (brandData as any).data
+      : []) || [];
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -41,25 +58,46 @@ const ContentTab = ({ control, errors }: ContentTabProps) => {
             name="typeId"
             control={control}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  const selectedType = types.find(
+                    (brand: GadgetBrand) => brand.id === value
+                  );
+                  setValue(
+                    "typeBaseId",
+                    selectedType ? selectedType.baseId : ""
+                  );
+                  field.onChange(value);
+                }}
+              >
                 <SelectTrigger
                   className={errors.typeId ? "border-destructive" : ""}
                 >
                   <SelectValue placeholder="Select gadget type" />
                 </SelectTrigger>
+
                 <SelectContent>
-                  <SelectItem value="smartphone">Smartphone</SelectItem>
-                  <SelectItem value="laptop">Laptop</SelectItem>
-                  <SelectItem value="tablet">Tablet</SelectItem>
-                  <SelectItem value="smartwatch">Smartwatch</SelectItem>
-                  <SelectItem value="headphones">Headphones</SelectItem>
-                  <SelectItem value="camera">Camera</SelectItem>
-                  <SelectItem value="gaming">Gaming</SelectItem>
-                  <SelectItem value="wearable">Wearable</SelectItem>
+                  {isTypeLoading ? (
+                    <SelectItem value="loading" disabled>
+                      Loading Type...
+                    </SelectItem>
+                  ) : types.length > 0 ? (
+                    types.map((type: GadgetType) => (
+                      <SelectItem key={type.baseId} value={type.id}>
+                        {type.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>
+                      No types available
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             )}
           />
+
           {errors?.typeId && (
             <p className="text-sm text-destructive">
               {errors.typeId.message as string}
@@ -73,25 +111,45 @@ const ContentTab = ({ control, errors }: ContentTabProps) => {
             name="brandId"
             control={control}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  const selectedBrand = brands.find(
+                    (brand: GadgetBrand) => brand.id === value
+                  );
+                  setValue(
+                    "brandBaseId",
+                    selectedBrand ? selectedBrand.baseId : ""
+                  );
+                  field.onChange(value);
+                }}
+              >
                 <SelectTrigger
                   className={errors.brandId ? "border-destructive" : ""}
                 >
                   <SelectValue placeholder="Select brand" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="apple">Apple</SelectItem>
-                  <SelectItem value="samsung">Samsung</SelectItem>
-                  <SelectItem value="google">Google</SelectItem>
-                  <SelectItem value="microsoft">Microsoft</SelectItem>
-                  <SelectItem value="sony">Sony</SelectItem>
-                  <SelectItem value="xiaomi">Xiaomi</SelectItem>
-                  <SelectItem value="oneplus">OnePlus</SelectItem>
-                  <SelectItem value="huawei">Huawei</SelectItem>
+                  {isBrandLoading ? (
+                    <SelectItem value="loading" disabled>
+                      Loading brands...
+                    </SelectItem>
+                  ) : brands.length > 0 ? (
+                    brands.map((brand: GadgetBrand) => (
+                      <SelectItem key={brand.baseId} value={brand.id}>
+                        {brand.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>
+                      No brands available
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             )}
           />
+
           {errors.brandId && (
             <p className="text-sm text-destructive">
               {errors.brandId.message as string}
@@ -122,30 +180,17 @@ const ContentTab = ({ control, errors }: ContentTabProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label>Release Date</Label>
           <Controller
             name="releaseDate"
             control={control}
-            render={({ field }) => (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal"
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {field.value ? format(field.value, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value || undefined}
-                    onSelect={field.onChange}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+            render={({ field, fieldState }) => (
+              <DatePicker
+                label="Release Date"
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Select release date"
+                error={fieldState.error?.message}
+              />
             )}
           />
         </div>
@@ -193,27 +238,6 @@ const ContentTab = ({ control, errors }: ContentTabProps) => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="content">Content *</Label>
-        <Controller
-          name="content"
-          control={control}
-          render={({ field }) => (
-            <TextEditorWithPreview
-              value={field.value}
-              onChange={field.onChange}
-              placeholder="Write your gadget content..."
-              className="min-h-[500px]"
-            />
-          )}
-        />
-        {errors.content && (
-          <p className="text-sm text-destructive">
-            {errors.content.message as string}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
         <Label>Main Image *</Label>
         <Controller
           name="image"
@@ -241,6 +265,27 @@ const ContentTab = ({ control, errors }: ContentTabProps) => {
             />
           )}
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="content">Content *</Label>
+        <Controller
+          name="content"
+          control={control}
+          render={({ field }) => (
+            <TextEditorWithPreview
+              value={field.value}
+              onChange={field.onChange}
+              placeholder="Write your gadget content..."
+              className="min-h-[500px]"
+            />
+          )}
+        />
+        {errors.content && (
+          <p className="text-sm text-destructive">
+            {errors.content.message as string}
+          </p>
+        )}
       </div>
     </div>
   );
