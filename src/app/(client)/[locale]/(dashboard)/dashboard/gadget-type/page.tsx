@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import FormValueForm from "../brand/_components/create-form-data-form";
 import FormDataTable from "../brand/_components/form-data-table";
 
-export default async function CategoriesPage() {
+export default async function GadgetType() {
   const session = await getServerSession(authOptions);
 
   if (
@@ -17,19 +17,16 @@ export default async function CategoriesPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <DashboardHeader
-        heading="Categories"
-        text="Manage your blog categories"
-      />
+      <DashboardHeader heading="Gadget Types" text="Manage your  Gadget Type" />
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div>
-          <h2 className="text-xl font-bold mb-4">Add New Category</h2>
-          <FormValueForm mode="category" />
+          <h2 className="text-xl font-bold mb-4">Add New Gadget Type</h2>
+          <FormValueForm mode="gadgetType" />
         </div>
         <div>
-          <h2 className="text-xl font-bold mb-4">Existing Categories</h2>
-          <FormDataTable mode="category" />
+          <h2 className="text-xl font-bold mb-4">Existing Gadget Types</h2>
+          <FormDataTable mode="gadgetType" />
         </div>
       </div>
     </div>

@@ -79,6 +79,8 @@ const updateGadgetBrand = async (req: Request) => {
   });
   if (!GadgetBrand) throw ApiErrors.NotFound("GadgetBrand not found");
 
+  
+
   const { name } = await req.json();
   if (!name) throw ApiErrors.BadRequest("Edited text are required");
 

@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import SideBarNavItem from "./side-navbar/sidebar-nav-item";
 import { sideNavItemsContent } from "@/content/dashboard/side-nav-content";
 import { toggleSidebarMobileMenu } from "@/redux/features/nav-states/nav-slice";
+import Logo from "@/components/(public)/shared/navbar/logo";
 
 const DashBoardSidebarNav: React.FC<{ role: string }> = ({ role }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -55,13 +56,8 @@ const DashBoardSidebarNav: React.FC<{ role: string }> = ({ role }) => {
       {isMobile && (
         <div className="md:hidden">
           <Sheet open={isSidebarOpen} onOpenChange={handleToggleSidebar}>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
             <SheetContent side="left" className="w-[80%] max-w-[300px] pt-10">
+              <Logo className="flex justify-center " />
               <nav className="flex flex-col space-y-1">
                 <NavItems />
               </nav>

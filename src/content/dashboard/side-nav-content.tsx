@@ -46,13 +46,13 @@ export const sideNavItemsContent: ISideBarNavItem[] = [
     children: [
       {
         title: "All Gadgets",
-        href: "/dashboard/gadgets",
+        href: "/dashboard/gadget",
         icon: Smartphone,
         roles: ["SUPER_ADMIN", "ADMIN", "AUTHOR"],
       },
       {
         title: "Create Gadget",
-        href: "/dashboard/gadgets/create",
+        href: "/dashboard/gadget/new",
         icon: PlusCircle,
         roles: ["SUPER_ADMIN", "ADMIN", "AUTHOR"],
       },
@@ -65,27 +65,39 @@ export const sideNavItemsContent: ISideBarNavItem[] = [
     roles: ["SUPER_ADMIN", "ADMIN"],
   },
   {
-    title: "Tags",
-    href: "/dashboard/tags",
-    icon: Tag,
+    title: "GadgetBrand",
+    href: "/dashboard/brand",
+    icon: FolderPlus,
     roles: ["SUPER_ADMIN", "ADMIN"],
   },
+  {
+    title: "GadgetType",
+    href: "/dashboard/gadget-type",
+    icon: FolderPlus,
+    roles: ["SUPER_ADMIN", "ADMIN"],
+  },
+  // {
+  //   title: "Tags",
+  //   href: "/dashboard/tags",
+  //   icon: Tag,
+  //   roles: ["SUPER_ADMIN", "ADMIN"],
+  // },
   {
     title: "Users",
     href: "/dashboard/users",
     icon: Users,
     roles: ["SUPER_ADMIN", "ADMIN"],
   },
-  {
-    title: "Analytics",
-    href: "/dashboard/analytics",
-    icon: BarChart3,
-    roles: ["SUPER_ADMIN", "ADMIN"],
-  },
-  {
-    title: "Settings",
-    href: "/dashboard/settings",
-    icon: Settings,
-    roles: ["SUPER_ADMIN", "ADMIN", "AUTHOR"],
-  },
+  // {
+  //   title: "Analytics",
+  //   href: "/dashboard/analytics",
+  //   icon: BarChart3,
+  //   roles: ["SUPER_ADMIN", "ADMIN"],
+  // },
+  // {
+  //   title: "Settings",
+  //   href: "/dashboard/settings",
+  //   icon: Settings,
+  //   roles: ["SUPER_ADMIN", "ADMIN", "AUTHOR"],
+  // },
 ];

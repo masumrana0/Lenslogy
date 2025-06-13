@@ -52,7 +52,7 @@ const createGadgetType = async (req: Request) => {
 const getAllGadgetType = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const lang = (searchParams.get("lang") || "en") as Language;
-
+  console.log("hello iam in get all gadgetType");
   const result = await prisma.gadgetType.findMany({
     where: {
       lang: lang,
@@ -61,6 +61,7 @@ const getAllGadgetType = async (req: Request) => {
       createdAt: "desc",
     },
   });
+  console.log(result);
 
   return result;
 };

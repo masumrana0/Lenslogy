@@ -89,7 +89,7 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto py-8">
+    <div className="container  mx-auto ">
       <Card>
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">

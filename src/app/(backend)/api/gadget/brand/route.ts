@@ -5,4 +5,4 @@ export const POST = GadgetBrandController.createGadgetBrand;
 export const GET = GadgetBrandController.getAllGadgetBrand;
 
 export const PATCH = GadgetBrandController.updateGadgetBrand;
-export const DELETE = GadgetBrandController.updateGadgetBrand;
+export const DELETE = GadgetBrandController.deleteGadgetBrand;

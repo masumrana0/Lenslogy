@@ -1,9 +1,8 @@
- 
 import { baseApi } from "./baseApi";
 
 const url = "/gadget/brand";
 
-const BandApi: any = baseApi.injectEndpoints({
+const bandApi = baseApi.injectEndpoints({
   endpoints: (build: any) => ({
     // Create a new Band
     createBand: build.mutation({
@@ -15,7 +14,6 @@ const BandApi: any = baseApi.injectEndpoints({
       invalidatesTags: ["brand"],
     }),
 
-    // Upcrea ed t an exi ting Band
     updateBand: build.mutation({
       query: ({ name, id }: { id: string; name: string }) => ({
         url: `${url}?id=${id}`,
@@ -34,8 +32,7 @@ const BandApi: any = baseApi.injectEndpoints({
       invalidatesTags: ["brand"],
     }),
 
-    // Get all categories (optionally by language)
-    getAllCategories: build.query({
+    getAllBrand: build.query({
       query: (lang?: string) => ({
         url: `${url}`,
         method: "GET",
@@ -44,7 +41,6 @@ const BandApi: any = baseApi.injectEndpoints({
       providesTags: ["brand"],
     }),
 
-    // Get a single Band by ID (optionally with lang param)
     getBandById: build.query({
       query: ({ id, lang }: { id: string; lang?: "en" | "bn" }) => ({
         url: `${url}/${id}`,
@@ -61,7 +57,6 @@ export const {
   useCreateBandMutation,
   useUpdateBandMutation,
   useDeleteBandMutation,
-  useGetAllCategoriesQuery,
-
   useGetBandByIdQuery,
-} = BandApi;
+  useGetAllBrandQuery,
+} = bandApi;

@@ -1,4 +1,3 @@
-import { useUpdateUserMutation } from "@/redux/api/user.api";
 import { baseApi } from "./baseApi";
 
 const url = "/categories";

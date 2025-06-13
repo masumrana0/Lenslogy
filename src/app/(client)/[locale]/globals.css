@@ -246,8 +246,7 @@ Lightness (0%-100%) → How light or dark the color is (0% = black, 100% = white
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
- 
- 
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -256,6 +255,3 @@ Lightness (0%-100%) → How light or dark the color is (0% = black, 100% = white
     @apply bg-background text-foreground;
   }
 }
-
-
-

@@ -2,10 +2,10 @@ import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-heade
 import { authOptions } from "@/lib/next-auth/auth";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
-import FormValueForm from "../brand/_components/create-form-data-form";
-import FormDataTable from "../brand/_components/form-data-table";
+import FormValueForm from "./_components/create-form-data-form";
+import FormDataTable from "./_components/form-data-table";
 
-export default async function CategoriesPage() {
+export default async function BrandPage() {
   const session = await getServerSession(authOptions);
 
   if (
@@ -24,12 +24,12 @@ export default async function CategoriesPage() {
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div>
-          <h2 className="text-xl font-bold mb-4">Add New Category</h2>
-          <FormValueForm mode="category" />
+          <h2 className="text-xl font-bold mb-4">Add New Brand</h2>
+          <FormValueForm mode="brand" />
         </div>
         <div>
-          <h2 className="text-xl font-bold mb-4">Existing Categories</h2>
-          <FormDataTable mode="category" />
+          <h2 className="text-xl font-bold mb-4">Existing Brands</h2>
+          <FormDataTable mode="brand" />
         </div>
       </div>
     </div>

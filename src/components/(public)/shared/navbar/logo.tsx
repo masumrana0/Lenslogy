@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 
-const Logo = ({ className }: { className: string }) => {
+const Logo = ({ className }: { className?: string }) => {
   return (
     <Link href="/" className={`shrink-0 ${className}`}>
       <div className="flex items-center">

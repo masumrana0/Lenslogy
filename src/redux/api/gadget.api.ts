@@ -1,4 +1,3 @@
-import { Language } from "@prisma/client";
 import { baseApi } from "./baseApi";
 
 const url = "/gadget";
