@@ -45,6 +45,7 @@ const createArticle = async (req: Request) => {
 
   // Translate content to Bangla
   const translated = await translateContent({ title, excerpt, content });
+  console.log(translated);
 
   // Bangla article
   const banglaArticle = {
@@ -54,19 +55,25 @@ const createArticle = async (req: Request) => {
     authorId: session!.user.id,
     lang: "bn",
   };
+  console.log(banglaArticle);
 
   // Save both articles in a transaction
-  const result = await prisma.$transaction(async (tx) => {
-    const baseData = await tx.article.create({ data: baseArticle });
-    const banglaData = await tx.article.create({
-      data: {
-        ...banglaArticle,
-        baseId: baseData.baseId,
-      },
-    });
+  const result = await prisma.$transaction(
+    async (tx) => {
+      const baseData = await tx.article.create({ data: baseArticle });
+      const banglaData = await tx.article.create({
+        data: {
+          ...banglaArticle,
+          baseId: baseData.baseId,
+        },
+      });
 
-    return { en: baseData, bn: banglaData };
-  });
+      return { en: baseData, bn: banglaData };
+    },
+    {
+      timeout: 10000, // 10 seconds
+    }
+  );
 
   return result;
 };

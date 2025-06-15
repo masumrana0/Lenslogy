@@ -5,11 +5,18 @@ const fileListSchema = z.custom<FileList>((val) => {
   return val instanceof FileList;
 }, "Invalid file list");
 
-const requiredFileListSchema = fileListSchema.refine(
-  (files) => files && files.length > 0,
-  "At least one file is required"
-);
+// Date schema that handles both Date objects and date strings
+const dateSchema = z.union([
+  z.date(),
+  z.string().transform((str) => {
+    if (!str) return null;
+    const date = new Date(str);
+    return isNaN(date.getTime()) ? null : date;
+  }),
+  z.null(),
+]);
 
+// Combined schema that works for both modes
 export const gadgetSchema = z.object({
   // Content fields
   typeId: z.string().min(1, "Gadget type is required"),
@@ -17,14 +24,14 @@ export const gadgetSchema = z.object({
   brandBaseId: z.string().optional(),
   typeBaseId: z.string().optional(),
   model: z.string().min(1, "Model is required"),
-  releaseDate: z.date().optional().nullable(),
+  releaseDate: dateSchema.optional().nullable(),
   title: z.string().min(1, "Title is required"),
   excerpt: z.string().min(1, "Excerpt is required"),
   content: z.string().min(1, "Content is required"),
 
-  // Image fields with validation
-  image: requiredFileListSchema,
-  images: requiredFileListSchema,
+  // Image fields with flexible validation
+  image: z.union([fileListSchema, z.string().min(1, "Image is required")]),
+  images: z.union([fileListSchema, z.array(z.string())]).optional(),
 
   // Settings fields
   isGadget: z.boolean().default(true),

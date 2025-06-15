@@ -1,8 +1,12 @@
 import React from "react";
-import GadgetForm from "./_components";
+import GadgetForm from "./components/gadget-form";
 
-const Page = () => {
-  return <GadgetForm />;
+const CrateGadgetPage = () => {
+  return (
+    <>
+      <GadgetForm />
+    </>
+  );
 };
 
-export default Page;
+export default CrateGadgetPage;

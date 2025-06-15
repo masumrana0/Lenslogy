@@ -12,28 +12,39 @@ import {
 
 import {
   Controller,
-  SetFieldValue,
+  type SetFieldValue,
   type Control,
   type FieldErrors,
 } from "react-hook-form";
-import { GadgetFormData } from "@/schama/gadget-schema";
-import { ImageUpload } from "./image-uploader";
-import { MultiImageUpload } from "./multi-upload";
+import type { GadgetFormData } from "@/schama/gadget-schema";
+import ImageUpload from "./image-uploader";
+
 import TextEditorWithPreview from "../../../articles/new/_components/article-form/text-editor";
 import { useParams } from "next/navigation";
 import { useGetAllGadgetTypeQuery } from "@/redux/api/gadgetType.api";
 import { useGetAllBrandQuery } from "@/redux/api/brand.api";
-import { GadgetBrand, GadgetType } from "@prisma/client";
+import type { GadgetBrand, GadgetType } from "@prisma/client";
 import DatePicker from "@/components/ui/DatePicker";
+import MultiImageUpload from "./multi-uploader";
+import { useState } from "react";
 
 interface ContentTabProps {
   control: Control<GadgetFormData | any>;
   errors: FieldErrors<GadgetFormData | any>;
   setValue: SetFieldValue<GadgetFormData | any>;
+  onRemoveExistingImage?: (imageUrl: string) => void;
+  initialData?: any;
 }
 
-const ContentTab = ({ control, errors, setValue }: ContentTabProps) => {
+const ContentTab = ({
+  control,
+  errors,
+  setValue,
+  onRemoveExistingImage,
+  initialData,
+}: ContentTabProps) => {
   const { locale: lang } = useParams();
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
 
   const { data: typeData, isLoading: isTypeLoading } =
     useGetAllGadgetTypeQuery(lang);
@@ -49,6 +60,26 @@ const ContentTab = ({ control, errors, setValue }: ContentTabProps) => {
       ? (brandData as any).data
       : []) || [];
 
+  // Get existing images, filtering out removed ones
+  const existingImages = initialData?.images
+    ? (initialData.images as string[]).filter(
+        (img) => !removedImages.includes(img)
+      )
+    : [];
+
+  const handleRemoveExistingImage = (imageUrl: string) => {
+    setRemovedImages((prev) => [...prev, imageUrl]);
+    if (onRemoveExistingImage) {
+      onRemoveExistingImage(imageUrl);
+    }
+  };
+
+  const initialType = types.find(
+    (type) => type.baseId == initialData.typeBaseId
+  );
+
+  console.log(initialType);
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -59,16 +90,16 @@ const ContentTab = ({ control, errors, setValue }: ContentTabProps) => {
             control={control}
             render={({ field }) => (
               <Select
-                value={field.value}
+                value={field.value || initialType?.id}
                 onValueChange={(value) => {
                   const selectedType = types.find(
-                    (brand: GadgetBrand) => brand.id === value
+                    (type: GadgetType) => type.id === value
                   );
                   setValue(
                     "typeBaseId",
                     selectedType ? selectedType.baseId : ""
                   );
-                  field.onChange(value);
+                  field.onChange(selectedType.typeId);
                 }}
               >
                 <SelectTrigger
@@ -246,6 +277,7 @@ const ContentTab = ({ control, errors, setValue }: ContentTabProps) => {
             <ImageUpload
               value={field.value}
               onChange={field.onChange}
+              existingImage={initialData?.image}
               error={errors.image?.message as string}
             />
           )}
@@ -261,6 +293,8 @@ const ContentTab = ({ control, errors, setValue }: ContentTabProps) => {
             <MultiImageUpload
               value={field.value}
               onChange={field.onChange}
+              onRemoveExisting={handleRemoveExistingImage}
+              existingImages={existingImages}
               error={errors.images?.message as string}
             />
           )}

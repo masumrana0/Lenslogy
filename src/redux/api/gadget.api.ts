@@ -13,29 +13,27 @@ const gadgetApi: any = baseApi.injectEndpoints({
     }),
 
     getAllGadgets: build.query({
-      query: (query: string) => ({
-        url: `${url}?${query}`,
+      query: ({ lang, query }: { query: string; lang: string }) => ({
+        url: `${url}${query}&lang=${lang}`,
         method: "GET",
       }),
       providesTags: ["gadget"],
     }),
 
     createGadget: build.mutation({
-      query: (data: any) => ({
+      query: (data: FormData) => ({
         url: url,
         method: "POST",
         body: data,
-        contentType: "multipart/form-data",
       }),
       invalidatesTags: ["gadget"],
     }),
 
     updateGadget: build.mutation({
-      query: ({ formData, id }: { formData: any; id: string }) => ({
+      query: ({ id, data }: { id: string; data: FormData }) => ({
         url: `${url}?id=${id}`,
         method: "PATCH",
-        body: formData,
-        contentType: "multipart/form-data",
+        body: data,
       }),
       invalidatesTags: ["gadget"],
     }),

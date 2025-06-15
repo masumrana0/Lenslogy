@@ -44,6 +44,7 @@ export const booleanFilterKeys: (keyof IArticlesTableFilters)[] = [
   "isPinFeatured",
   "isPinLatest",
   "isPinHero",
+  "isPinNav",
   "isUpComing",
   "isEmergingTech",
   "isHotTech",
@@ -56,6 +57,7 @@ export const filterInitialState: IArticlesTableFilters = {
   isEmergingTech: null,
   isFeatured: null,
   isHotTech: null,
+  isPinNav: null,
   isPinFeatured: null,
   isPinHero: null,
   isPinLatest: null,
@@ -93,8 +95,8 @@ export const articleBooleanFieldsForUI = [
     desc: "Feature in top hero banner",
   },
   {
-   name:"isPinNav",
-   label:"is article pinned to navbar"
+    name: "isPinNav",
+    label: "is article pinned to navbar",
   },
   {
     name: "isGadget",

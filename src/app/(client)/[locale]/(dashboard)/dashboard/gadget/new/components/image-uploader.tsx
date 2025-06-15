@@ -7,37 +7,53 @@ import { X, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ImageUploadProps {
-  value?: FileList;
+  value?: FileList | string;
   onChange: (files: FileList | undefined) => void;
+  existingImage?: string;
   className?: string;
   disabled?: boolean;
   error?: string;
 }
 
-export function ImageUpload({
+function ImageUpload({
   value,
   onChange,
+  existingImage,
   className,
   disabled,
   error,
 }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasNewFile, setHasNewFile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Update preview when value changes
   useEffect(() => {
-    if (value && value.length > 0) {
-      const file = value[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (value) {
+      if (typeof value === "string") {
+        // Existing image URL
+        setPreview(value);
+        setHasNewFile(false);
+      } else if (value instanceof FileList && value.length > 0) {
+        // New file upload
+        const file = value[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result as string);
+          setHasNewFile(true);
+        };
+        reader.readAsDataURL(file);
+      }
+    } else if (existingImage) {
+      // Show existing image if no new value
+      setPreview(existingImage);
+      setHasNewFile(false);
     } else {
       setPreview(null);
+      setHasNewFile(false);
     }
-  }, [value]);
+  }, [value, existingImage]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -47,7 +63,8 @@ export function ImageUpload({
   };
 
   const handleRemoveImage = () => {
-    setPreview(null);
+    setPreview(existingImage || null);
+    setHasNewFile(false);
     onChange(undefined);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -80,7 +97,6 @@ export function ImageUpload({
 
     const files = e.dataTransfer.files;
     if (files.length > 0) {
-      // Create a new FileList-like object
       const dt = new DataTransfer();
       dt.items.add(files[0]);
       onChange(dt.files);
@@ -135,15 +151,37 @@ export function ImageUpload({
             }}
           />
           {!disabled && (
-            <Button
-              type="button"
-              size="icon"
-              variant="destructive"
-              className="absolute top-2 right-2 h-8 w-8 rounded-full"
-              onClick={handleRemoveImage}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <>
+              <Button
+                type="button"
+                size="icon"
+                variant="destructive"
+                className="absolute top-2 right-2 h-8 w-8 rounded-full"
+                onClick={handleRemoveImage}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              {!hasNewFile && (
+                <div className="absolute bottom-2 left-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    onClick={handleButtonClick}
+                    className="text-xs"
+                  >
+                    Change Image
+                  </Button>
+                </div>
+              )}
+              {hasNewFile && (
+                <div className="absolute bottom-2 left-2">
+                  <span className="text-xs bg-green-500 text-white px-2 py-1 rounded">
+                    New Image
+                  </span>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -152,3 +190,5 @@ export function ImageUpload({
     </div>
   );
 }
+
+export default ImageUpload;

@@ -9,8 +9,9 @@ export interface IArticlesTableFilters {
   isEmergingTech: string | null;
   isHotTech: string | null;
   isFeatured: string | null;
+  isPinNav: string | null;
   isGadget: string | null;
   isLatest: string | null;
-  sortBy: string;
-  sortOrder: string;
+  sortBy: "createdAt" | "updatedAt";
+  sortOrder: "desc" | "asc";
 }

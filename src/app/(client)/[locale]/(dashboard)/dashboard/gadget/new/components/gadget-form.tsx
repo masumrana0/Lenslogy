@@ -16,13 +16,20 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import ContentTab from "./content-tab";
+import {
+  useCreateGadgetMutation,
+  useUpdateGadgetMutation,
+} from "@/redux/api/gadget.api";
+import { useState } from "react";
 
 interface GadgetFormProps {
   mode?: "create" | "update";
-  initialData?: Partial<GadgetFormData | any>;
+  gadget?: Partial<GadgetFormData | any>;
 }
 
-const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
+const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
+
   const defaultValue = {
     typeId: "",
     brandId: "",
@@ -46,11 +53,22 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
     isHotTech: false,
   };
 
-  const initialValue: any = initialData ? initialData : defaultValue;
+  const isUpdate = mode === "update";
+  const isCreate = mode === "create";
+
+  // Prepare initial values with proper date conversion
+  const initialValue: any = gadget
+    ? {
+        ...defaultValue,
+        ...gadget,
+        releaseDate: gadget.releaseDate ? new Date(gadget.releaseDate) : null,
+      }
+    : defaultValue;
+
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
     reset,
     setValue,
   } = useForm<GadgetFormData>({
@@ -58,31 +76,81 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
     defaultValues: initialValue,
   });
 
-  const isUpdate = mode === "update";
-  const isCreate = mode === "create";
+  console.log(gadget)
+
+  const [createGadget, { isLoading: isCreating }] = useCreateGadgetMutation();
+  const [updateGadget, { isLoading: isUpdating }] = useUpdateGadgetMutation();
+  const isLoading = isCreating || isUpdating;
+
+  const handleRemoveExistingImage = (imageUrl: string) => {
+    setRemovedImages((prev) => [...prev, imageUrl]);
+  };
 
   const onFormSubmit = async (data: GadgetFormData) => {
-    console.log(data);
-
     try {
+      const formData = new FormData();
+
       if (isCreate) {
-        toast.success(
-          `Gadget ${mode === "create" ? "created" : "updated"} successfully!`
-        );
-        if (mode === "create") {
-          // reset();
+        // For create, add all data
+        if (data.image && data.image instanceof FileList && data.image[0]) {
+          formData.append("imgFile", data.image[0]);
         }
-      } else {
-        // Default behavior - just log the data
-        // console.log("Form submitted:", data);
-        // console.log("Main image:", data.image?.[0]);
-        // console.log(
-        //   "Other images:",
-        //   data.images ? Array.from(data.images) : []
-        // );
-        // toast.success(
-        //   `Gadget ${mode === "create" ? "created" : "updated"} successfully!`
-        // );
+
+        if (
+          data.images &&
+          data.images instanceof FileList &&
+          data.images.length > 0
+        ) {
+          Array.from(data.images).forEach((file) => {
+            formData.append("imgFiles", file);
+          });
+        }
+
+        const payloadData = { ...data };
+        delete payloadData.image;
+        delete payloadData.images;
+
+        formData.append("payload", JSON.stringify(payloadData));
+
+        const result = await createGadget(formData).unwrap();
+        toast.success("Gadget created successfully!");
+        reset();
+        return result;
+      } else if (isUpdate && gadget?.id) {
+        // For update, handle both new files and existing URLs
+        if (data.image && data.image instanceof FileList && data.image[0]) {
+          formData.append("imgFile", data.image[0]);
+        }
+
+        if (
+          data.images &&
+          data.images instanceof FileList &&
+          data.images.length > 0
+        ) {
+          Array.from(data.images).forEach((file) => {
+            formData.append("imgFiles", file);
+          });
+        }
+
+        // Add removed images info
+        if (removedImages.length > 0) {
+          formData.append("removedImages", JSON.stringify(removedImages));
+        }
+
+        const payloadData = { ...data };
+        delete payloadData.image;
+        delete payloadData.images;
+
+        formData.append("payload", JSON.stringify(payloadData));
+
+        const result = await updateGadget({
+          id: gadget.id,
+          data: formData,
+        }).unwrap();
+
+        toast.success("Gadget updated successfully!");
+        setRemovedImages([]);
+        return result;
       }
     } catch (error) {
       console.error("Form submission error:", error);
@@ -91,7 +159,7 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
   };
 
   return (
-    <div className="container  mx-auto ">
+    <div className="container mx-auto">
       <Card>
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
@@ -105,9 +173,16 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
                   : "Fill in the details to create a new gadget entry"}
               </CardDescription>
             </div>
-            <Badge variant={isUpdate ? "secondary" : "default"}>
-              {isUpdate ? "Update Mode" : "Create Mode"}
-            </Badge>
+            <div className="flex gap-2">
+              <Badge variant={isUpdate ? "secondary" : "default"}>
+                {isUpdate ? "Update Mode" : "Create Mode"}
+              </Badge>
+              {isUpdate && (isDirty || removedImages.length > 0) && (
+                <Badge variant="outline" className="text-orange-600">
+                  Changes detected
+                </Badge>
+              )}
+            </div>
           </div>
         </CardHeader>
 
@@ -134,6 +209,8 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
                   control={control}
                   errors={errors as any}
                   setValue={setValue}
+                  onRemoveExistingImage={handleRemoveExistingImage}
+                  initialData={gadget}
                 />
               </TabsContent>
 
@@ -149,9 +226,9 @@ const GadgetForm = ({ mode = "create", initialData }: GadgetFormProps) => {
               <Button
                 type="submit"
                 className="bg-red-500 hover:bg-red-600 text-white"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoading}
               >
-                {isSubmitting
+                {isSubmitting || isLoading
                   ? isUpdate
                     ? "Updating..."
                     : "Creating..."
