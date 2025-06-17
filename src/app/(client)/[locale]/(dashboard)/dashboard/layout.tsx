@@ -14,7 +14,7 @@ export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/login");
+  if (!session) redirect("/auth/login");
 
   const userRole = session.user.role ?? "AUTHOR";
 
