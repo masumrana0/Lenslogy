@@ -2,9 +2,10 @@
 
 import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState, useCallback } from "react";
 import RenderPreview from "./render-preview";
-import { IEditorContentProps } from "./interface/editor-interface";
+import type { IEditorContentProps } from "./interface/editor-interface";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const JoditEditor = dynamic(() => import("jodit-react"), {
@@ -26,23 +27,39 @@ const EditorContent: React.FC<IEditorContentProps> = ({
     setIsMounted(true);
   }, []);
 
+  // Enhanced change handler to preserve formatting
+  const handleEditorChange = useCallback(
+    (newValue: string) => {
+      latestValueRef.current = newValue;
+      onChange(newValue);
+    },
+    [onChange, latestValueRef]
+  );
+
   if (!isMounted) {
     return <Skeleton className="h-64 w-full" />;
   }
 
   return (
-    <div className={cn("relative", viewMode === "split" && "grid grid-cols-2")}>
+    <div
+      className={cn(
+        "relative h-full",
+        viewMode === "split" && "grid grid-cols-2"
+      )}
+    >
       {/* Editor */}
       {(viewMode === "edit" || viewMode === "split") && (
         <div
           className={cn(
+            "h-full",
             viewMode === "split" &&
               "border-r border-gray-200 dark:border-gray-700"
           )}
         >
           <JoditEditor
-            value={latestValueRef.current}
-            onBlur={(value) => onChange(value)}
+            value={value}
+            onChange={handleEditorChange}
+            onBlur={handleEditorChange}
             config={config as any}
           />
         </div>
@@ -52,7 +69,7 @@ const EditorContent: React.FC<IEditorContentProps> = ({
       {(viewMode === "preview" || viewMode === "split") && (
         <div
           className={cn(
-            "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900",
+            "h-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900",
             viewMode === "preview" && "rounded-lg",
             viewMode === "split" && "rounded-r-lg border-l-0",
             "overflow-auto"

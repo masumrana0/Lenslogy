@@ -37,7 +37,6 @@ import { IArticleFormProps } from "../../../_interface/article.interface";
 import {
   articleCreateSchema,
   articleEditSchema,
-  articleSchema,
 } from "@/schama/article-schema";
 
 const ArticleForm = ({
@@ -84,7 +83,7 @@ const ArticleForm = ({
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { isSubmitting, isDirty },
     reset,
     setValue,
   } = form;

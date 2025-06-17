@@ -7,14 +7,6 @@ import EditorSmallScreenView from "./editor-small-screen";
 import { IEditorProps, IViewMode } from "./interface/editor-interface";
 import getEditorConfig from "./editor-config";
 
-const debounce = (func: (...args: any[]) => void, wait: number) => {
-  let timeout: ReturnType<typeof setTimeout>;
-  return (...args: any[]) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-};
-
 const TextEditorWithPreview: React.FC<IEditorProps> = ({
   value,
   onChange,
