@@ -11,7 +11,7 @@ const createGadgetBrand = async (req: Request) => {
 
   const { name } = await req.json();
 
-  const isExistedGadgetBrand = await prisma.gadgetBrand.findUnique({
+  const isExistedGadgetBrand = await prisma.gadgetBrand.findFirst({
     where: {
       name: name,
       lang: "en",
@@ -78,8 +78,6 @@ const updateGadgetBrand = async (req: Request) => {
     where: { id: GadgetBrandId },
   });
   if (!GadgetBrand) throw ApiErrors.NotFound("GadgetBrand not found");
-
-  
 
   const { name } = await req.json();
   if (!name) throw ApiErrors.BadRequest("Edited text are required");
