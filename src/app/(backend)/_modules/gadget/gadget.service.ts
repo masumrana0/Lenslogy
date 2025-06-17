@@ -13,6 +13,7 @@ import { paginationFields } from "../../_core/constants/patination.constant";
 import pick from "../../_core/shared/pick";
 import { paginationHelpers } from "../../_core/helper/pagination-helper";
 
+// create Gadget
 const createGadget = async (req: Request) => {
   // Auth check
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
@@ -87,6 +88,7 @@ const createGadget = async (req: Request) => {
   return result;
 };
 
+// update Gadget
 export const updateGadget = async (req: Request) => {
   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
 
@@ -148,7 +150,7 @@ export const updateGadget = async (req: Request) => {
         }
       }
     } catch (error) {
-      console.error("Error uploading main image:", error);
+      // console.error("Error uploading main image:", error);
       throw ApiErrors.BadRequest("Failed to upload main image");
     }
   }
@@ -171,7 +173,7 @@ export const updateGadget = async (req: Request) => {
       updatedBase.images = combinedImages;
       updatedBangla.images = combinedImages;
     } catch (error) {
-      console.error("Error uploading multiple images:", error);
+      // console.error("Error uploading multiple images:", error);
       throw ApiErrors.BadRequest("Failed to upload images");
     }
   } else if (removedImages.length > 0) {
@@ -191,7 +193,7 @@ export const updateGadget = async (req: Request) => {
         removedImages.map((imageUrl) => uploader.deleteImage(imageUrl))
       );
     } catch (error) {
-      console.error("Error deleting removed images:", error);
+      // console.error("Error deleting removed images:", error);
       // Don't throw here, continue with update
     }
   }
@@ -209,7 +211,10 @@ export const updateGadget = async (req: Request) => {
   let needsTranslation = false;
 
   translatableFields.forEach((field) => {
-    if (payload[field] && payload[field] !== existingGadget[field as keyof typeof existingGadget]) {
+    if (
+      payload[field] &&
+      payload[field] !== existingGadget[field as keyof typeof existingGadget]
+    ) {
       fieldsToTranslate[field] = payload[field];
       needsTranslation = true;
     }
@@ -220,7 +225,7 @@ export const updateGadget = async (req: Request) => {
       const translatedContent = await translateContent(fieldsToTranslate);
       Object.assign(updatedBangla, translatedContent);
     } catch (error) {
-      console.error("Translation error:", error);
+      // console.error("Translation error:", error);
       // Continue without translation if it fails
     }
   }
@@ -287,121 +292,6 @@ export const updateGadget = async (req: Request) => {
 
   return result;
 };
-
-// const updateGadget = async (req: Request) => {
-//   const session = await Auth([Role.ADMIN, Role.SUPER_ADMIN, Role.AUTHOR]);
-
-//   const { searchParams } = new URL(req.url);
-//   const gadgetId = searchParams.get("id");
-//   if (!gadgetId) throw ApiErrors.BadRequest("Gadget ID is missing");
-
-//   // Check if Gadget exists
-//   const existingGadget = await prisma.gadget.findFirst({
-//     where: { id: gadgetId },
-//   });
-
-//   if (!existingGadget) throw ApiErrors.NotFound("Gadget not found");
-
-//   // Only allow SUPER_ADMIN or the author to update the Gadget
-//   if (
-//     session.user.role !== Role.SUPER_ADMIN &&
-//     existingGadget.authorId !== session.user.id
-//   ) {
-//     throw ApiErrors.Forbidden("You're not authorized to update this Gadget");
-//   }
-
-//   // Get form data
-//   const formData = await req.formData();
-
-//   const file = formData.get("imgFile") as File | null;
-//   const fileList = formData.getAll("imgFiles") as File[];
-//   const payloadStr = formData.get("payload") as string | null;
-
-//   if (!payloadStr) {
-//     throw ApiErrors.BadRequest("Payload is required");
-//   }
-
-//   // Parse payload
-//   let payload: any;
-//   try {
-//     payload = JSON.parse(payloadStr);
-//   } catch {
-//     throw ApiErrors.BadRequest("Invalid JSON payload.");
-//   }
-
-//   const updatedBase: Record<string, any> = { ...payload };
-//   const updatedBangla: Record<string, any> = {};
-
-//   // Handle image uploads if provided
-//   if (file) {
-//     const uploadedFiles = await uploader.uploadImages([file as any]);
-//     const image = uploadedFiles[0]?.fileUrl;
-//     updatedBase.image = image;
-//     updatedBangla.image = image;
-
-//     // Delete old image if successful
-//     if (image && existingGadget.image) {
-//       await uploader.deleteImage(existingGadget.image);
-//     }
-//   }
-
-//   if (fileList && fileList.length > 0) {
-//     const uploadedFiles = await uploader.uploadImages(fileList as any);
-//     const images = uploadedFiles.map((f: any) => f.fileUrl);
-//     updatedBase.images = images;
-//     updatedBangla.images = images;
-//   }
-
-//   // Extract translatable fields
-//   const { title, excerpt, content, ...others } = updatedBase;
-
-//   // Only translate if these fields are provided
-//   let translatedContent = {};
-//   if (title || excerpt || content) {
-//     translatedContent = await translateContent({
-//       title: title || undefined,
-//       excerpt: excerpt || undefined,
-//       content: content || undefined,
-//     });
-//   }
-
-//   // Merge non-translatable fields
-//   Object.assign(updatedBangla, others);
-
-//   // Add translated content
-//   if (Object.keys(translatedContent).length > 0) {
-//     Object.assign(updatedBangla, translatedContent);
-//   }
-
-//   // Update both versions in a transaction
-//   const result = await prisma.$transaction(async (tx) => {
-//     // Update base (English) Gadget
-//     const updatedBaseGadget = await tx.gadget.update({
-//       where: {
-//         baseId_lang_unique: {
-//           baseId: existingGadget.baseId,
-//           lang: "en",
-//         },
-//       },
-//       data: updatedBase,
-//     });
-
-//     // Update Bangla version
-//     const updatedBanglaGadget = await tx.gadget.update({
-//       where: {
-//         baseId_lang_unique: {
-//           baseId: existingGadget.baseId,
-//           lang: "bn",
-//         },
-//       },
-//       data: updatedBangla,
-//     });
-
-//     return { base: updatedBaseGadget, bn: updatedBanglaGadget };
-//   });
-
-//   return result;
-// };
 
 // delete Gadget
 const deleteGadget = async (req: Request) => {

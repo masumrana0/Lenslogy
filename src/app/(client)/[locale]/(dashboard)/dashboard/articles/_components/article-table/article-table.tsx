@@ -4,7 +4,6 @@ import type { Article, Language } from "@prisma/client";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import FilterPanel from "./article-filter-pannel";
-
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { queryToObject } from "@/utils/query";
 import { setArticleFilterQuery } from "@/redux/features/filter/article.filter";
@@ -12,6 +11,11 @@ import ArticleActiveFilters from "./article-active-filters";
 import ArticleList from "./article-list";
 import PaginationControls from "../../../_components/shared/pagination-controls";
 import SearchBar from "../../../_components/filters/search-bar";
+import ArticleForm from "../../new/_components/article-form/article-form";
+import { DashboardHeader } from "@/components/(dashboard)/shared/dashboard-header";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
 const ArticlesTable = () => {
   const router = useRouter();
@@ -61,12 +65,20 @@ const ArticlesTable = () => {
   return (
     <>
       {isEditOpen?.state ? (
-        // <GadgetForm mode="update" gadget={isEditOpen.gadget as Gadget} />
-        <div>
-          <h2>Cooking...</h2>
-        </div>
+        <ArticleForm
+          mode="update"
+          setIsEditOpen={setIsEditOpen}
+          article={isEditOpen.article as Article}
+        />
       ) : (
         <div className="space-y-4">
+          <DashboardHeader heading="Articles" text="Manage your articles">
+            <Button asChild>
+              <Link href="/dashboard/articles/new">
+                <Plus className="mr-2 h-4 w-4" /> New Article
+              </Link>
+            </Button>
+          </DashboardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <SearchBar
               value={queryObject.searchTerm as string}

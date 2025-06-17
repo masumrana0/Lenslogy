@@ -10,7 +10,6 @@ import { queryToObject } from "@/utils/query";
 import GadgetForm from "../../new/components/gadget-form";
 import GadgetList from "./gadget-list";
 import { setGadgetFilterQuery } from "@/redux/features/filter/gadget.filter";
-
 import SearchBar from "../../../_components/filters/search-bar";
 import PaginationControls from "../../../_components/shared/pagination-controls";
 
@@ -49,6 +48,7 @@ const GadgetTable = () => {
     query,
     lang,
   });
+
   const gadgets = gadgetData?.data.result || [];
 
   const meta = gadgetData?.data?.meta || {
@@ -61,7 +61,11 @@ const GadgetTable = () => {
   return (
     <>
       {isEditOpen?.state ? (
-        <GadgetForm mode="update" gadget={isEditOpen.gadget as Gadget} />
+        <GadgetForm
+          mode="update"
+          setIsEditOpen={setIsEditOpen}
+          gadget={isEditOpen.gadget as Gadget}
+        />
       ) : (
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

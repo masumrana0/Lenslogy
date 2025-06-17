@@ -1,3 +1,7 @@
+import { GadgetFormData } from "@/schama/gadget-schema";
+import { Gadget } from "@prisma/client";
+import { SetStateAction } from "react";
+
 export interface IGadgetFilters {
   searchTerm?: string;
   brandBaseId?: string;
@@ -18,4 +22,15 @@ export interface IGadgetFilters {
   page?: number;
   limit?: number;
   lang?: "en" | "bn";
+}
+
+export interface IGadgetFormProps {
+  mode?: "create" | "update";
+  gadget?: Partial<GadgetFormData | any>;
+  setIsEditOpen?: React.Dispatch<
+    React.SetStateAction<{
+      state: boolean;
+      gadget: GadgetFormData | null | any;
+    }>
+  >;
 }

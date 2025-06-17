@@ -18,3 +18,26 @@ export const gadgetBooleanFilterKeys = [
   "isEmergingTech",
   "isHotTech",
 ];
+
+export const gadgetDefaultValue = {
+  typeId: "",
+  brandId: "",
+  model: "",
+  releaseDate: null,
+  title: "",
+  excerpt: "",
+  content: "",
+  image: "",
+  images: [],
+  isGadget: true,
+  isFeatured: false,
+  isPinFeatured: false,
+  isPinLatest: false,
+  isLatest: false,
+  isPinHero: false,
+  isPinNav: false,
+  isPublished: false,
+  isUpComing: false,
+  isEmergingTech: false,
+  isHotTech: false,
+};

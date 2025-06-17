@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { removeSpecificFilterQuery } from "@/redux/features/filter/article.filter";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { X } from "lucide-react";
-import { IArticleFilters } from "../../interface/article.interface";
+import { IArticleFilters } from "../../_interface/article.interface";
 
 const ArticleActiveFilters = () => {
   const dispatch = useAppDispatch();

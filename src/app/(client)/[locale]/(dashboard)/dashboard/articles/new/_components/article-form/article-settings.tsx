@@ -1,115 +1,163 @@
 "use client";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
+
 import React from "react";
+import { Controller, UseFormReturn } from "react-hook-form";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 import { Article } from "@prisma/client";
-import type { UseFormReturn } from "react-hook-form";
-import { articleBooleanFieldsForUI } from "../../../_utils/utils";
 
 interface ArticleSettingsProps {
   form: UseFormReturn<Article>;
 }
+
 const ArticleSettings: React.FC<ArticleSettingsProps> = ({ form }) => {
-  const watch = form.watch();
-  const { setValue, control } = form;
+  const { watch, setValue, control } = form;
 
-  const pinFields = ["isPinFeatured", "isPinLatest", "isPinHero", "isPinNav"];
-  const techFields = ["isLatest", "isUpComing"];
-  const anoFields = ["isGadget", "isHotTech"];
+  const watchAll = watch();
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {articleBooleanFieldsForUI.map(({ name, desc }) => {
-        const isPinField = pinFields.includes(name);
-        const isTechField = techFields.includes(name);
-        const isAnoFields = anoFields.includes(name);
-        const isChecked = watch[name as keyof Article];
+  const generalSettings = [
+    {
+      key: "isPublished",
+      label: "Published",
+      description: "Make visible to public",
+    },
+    {
+      key: "isGadget",
+      label: "Is Gadget",
+      description: "Mark as a gadget item",
+    },
+    {
+      key: "isFeatured",
+      label: "Featured",
+      description: "Show in featured section",
+    },
+    {
+      key: "isLatest",
+      label: "Latest",
+      description: "Mark as latest gadget",
+    },
+    {
+      key: "isUpComing",
+      label: "Upcoming",
+      description: "Mark as upcoming release",
+    },
+  ] as const;
+
+  const pinSettings = [
+    {
+      key: "isPinFeatured",
+      label: "Pin Featured",
+      description: "Pin to featured section",
+    },
+    {
+      key: "isPinLatest",
+      label: "Pin Latest",
+      description: "Pin to latest section",
+    },
+    {
+      key: "isPinHero",
+      label: "Pin Hero",
+      description: "Pin to hero section",
+    },
+    {
+      key: "isPinNav",
+      label: "Pin Navigation",
+      description: "Pin to navigation",
+    },
+  ] as const;
+
+  const techSettings = [
+    {
+      key: "isEmergingTech",
+      label: "Emerging Tech",
+      description: "Mark as emerging technology",
+    },
+    {
+      key: "isHotTech",
+      label: "Hot Tech",
+      description: "Mark as hot technology",
+    },
+  ] as const;
+
+  // Fix SettingGroup to accept correct types and use watchAll properly
+  const SettingGroup = ({
+    title,
+    settings,
+    exclusive = false,
+  }: {
+    title: string;
+    settings: readonly {
+      key: keyof Article;
+      label: string;
+      description: string;
+    }[];
+    exclusive?: boolean;
+  }) => (
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold">{title}</h3>
+      {settings.map(({ key, label, description }) => {
+        const isChecked = watchAll?.[key] ?? false;
 
         let shouldDisable = false;
-
-        if (isTechField) {
-          // If the other tech field is selected and this one is not
-          const otherTechChecked = techFields
-            .filter((field) => field !== name)
-            .some((field) => watch[field as keyof Article]);
-
-          shouldDisable = otherTechChecked && !isChecked;
-        }
-
-        if (isPinField) {
-          // If another pin is selected and this one is not
-          const otherPinChecked = pinFields
-            .filter((field) => field !== name)
-            .some((field) => watch[field as keyof Article]);
-
-          shouldDisable = otherPinChecked && !isChecked;
-        }
-        if (isAnoFields) {
-          // If another ano field is selected and this one is not
-          const otherAnoChecked = anoFields
-            .filter((field) => field !== name)
-            .some((field) => watch[field as keyof Article]);
-
-          shouldDisable = otherAnoChecked && !isChecked;
+        if (exclusive) {
+          // Check if any other setting is checked
+          const othersChecked = settings
+            .filter((s) => s.key !== key)
+            .some((s) => watchAll?.[s.key]);
+          shouldDisable = othersChecked && !isChecked;
         }
 
         return (
-          <FormField
-            key={name}
-            control={control}
-            name={name as keyof Article}
-            render={({ field }) => (
-              <FormItem
-                className={`flex flex-row items-start p-4 border rounded-md space-x-3 space-y-0 ${
-                  shouldDisable
-                    ? "bg-gray-100 opacity-50 cursor-not-allowed"
-                    : ""
-                }`}
-              >
-                <FormControl>
-                  <Checkbox
-                    checked={field.value as boolean}
-                    // onCheckedChange={field.onChange}
-                    onCheckedChange={(checked) => {
-                      field.onChange(checked);
-
-                      // 🔁 Auto-check related fields
-                      if (name === "isPinFeatured" && checked) {
-                        setValue("isFeatured", true);
-                      }
-                      if (name === "isPinLatest" && checked) {
-                        setValue("isLatest", true);
-                      }
-                    }}
-                    id={name}
-                    disabled={shouldDisable}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel
-                    htmlFor={name}
-                    className={shouldDisable ? "text-gray-500" : ""}
-                  >
-                    {name}
-                  </FormLabel>
-                  <FormDescription
-                    className={shouldDisable ? "text-gray-400" : ""}
-                  >
-                    {desc}
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
+          <div
+            key={key}
+            className={`flex items-center justify-between ${
+              shouldDisable ? "opacity-50 pointer-events-none" : ""
+            }`}
+          >
+            <div className="space-y-0.5">
+              <Label htmlFor={key}>{label}</Label>
+              <p className="text-sm text-muted-foreground">{description}</p>
+            </div>
+            <Controller
+              name={key}
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  id={key}
+                  checked={field.value as boolean}
+                  onCheckedChange={(checked) => {
+                    field.onChange(checked);
+                    if (exclusive && checked) {
+                      // Disable other checkboxes in this exclusive group
+                      settings.forEach((s) => {
+                        if (s.key !== key) {
+                          setValue(s.key, false);
+                        }
+                      });
+                    }
+                  }}
+                  className="data-[state=checked]:bg-red-500"
+                />
+              )}
+            />
+          </div>
         );
       })}
+    </div>
+  );
+
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <SettingGroup title="General Settings" settings={generalSettings} />
+        <SettingGroup title="Pin Settings" settings={pinSettings} exclusive />
+      </div>
+      <SettingGroup
+        title="Technology Categories"
+        settings={techSettings}
+        exclusive
+      />
     </div>
   );
 };

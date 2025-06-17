@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-
 import { SettingsTab } from "./settings-tab";
 import { gadgetSchema, type GadgetFormData } from "@/schama/gadget-schema";
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import ContentTab from "./content-tab";
@@ -20,38 +20,17 @@ import {
   useCreateGadgetMutation,
   useUpdateGadgetMutation,
 } from "@/redux/api/gadget.api";
+
+import { gadgetDefaultValue } from "../../_utils/gadget.utils";
+import { IGadgetFormProps } from "../../_interface/gadget.interface";
 import { useState } from "react";
 
-interface GadgetFormProps {
-  mode?: "create" | "update";
-  gadget?: Partial<GadgetFormData | any>;
-}
-
-const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
+const GadgetForm = ({
+  mode = "create",
+  gadget,
+  setIsEditOpen,
+}: IGadgetFormProps) => {
   const [removedImages, setRemovedImages] = useState<string[]>([]);
-
-  const defaultValue = {
-    typeId: "",
-    brandId: "",
-    model: "",
-    releaseDate: null,
-    title: "",
-    excerpt: "",
-    content: "",
-    image: "",
-    images: [],
-    isGadget: true,
-    isFeatured: false,
-    isPinFeatured: false,
-    isPinLatest: false,
-    isLatest: false,
-    isPinHero: false,
-    isPinNav: false,
-    isPublished: false,
-    isUpComing: false,
-    isEmergingTech: false,
-    isHotTech: false,
-  };
 
   const isUpdate = mode === "update";
   const isCreate = mode === "create";
@@ -59,11 +38,16 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
   // Prepare initial values with proper date conversion
   const initialValue: any = gadget
     ? {
-        ...defaultValue,
+        ...gadgetDefaultValue,
         ...gadget,
         releaseDate: gadget.releaseDate ? new Date(gadget.releaseDate) : null,
       }
-    : defaultValue;
+    : gadgetDefaultValue;
+
+  const form = useForm<GadgetFormData>({
+    resolver: zodResolver(gadgetSchema as any),
+    defaultValues: initialValue,
+  });
 
   const {
     control,
@@ -71,10 +55,9 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
     formState: { errors, isSubmitting, isDirty },
     reset,
     setValue,
-  } = useForm<GadgetFormData>({
-    resolver: zodResolver(gadgetSchema as any),
-    defaultValues: initialValue,
-  });
+  } = form;
+
+  // const form = useForm();
 
   const [createGadget, { isLoading: isCreating }] = useCreateGadgetMutation();
   const [updateGadget, { isLoading: isUpdating }] = useUpdateGadgetMutation();
@@ -82,6 +65,14 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
 
   const handleRemoveExistingImage = (imageUrl: string) => {
     setRemovedImages((prev) => [...prev, imageUrl]);
+  };
+
+  const handleResetAndCancel = () => {
+    if (isCreate) {
+      reset();
+    } else if (isUpdate && setIsEditOpen) {
+      setIsEditOpen({ gadget: null, state: false });
+    }
   };
 
   const onFormSubmit = async (data: GadgetFormData) => {
@@ -148,11 +139,13 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
 
         toast.success("Gadget updated successfully!");
         setRemovedImages([]);
+        if (setIsEditOpen) setIsEditOpen({ gadget: null, state: false });
         return result;
       }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      toast.error(`Failed to ${mode} gadget. Please try again.`);
+    } catch (error: any) {
+      const message =
+        error.data.message || `Failed to ${mode} gadget. Please try again.`;
+      toast.error(message);
     }
   };
 
@@ -202,6 +195,7 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
                 </TabsTrigger>
               </TabsList>
 
+              {/*  Content tab */}
               <TabsContent value="content">
                 <ContentTab
                   control={control}
@@ -212,14 +206,19 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
                 />
               </TabsContent>
 
+              {/* settings tab */}
               <TabsContent value="settings">
-                <SettingsTab control={control} />
+                <SettingsTab form={form} />
               </TabsContent>
             </Tabs>
 
             <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
-              <Button type="button" variant="outline" onClick={() => reset()}>
-                {isUpdate ? "Reset" : "Clear"}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleResetAndCancel}
+              >
+                {isUpdate ? "Cancel" : "Clear"}
               </Button>
               <Button
                 type="submit"

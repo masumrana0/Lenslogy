@@ -1,4 +1,5 @@
 "use client";
+
 import {
   FormField,
   FormItem,
@@ -14,8 +15,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-import { UseFormReturn } from "react-hook-form";
-import { Article, Category } from "@prisma/client";
+import type { UseFormReturn } from "react-hook-form";
+import type { Article, Category } from "@prisma/client";
 import { ImageUploader } from "@/components/ui/image-uploader";
 import { useGetAllCategoriesQuery } from "@/redux/api/category.api";
 import { useParams } from "next/navigation";
@@ -43,7 +44,7 @@ const ArticleMediaCategoryInputs = ({
       <FormField
         control={form.control}
         name="image"
-        render={({ field: { onChange } }) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <FormItem>
             <FormLabel>Featured Image</FormLabel>
             <FormControl>
@@ -68,7 +69,7 @@ const ArticleMediaCategoryInputs = ({
       <FormField
         control={form.control}
         name="categoryBaseId"
-        render={({ field }) => (
+        render={({ field, fieldState: { error } }) => (
           <FormItem>
             <FormLabel>Category</FormLabel>
             <Select
@@ -79,12 +80,14 @@ const ArticleMediaCategoryInputs = ({
                 );
                 if (category) {
                   form.setValue("categoryId", category.id);
+                } else {
+                  form.setValue("categoryId", "");
                 }
               }}
               value={field.value}
             >
               <FormControl>
-                <SelectTrigger>
+                <SelectTrigger className={error ? "border-red-500" : ""}>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
               </FormControl>

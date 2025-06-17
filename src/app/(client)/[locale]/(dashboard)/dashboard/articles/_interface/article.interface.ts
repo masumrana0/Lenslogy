@@ -1,3 +1,6 @@
+import { Article } from "@prisma/client";
+import { Dispatch, SetStateAction } from "react";
+
 export interface IArticleFilters {
   searchTerm?: string;
   categoryBaseId?: string;
@@ -17,4 +20,12 @@ export interface IArticleFilters {
   page?: number;
   limit?: number;
   lang?: "en" | "bn";
+}
+
+export interface IArticleFormProps {
+  article?: Article;
+  mode?: "create" | "update";
+  setIsEditOpen?: Dispatch<
+    SetStateAction<{ state: boolean; article: any | null }>
+  >;
 }

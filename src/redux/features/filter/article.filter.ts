@@ -1,5 +1,5 @@
+import { IArticleFilters } from "@/app/(client)/[locale]/(dashboard)/dashboard/articles/_interface/article.interface";
 import { articleBooleanFilterKeys } from "@/app/(client)/[locale]/(dashboard)/dashboard/articles/_utils/utils";
-import { IArticleFilters } from "@/app/(client)/[locale]/(dashboard)/dashboard/articles/interface/article.interface";
 import { filterInitialState } from "@/utils/filter";
 import { objectToQuery } from "@/utils/query";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";

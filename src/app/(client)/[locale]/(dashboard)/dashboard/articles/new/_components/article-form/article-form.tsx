@@ -1,60 +1,59 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { status } from "http-status";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-
-// UI Components
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Form,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import {
+  useCreateArticleMutation,
+  useUpdateArticleMutation,
+} from "@/redux/api/article.api";
+import { articleResetState } from "../../../_utils/utils";
+import ArticleTextInputs from "./article-content-form";
+import ArticleMediaCategoryInputs from "./article-media-form";
+import ArticleSettings from "./article-settings";
+import TextEditorWithPreview from "./text-editor";
+import type { Article } from "@prisma/client";
+import { useEffect, useMemo, useState } from "react";
+import { status } from "http-status";
+import ArticleFormSkeleton from "../skeleton/article-form-skeleton";
+import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/toast";
-
-// API Hooks
+import { IArticleFormProps } from "../../../_interface/article.interface";
 import {
-  useCreateArticleMutation,
-  useUpdateArticleMutation,
-} from "@/redux/api/article.api";
+  articleCreateSchema,
+  articleEditSchema,
+  articleSchema,
+} from "@/schama/article-schema";
 
-// Schema & Types
-import { articleSchema } from "@/schama/validation-schema";
-
-import { articleResetState } from "../../../_utils/utils";
-import ArticleTextInputs from "./article-content-form";
-import ArticleMediaCategoryInputs from "./article-media-form";
-import ArticleSettings from "./article-settings";
-
-import { Article } from "@prisma/client";
-import ArticleFormSkeleton from "../skeleton/article-form-skeleton";
-import TextEditorWithPreview from "./text-editor";
-
-interface ArticleFormProps {
-  article?: Article;
-  setIsEditOpen?: Dispatch<
-    SetStateAction<{ state: boolean; article: any | null }>
-  >;
-}
-
-const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
-  const isEditMode = !!article?.id;
+const ArticleForm = ({
+  article,
+  setIsEditOpen,
+  mode = "create",
+}: IArticleFormProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(
     article?.image || null
   );
-
   const [isMounted, setIsMounted] = useState(false);
-  // API mutations
-  const [createArticle, { isLoading: isCreating }] = useCreateArticleMutation();
-  const [updateArticle, { isLoading: isUpdating }] = useUpdateArticleMutation();
-  const isLoading = isCreating || isUpdating;
 
+  const isUpdate = mode === "update";
+  const isCreate = mode === "create";
+
+  // Prepare initial values
   const initialValues = useMemo(
     () => ({
       title: article?.title || "",
@@ -75,11 +74,25 @@ const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
     [article]
   );
 
-  // Initialize form with explicit default values for all boolean fields
+  const validationSchema = isUpdate ? articleEditSchema : articleCreateSchema;
+
   const form = useForm<Article>({
-    resolver: zodResolver(articleSchema as any),
+    resolver: zodResolver(validationSchema as any),
     defaultValues: initialValues,
   });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting, isDirty },
+    reset,
+    setValue,
+  } = form;
+
+  // API mutations
+  const [createArticle, { isLoading: isCreating }] = useCreateArticleMutation();
+  const [updateArticle, { isLoading: isUpdating }] = useUpdateArticleMutation();
+  const isLoading = isCreating || isUpdating;
 
   useEffect(() => {
     setIsMounted(true);
@@ -88,12 +101,21 @@ const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
   if (!isMounted) {
     return <ArticleFormSkeleton />;
   }
-  // Submit handler
-  const onSubmit = async (values: Article) => {
+
+  const handleResetAndCancel = () => {
+    if (isCreate) {
+      reset(articleResetState);
+      setImagePreview(null);
+    } else if (isUpdate && setIsEditOpen) {
+      setIsEditOpen({ state: false, article: null });
+    }
+  };
+
+  const onFormSubmit = async (values: Article) => {
     try {
       let response;
 
-      if (isEditMode && article?.id) {
+      if (isUpdate && article?.id) {
         // Compare current form values to initial values
         const getChangedFields = (
           current: Article,
@@ -116,11 +138,11 @@ const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
         const changedFields = getChangedFields(values, initialValues);
 
         if (Object.keys(changedFields).length === 0) {
-          toast({ title: "No changes", description: "Nothing to update." });
+          toast.info("No changes detected");
           return;
         }
 
-        // Now build formData from only changed fields
+        // Build formData from only changed fields
         const formData = new FormData();
         const { image, ...payloadData } = changedFields;
 
@@ -148,128 +170,138 @@ const ArticleForm = ({ article, setIsEditOpen }: ArticleFormProps) => {
         response?.statusCode === status.CREATED ||
         response?.statusCode === status.OK
       ) {
-        toast({
-          title: "Success",
-          description: isEditMode
-            ? "Article updated successfully"
-            : "Article created successfully",
-        });
+        toast.success(
+          isUpdate
+            ? "Article updated successfully!"
+            : "Article created successfully!"
+        );
 
-        if (!isEditMode) {
-          form.reset(articleResetState);
+        if (isCreate) {
+          reset(articleResetState);
           setImagePreview(null);
-        } else if (isEditMode && setIsEditOpen) {
+        } else if (isUpdate && setIsEditOpen) {
           setIsEditOpen({ state: false, article: null });
         }
       }
     } catch (error: any) {
-      const message = error.data?.message || "Failed to save article";
-      toast({
-        title: "Error",
-        description: message,
-      });
-    }
-  };
-
-  const handleCanceling = () => {
-    if (!isEditMode) {
-      form.reset(articleResetState);
-      setImagePreview(null);
-    } else if (isEditMode && setIsEditOpen) {
-      setIsEditOpen({ state: false, article: null });
+      const message =
+        error.data?.message || `Failed to ${mode} article. Please try again.`;
+      toast.error(message);
     }
   };
 
   return (
-    <Card className="border-none shadow-none p-5">
-      <CardHeader className="px-0">
-        <CardTitle className="text-2xl font-bold">
-          {isEditMode && "Edit Article"}
-        </CardTitle>
-      </CardHeader>
+    <div className="container mx-auto">
+      <Card>
+        <CardHeader className="border-b">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl">
+                {isUpdate ? "Update Article" : "Create New Article"}
+              </CardTitle>
+              <CardDescription>
+                {isUpdate
+                  ? "Update the article details below"
+                  : "Fill in the details to create a new article entry"}
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Badge variant={isUpdate ? "secondary" : "default"}>
+                {isUpdate ? "Update Mode" : "Create Mode"}
+              </Badge>
+              {isUpdate && isDirty && (
+                <Badge variant="outline" className="text-orange-600">
+                  Changes detected
+                </Badge>
+              )}
+            </div>
+          </div>
+        </CardHeader>
 
-      <CardContent className="px-0">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <Tabs defaultValue="content" className="w-full">
-              {/* Tab Navigation */}
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="content">Content</TabsTrigger>
-                <TabsTrigger value="settings">Settings</TabsTrigger>
-              </TabsList>
+        <CardContent className="pt-6">
+          <FormProvider {...form}>
+            <form onSubmit={handleSubmit(onFormSubmit)}>
+              <Tabs defaultValue="content" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger
+                    value="content"
+                    className="data-[state=active]:bg-red-500 data-[state=active]:text-white"
+                  >
+                    Content
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="settings"
+                    className="data-[state=active]:bg-red-500 data-[state=active]:text-white"
+                  >
+                    Settings
+                  </TabsTrigger>
+                </TabsList>
 
-              {/* Content Tab */}
-              <TabsContent value="content" className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8">
-                  <ArticleTextInputs form={form} />
-                  <ArticleMediaCategoryInputs
-                    form={form}
-                    imagePreview={imagePreview}
-                    setImagePreview={setImagePreview}
+                {/* Content Tab */}
+                <TabsContent value="content" className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8">
+                    <ArticleTextInputs form={form} />
+                    <ArticleMediaCategoryInputs
+                      form={form}
+                      imagePreview={imagePreview}
+                      setImagePreview={setImagePreview}
+                    />
+                  </div>
+
+                  {/* Content Editor */}
+                  <FormField
+                    control={control}
+                    name="content"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Content</FormLabel>
+                        <FormControl>
+                          <TextEditorWithPreview
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="Write your article content..."
+                            className="min-h-[500px]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-                {/* Content */}
-                <FormField
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Content</FormLabel>
-                      <FormControl>
-                        <TextEditorWithPreview
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Write your article content..."
-                          className="min-h-[500px]"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
+                </TabsContent>
 
-              {/* Settings Tab */}
-              <TabsContent value="settings" className="space-y-8">
-                <ArticleSettings form={form} />
-              </TabsContent>
-            </Tabs>
+                {/* Settings Tab */}
+                <TabsContent value="settings">
+                  <ArticleSettings form={form} />
+                </TabsContent>
+              </Tabs>
 
-            {/* Submit Button */}
-            <div className="flex justify-end gap-2">
-              {isEditMode && (
+              <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={handleCanceling}
-                  disabled={isLoading}
+                  onClick={handleResetAndCancel}
                 >
-                  Cancel
+                  {isUpdate ? "Cancel" : "Clear"}
                 </Button>
-              )}
-
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="gap-2 bg-red-500 hover:bg-red-600 text-white"
-              >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    {/* <Loader2 className="h-4 w-4 animate-spin" /> */}
-                    {isEditMode ? "Updating..." : "Saving..."}
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    {/* <Save className="h-4 w-4" /> */}
-                    {isEditMode ? "Update Article" : "Save Article"}
-                  </span>
-                )}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+                <Button
+                  type="submit"
+                  className="bg-red-500 hover:bg-red-600 text-white"
+                  disabled={isSubmitting || isLoading}
+                >
+                  {isSubmitting || isLoading
+                    ? isUpdate
+                      ? "Updating..."
+                      : "Creating..."
+                    : isUpdate
+                    ? "Update Article"
+                    : "Create Article"}
+                </Button>
+              </div>
+            </form>
+          </FormProvider>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

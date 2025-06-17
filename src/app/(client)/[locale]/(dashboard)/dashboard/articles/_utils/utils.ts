@@ -1,7 +1,6 @@
 "use client";
 
-import { IArticle } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
-import { IArticleFilters } from "../interface/article.interface";
+import { IArticleFilters } from "../_interface/article.interface";
 
 export const articleBooleanFields = [
   {

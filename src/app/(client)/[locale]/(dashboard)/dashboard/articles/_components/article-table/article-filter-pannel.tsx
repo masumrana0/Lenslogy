@@ -30,13 +30,13 @@ import { cn } from "@/lib/utils";
 
 import { useGetAllCategoriesQuery } from "@/redux/api/category.api";
 
-import { IArticleFilters } from "../../interface/article.interface";
 import { setArticleCache } from "@/redux/features/cashing/cashing.slice";
-import { articleBooleanFilterKeys } from "../../_utils/utils";
 import {
   clearArticleFilterQuery,
   setArticleFilterQuery,
 } from "@/redux/features/filter/article.filter";
+import { IArticleFilters } from "../../_interface/article.interface";
+import { articleBooleanFilterKeys } from "../../_utils/utils";
 
 const FilterPanel = () => {
   const { locale: lang } = useParams();
