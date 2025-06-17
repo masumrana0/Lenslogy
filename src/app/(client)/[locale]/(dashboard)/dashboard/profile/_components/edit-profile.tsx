@@ -21,11 +21,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { useUpdateUserMutation } from "@/redux/api/user.api";
-import { editProfileSchema } from "@/schama/validation-schema";
+ 
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import status from "http-status";
 
 import { useRouter } from "next/navigation";
+import { editProfileSchema } from "@/schama/validation-schema";
 
 type ProfileFormValues = z.infer<typeof editProfileSchema>;
 
