@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
-import { Loader2, Save } from "lucide-react";
 
 // API Hooks
 import {
@@ -28,16 +27,14 @@ import {
 // Schema & Types
 import { articleSchema } from "@/schama/validation-schema";
 
+import { articleResetState } from "../../../_utils/utils";
 import ArticleTextInputs from "./article-content-form";
 import ArticleMediaCategoryInputs from "./article-media-form";
 import ArticleSettings from "./article-settings";
-import { articleResetState } from "../../../_components/utils";
 
 import { Article } from "@prisma/client";
-import TextEditorWithPreview from "./text-editor";
 import ArticleFormSkeleton from "../skeleton/article-form-skeleton";
-import { Schema } from "zod";
-import { useRouter } from "next/navigation";
+import TextEditorWithPreview from "./text-editor";
 
 interface ArticleFormProps {
   article?: Article;

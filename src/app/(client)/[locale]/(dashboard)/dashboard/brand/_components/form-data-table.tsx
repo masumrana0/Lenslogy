@@ -241,7 +241,7 @@ const FormDataTable: React.FC<{ mode: IMode }> = ({ mode }) => {
                 </TableCell>
               </TableRow>
             ) : (
-              data.data.map((item) => (
+              data.data.map((item: any) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.baseId}</TableCell>

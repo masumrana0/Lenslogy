@@ -11,15 +11,13 @@ import { TableCell } from "@/components/ui/table";
 import type { Gadget } from "@prisma/client";
 import type React from "react";
 import { useState, type SetStateAction } from "react";
-
 import Modal from "@/components/ui/modal";
 import { gadgetBooleanFilterKeys } from "../../_utils/gadget.utils";
 import { useDeleteGadgetMutation } from "@/redux/api/gadget.api";
-
 import GadgetListSkeleton from "../skeletons/gadget-list-skeleton";
 import GadgetCard from "./gadget-card";
-import EmptyGadgetList from "./emty-gadet-list";
 import GadgetTableRow from "./gadget-table-row";
+import EmptyDataList from "../../../_components/shared/empty-data-list";
 
 const gadgetBooleanFieldsForUI = gadgetBooleanFilterKeys.map((key) => ({
   name: key,
@@ -32,8 +30,6 @@ interface GadgetListProps {
   setIsEditOpen: React.Dispatch<
     SetStateAction<{ state: boolean; gadget: Gadget | null }>
   >;
-  onCreateNew?: () => void;
-  showCreateButton?: boolean;
 }
 
 const GadgetList: React.FC<GadgetListProps> = ({
@@ -41,8 +37,6 @@ const GadgetList: React.FC<GadgetListProps> = ({
   isLoading,
   setIsEditOpen,
   lang,
-  onCreateNew,
-  showCreateButton = false,
 }) => {
   const [showLangAlert, setShowLangAlert] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -102,7 +96,7 @@ const GadgetList: React.FC<GadgetListProps> = ({
           ) : (
             <TableRow>
               <TableCell colSpan={5} className="p-0">
-                {<EmptyGadgetList />}
+                <EmptyDataList name="gadget" />
               </TableCell>
             </TableRow>
           )}
@@ -129,13 +123,13 @@ const GadgetList: React.FC<GadgetListProps> = ({
           ))}
         </div>
       ) : (
-        <EmptyGadgetList />
+        <EmptyDataList name="gadget" />
       )}
     </div>
   );
 
   return (
-    <div className="rounded-lg border bg-card">
+    <div className="rounded-lg md:border md:bg-card">
       {renderDesktopView()}
       {renderMobileView()}
 

@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import PaginationControls from "@/app/(client)/[locale]/(dashboard)/dashboard/articles/_components/article-table/pagination-controls";
+
 import { ArticleGridProps } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ArticleCard from "../article-card";
+import PaginationControls from "@/app/(client)/[locale]/(dashboard)/dashboard/_components/shared/pagination-controls";
 
 const ArticleGrid = ({
   articles,

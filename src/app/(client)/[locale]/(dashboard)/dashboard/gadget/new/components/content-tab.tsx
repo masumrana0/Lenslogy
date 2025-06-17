@@ -74,12 +74,6 @@ const ContentTab = ({
     }
   };
 
-  const initialType = types.find(
-    (type) => type.baseId == initialData.typeBaseId
-  );
-
-  console.log(initialType);
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -90,7 +84,7 @@ const ContentTab = ({
             control={control}
             render={({ field }) => (
               <Select
-                value={field.value || initialType?.id}
+                value={field.value}
                 onValueChange={(value) => {
                   const selectedType = types.find(
                     (type: GadgetType) => type.id === value
@@ -99,7 +93,7 @@ const ContentTab = ({
                     "typeBaseId",
                     selectedType ? selectedType.baseId : ""
                   );
-                  field.onChange(selectedType.typeId);
+                  field.onChange(value);
                 }}
               >
                 <SelectTrigger

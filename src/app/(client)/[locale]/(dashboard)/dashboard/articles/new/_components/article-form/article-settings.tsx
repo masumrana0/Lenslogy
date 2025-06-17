@@ -11,7 +11,7 @@ import React from "react";
 
 import { Article } from "@prisma/client";
 import type { UseFormReturn } from "react-hook-form";
-import { articleBooleanFieldsForUI } from "../../../_components/utils";
+import { articleBooleanFieldsForUI } from "../../../_utils/utils";
 
 interface ArticleSettingsProps {
   form: UseFormReturn<Article>;

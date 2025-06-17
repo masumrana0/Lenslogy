@@ -1,17 +1,20 @@
-export interface IArticlesTableFilters {
-  searchTerm: string;
-  categoryBaseId: string;
-  isPublished: string | null;
-  isPinFeatured: string | null;
-  isPinLatest: string | null;
-  isPinHero: string | null;
-  isUpComing: string | null;
-  isEmergingTech: string | null;
-  isHotTech: string | null;
-  isFeatured: string | null;
-  isPinNav: string | null;
-  isGadget: string | null;
-  isLatest: string | null;
-  sortBy: "createdAt" | "updatedAt";
-  sortOrder: "desc" | "asc";
+export interface IArticleFilters {
+  searchTerm?: string;
+  categoryBaseId?: string;
+  isPublished?: boolean;
+  isPinFeatured?: boolean;
+  isPinLatest?: boolean;
+  isPinHero?: boolean;
+  isUpComing?: boolean;
+  isEmergingTech?: boolean;
+  isHotTech?: boolean;
+  isFeatured?: boolean;
+  isPinNav?: boolean;
+  isGadget?: boolean;
+  isLatest?: boolean;
+  sortBy?: "createdAt" | "updatedAt";
+  sortOrder?: "desc" | "asc";
+  page?: number;
+  limit?: number;
+  lang?: "en" | "bn";
 }

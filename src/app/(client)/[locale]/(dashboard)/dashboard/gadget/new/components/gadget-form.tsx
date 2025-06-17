@@ -76,8 +76,6 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
     defaultValues: initialValue,
   });
 
-  console.log(gadget)
-
   const [createGadget, { isLoading: isCreating }] = useCreateGadgetMutation();
   const [updateGadget, { isLoading: isUpdating }] = useUpdateGadgetMutation();
   const isLoading = isCreating || isUpdating;
@@ -106,7 +104,7 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
           });
         }
 
-        const payloadData = { ...data };
+        const payloadData: any = { ...data };
         delete payloadData.image;
         delete payloadData.images;
 
@@ -137,7 +135,7 @@ const GadgetForm = ({ mode = "create", gadget }: GadgetFormProps) => {
           formData.append("removedImages", JSON.stringify(removedImages));
         }
 
-        const payloadData = { ...data };
+        const payloadData: any = { ...data };
         delete payloadData.image;
         delete payloadData.images;
 

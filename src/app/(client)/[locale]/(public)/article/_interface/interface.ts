@@ -1,5 +1,5 @@
 import { IMeta } from "@/interface/common";
-import { ArticleAttachment, Category } from "@prisma/client";
+import { Category } from "@prisma/client";
 
 export type IPageProps = {
   params: Promise<{ locale: "bn" | "en"; baseId: string }>;
@@ -30,7 +30,7 @@ export interface IArticle {
   author: Author;
   createdAt: string;
   tags?: string[];
-  articleAttachment: ArticleAttachment;
+  articleAttachment: IArticleAttachment;
 }
 
 export interface RelatedArticlesProps {

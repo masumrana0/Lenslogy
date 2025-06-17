@@ -1,20 +1,19 @@
 "use client";
-import type { Gadget, Language } from "@prisma/client";
+import { useGetAllArticlesQuery } from "@/redux/api/article.api";
+import type { Article, Language } from "@prisma/client";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import FilterPanel from "./filter-pannel";
-import ActiveFilters from "./gadget-active-filters";
-import { useGetAllGadgetsQuery } from "@/redux/api/gadget.api";
+import FilterPanel from "./article-filter-pannel";
+
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { queryToObject } from "@/utils/query";
-import GadgetForm from "../../new/components/gadget-form";
-import GadgetList from "./gadget-list";
-import { setGadgetFilterQuery } from "@/redux/features/filter/gadget.filter";
-
-import SearchBar from "../../../_components/filters/search-bar";
+import { setArticleFilterQuery } from "@/redux/features/filter/article.filter";
+import ArticleActiveFilters from "./article-active-filters";
+import ArticleList from "./article-list";
 import PaginationControls from "../../../_components/shared/pagination-controls";
+import SearchBar from "../../../_components/filters/search-bar";
 
-const GadgetTable = () => {
+const ArticlesTable = () => {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -23,20 +22,20 @@ const GadgetTable = () => {
 
   const [isEditOpen, setIsEditOpen] = useState<{
     state: boolean;
-    gadget: Gadget | null;
-  }>({ state: false, gadget: null });
+    article: Article | null;
+  }>({ state: false, article: null });
 
   const queryObject = useAppSelector(
-    (state) => state.gadgetQuerySlice.queryObject
+    (state) => state.articleQuerySlice.queryObject
   );
-  const query = useAppSelector((state) => state.gadgetQuerySlice.gadgetQuery);
+  const query = useAppSelector((state) => state.articleQuerySlice.articleQuery);
 
   // Initialize state from URL params on component mount
   useEffect(() => {
     const params = searchParams;
 
     const newQueryObject = queryToObject(params.toString());
-    dispatch(setGadgetFilterQuery(newQueryObject));
+    dispatch(setArticleFilterQuery(newQueryObject));
   }, []);
 
   // set searchParam in the Url
@@ -45,13 +44,14 @@ const GadgetTable = () => {
     router.push(`?${params.toString()}`);
   }, [queryObject, router]);
 
-  const { data: gadgetData, isLoading } = useGetAllGadgetsQuery({
+  const { data: articleData, isLoading } = useGetAllArticlesQuery({
     query,
     lang,
   });
-  const gadgets = gadgetData?.data.result || [];
 
-  const meta = gadgetData?.data?.meta || {
+  const articles = articleData?.data.result || [];
+
+  const meta = articleData?.data?.meta || {
     total: 0,
     page: 1,
     limit: 10,
@@ -61,39 +61,43 @@ const GadgetTable = () => {
   return (
     <>
       {isEditOpen?.state ? (
-        <GadgetForm mode="update" gadget={isEditOpen.gadget as Gadget} />
+        // <GadgetForm mode="update" gadget={isEditOpen.gadget as Gadget} />
+        <div>
+          <h2>Cooking...</h2>
+        </div>
       ) : (
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <SearchBar
               value={queryObject.searchTerm as string}
               onChange={(val) =>
-                dispatch(setGadgetFilterQuery({ searchTerm: val }))
+                dispatch(setArticleFilterQuery({ searchTerm: val }))
               }
               placeholder="Search articles..."
             />
+
             <FilterPanel />
           </div>
 
-          <ActiveFilters />
+          <ArticleActiveFilters />
 
-          <GadgetList
-            gadgets={gadgets}
+          <ArticleList
+            articles={articles}
             isLoading={isLoading}
             setIsEditOpen={setIsEditOpen}
             lang={lang}
           />
 
-          {gadgets.length > 0 && (
+          {articles.length > 0 && (
             <PaginationControls
-              onPageChange={(page) =>
-                dispatch(setGadgetFilterQuery({ page: page }))
-              }
               currentPage={Number(queryObject.page)}
               totalPages={meta.totalPage}
               limit={Number(queryObject.limit)}
               total={meta.total}
-              resourceName="Gadget"
+              resourceName="Articles"
+              onPageChange={(page) =>
+                dispatch(setArticleFilterQuery({ page: page }))
+              }
             />
           )}
         </div>
@@ -102,4 +106,4 @@ const GadgetTable = () => {
   );
 };
 
-export default GadgetTable;
+export default ArticlesTable;

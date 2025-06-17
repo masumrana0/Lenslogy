@@ -1,6 +1,7 @@
 "use client";
 
-import { IArticlesTableFilters } from "../interface/article.interface";
+import { IArticle } from "@/app/(client)/[locale]/(public)/article/_interface/interface";
+import { IArticleFilters } from "../interface/article.interface";
 
 export const articleBooleanFields = [
   {
@@ -38,7 +39,7 @@ export const articleBooleanFields = [
   { name: "isGadget", label: "Gadget", desc: "Categorized as Gadget" },
 ] as const;
 
-export const booleanFilterKeys: (keyof IArticlesTableFilters)[] = [
+export const articleBooleanFilterKeys: (keyof IArticleFilters)[] = [
   "isPublished",
   "isFeatured",
   "isPinFeatured",
@@ -48,25 +49,8 @@ export const booleanFilterKeys: (keyof IArticlesTableFilters)[] = [
   "isUpComing",
   "isEmergingTech",
   "isHotTech",
+  "isGadget",
 ];
-
-export const filterInitialState: IArticlesTableFilters = {
-  searchTerm: "",
-  categoryBaseId: "",
-  isPublished: null,
-  isEmergingTech: null,
-  isFeatured: null,
-  isHotTech: null,
-  isPinNav: null,
-  isPinFeatured: null,
-  isPinHero: null,
-  isPinLatest: null,
-  isUpComing: null,
-  isGadget: null,
-  isLatest: null,
-  sortBy: "createdAt",
-  sortOrder: "desc",
-};
 
 export const articleBooleanFieldsForUI = [
   {

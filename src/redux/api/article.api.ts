@@ -14,8 +14,8 @@ const articleApi: any = baseApi.injectEndpoints({
     }),
 
     getAllArticles: build.query({
-      query: (query: string) => ({
-        url: `${url}?${query}`,
+      query: ({ lang, query }: { lang: "en" | "bn"; query: string }) => ({
+        url: `${url}?${query}&lang=${lang}`,
         method: "GET",
       }),
       providesTags: ["article"],

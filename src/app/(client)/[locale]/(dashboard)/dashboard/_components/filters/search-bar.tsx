@@ -5,31 +5,31 @@ import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
 
 interface SearchBarProps {
-  searchTerm: string;
-  onSearch: (term: string) => void;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
 }
 
-const SearchBar = ({ searchTerm, onSearch }: SearchBarProps) => {
+const SearchBar = ({
+  value,
+  onChange,
+  placeholder = "Search...",
+}: SearchBarProps) => {
   return (
-    <div className="relative w-full  max-w-lg">
+    <div className="relative w-full max-w-lg">
       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
       <Input
-        placeholder="Search articles..."
+        placeholder={placeholder}
         className="pl-8 w-full"
-        value={searchTerm}
-        onChange={(e) => onSearch(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            onSearch(searchTerm);
-          }
-        }}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
       />
-      {searchTerm && (
+      {value && (
         <Button
           variant="ghost"
           size="sm"
           className="absolute right-0 top-0 h-full px-3"
-          onClick={() => onSearch("")}
+          onClick={() => onChange("")}
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Clear search</span>

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatTimestampWithTranslation } from "@/lib/translator";
-import type { Gadget } from "@prisma/client";
+import type { Article } from "@prisma/client";
 import {
   Calendar,
   Edit,
@@ -23,29 +23,29 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-interface GadgetCardProps {
-  gadget: Gadget | any;
+interface articleCardProps {
+  article: Article | any;
   lang: "en" | "bn";
-  onEdit: (gadget: Gadget) => void;
+  onEdit: (article: Article) => void;
   onDelete: (id: string) => void;
-  gadgetBooleanFields: Array<{ name: string }>;
+  articleBooleanFields: string[];
 }
 
-const GadgetCard = ({
-  gadget,
+const ArticleCard = ({
+  article,
   lang,
   onEdit,
   onDelete,
-  gadgetBooleanFields,
-}: GadgetCardProps) => {
+  articleBooleanFields,
+}: articleCardProps) => {
   const renderStatusBadges = () => {
-    return gadgetBooleanFields.map(({ name }) => {
-      const value = gadget[name as keyof Gadget];
+    return articleBooleanFields.map((key) => {
+      const value = article[key as keyof Article];
 
-      if (name === "isPublished") {
+      if (key === "isPublished") {
         return (
           <Badge
-            key={name}
+            key={key}
             variant={value ? "default" : "secondary"}
             className="text-xs px-2 py-0.5"
           >
@@ -57,11 +57,11 @@ const GadgetCard = ({
       if (value) {
         return (
           <Badge
-            key={name}
+            key={key}
             variant="outline"
             className="text-xs px-2 py-0.5 capitalize"
           >
-            {name.replace(/([A-Z])/g, " $1").trim()}
+            {key.replace(/([A-Z])/g, " $1").trim()}
           </Badge>
         );
       }
@@ -76,10 +76,10 @@ const GadgetCard = ({
         <div className="flex items-start justify-between">
           <CardTitle className="text-base font-medium leading-tight flex-1 pr-2">
             <Link
-              href={`/gadget/${gadget.baseId}`}
+              href={`/article/${article.baseId}`}
               className="hover:text-primary transition-colors line-clamp-2"
             >
-              {gadget.title}
+              {article.title}
             </Link>
           </CardTitle>
           <DropdownMenu>
@@ -96,12 +96,12 @@ const GadgetCard = ({
             <DropdownMenuContent align="end" className="w-[160px]">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onEdit(gadget)}>
+              <DropdownMenuItem onClick={() => onEdit(article)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => onDelete(gadget.id)}
+                onClick={() => onDelete(article.id)}
                 className="text-destructive focus:text-destructive"
               >
                 <Trash className="mr-2 h-4 w-4" />
@@ -115,9 +115,9 @@ const GadgetCard = ({
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center space-x-2 text-muted-foreground">
             <Package className="h-4 w-4" />
-            <span>Brand:</span>
+            <span>Category:</span>
           </div>
-          <span className="font-medium">{gadget?.brand?.name || "N/A"}</span>
+          <span className="font-medium">{article!.category.name || "N/A"}</span>
         </div>
 
         <div className="flex items-start justify-between text-sm">
@@ -136,7 +136,7 @@ const GadgetCard = ({
             <span>Created:</span>
           </div>
           <span className="text-muted-foreground">
-            {formatTimestampWithTranslation(gadget.createdAt, lang)}
+            {formatTimestampWithTranslation(article.createdAt, lang)}
           </span>
         </div>
       </CardContent>
@@ -144,4 +144,4 @@ const GadgetCard = ({
   );
 };
 
-export default GadgetCard;
+export default ArticleCard;

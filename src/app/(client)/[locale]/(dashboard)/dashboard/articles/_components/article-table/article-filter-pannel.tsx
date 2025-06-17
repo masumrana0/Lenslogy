@@ -19,61 +19,56 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
-import { useGetAllBrandQuery } from "@/redux/api/brand.api";
-import { useGetAllGadgetTypeQuery } from "@/redux/api/gadgetType.api";
 
-import {
-  clearGadgetFilterQuery,
-  setGadgetFilterQuery,
-} from "@/redux/features/filter/gadget.filter";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import { GadgetBrand, GadgetType } from "@prisma/client";
+import { Category } from "@prisma/client";
 import { Filter, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
-import { IGadgetFilters } from "../../_interface/gadget.interface";
-import { gadgetBooleanFilterKeys } from "../../_utils/gadget.utils";
-import { setGadgetCache } from "@/redux/features/cashing/cashing.slice";
+
+import { cn } from "@/lib/utils";
+
+import { useGetAllCategoriesQuery } from "@/redux/api/category.api";
+
+import { IArticleFilters } from "../../interface/article.interface";
+import { setArticleCache } from "@/redux/features/cashing/cashing.slice";
+import { articleBooleanFilterKeys } from "../../_utils/utils";
+import {
+  clearArticleFilterQuery,
+  setArticleFilterQuery,
+} from "@/redux/features/filter/article.filter";
 
 const FilterPanel = () => {
   const { locale: lang } = useParams();
   const dispatch = useAppDispatch();
   const queryObject = useAppSelector(
-    (state) => state.gadgetQuerySlice.queryObject
+    (state) => state.articleQuerySlice.queryObject
   );
 
   const [localFilters, setLocalFilters] =
-    React.useState<IGadgetFilters>(queryObject);
+    React.useState<IArticleFilters>(queryObject);
 
-  const { data: brandData, isLoading: isLoadingBrand } =
-    useGetAllBrandQuery(lang);
-  const { data: typeData, isLoading: isLoadingType } =
-    useGetAllGadgetTypeQuery(lang);
+  const { data: categoryData, isLoading: isLoadingBrand } =
+    useGetAllCategoriesQuery(lang);
 
-  const brands =
-    brandData && typeof brandData === "object" && "data" in brandData
-      ? (brandData.data as GadgetBrand[])
-      : [];
-
-  const types =
-    typeData && typeof typeData === "object" && "data" in typeData
-      ? (typeData?.data as GadgetType[])
+  const categories =
+    categoryData && typeof categoryData === "object" && "data" in categoryData
+      ? (categoryData.data as Category[])
       : [];
 
   const onResetFilters = () => {
     setLocalFilters({});
-    dispatch(clearGadgetFilterQuery());
+    dispatch(clearArticleFilterQuery());
   };
 
   const applyLocalFilters = () => {
-    dispatch(setGadgetFilterQuery(localFilters));
+    dispatch(setArticleFilterQuery(localFilters));
   };
 
   // storing brands and types data to showing active filter
   useEffect(() => {
-    dispatch(setGadgetCache({ brandCash: brands, typesCash: types }));
-  }, [brands, types]);
+    dispatch(setArticleCache({ categoryCash: categories }));
+  }, [categories]);
 
   return (
     <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -93,69 +88,40 @@ const FilterPanel = () => {
           <SheetHeader>
             <SheetTitle>Filter Article</SheetTitle>
             <SheetDescription>
-              Apply filters to narrow down your Gadget list
+              Apply filters to narrow down your Article list
             </SheetDescription>
           </SheetHeader>
 
           <div className="space-y-4">
             {/* Brand Filter */}
             <div className="space-y-2">
-              <Label htmlFor="brand">Gadget Brand</Label>
+              <Label htmlFor="brand">Article Category</Label>
               <Select
-                value={localFilters.brandBaseId || ""}
+                value={queryObject.categoryBaseId || ""}
                 onValueChange={(value) =>
-                  setLocalFilters((prev) => ({ ...prev, brandBaseId: value }))
+                  setLocalFilters((prev) => ({
+                    ...prev,
+                    categoryBaseId: value,
+                  }))
                 }
               >
                 <SelectTrigger id="brand">
-                  <SelectValue placeholder="Select Brand" />
+                  <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
                   {isLoadingBrand ? (
                     <SelectItem disabled value="__loading">
                       loading...
                     </SelectItem>
-                  ) : brands.length > 0 ? (
-                    brands.map((brand) => (
-                      <SelectItem key={brand.id} value={brand.baseId}>
-                        {brand.name}
+                  ) : categories.length > 0 ? (
+                    categories.map((category) => (
+                      <SelectItem key={category.id} value={category.baseId}>
+                        {category.name}
                       </SelectItem>
                     ))
                   ) : (
                     <SelectItem disabled value="__no_brand">
-                      No brand available
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Gadget Type Filter */}
-            <div className="space-y-2">
-              <Label htmlFor="type">Gadget Type</Label>
-              <Select
-                value={localFilters.typeBaseId || ""}
-                onValueChange={(value) =>
-                  setLocalFilters((prev) => ({ ...prev, typeBaseId: value }))
-                }
-              >
-                <SelectTrigger id="type">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingType ? (
-                    <SelectItem disabled value="_loading">
-                      loading...
-                    </SelectItem>
-                  ) : types.length > 0 ? (
-                    types.map((type) => (
-                      <SelectItem key={type.id} value={type.baseId}>
-                        {type.name}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled value="_available">
-                      No types available
+                      No Category available
                     </SelectItem>
                   )}
                 </SelectContent>
@@ -166,18 +132,21 @@ const FilterPanel = () => {
             <div className="space-y-2">
               <Label htmlFor="status">Statuses</Label>
               <div className="flex flex-wrap gap-2">
-                {gadgetBooleanFilterKeys.map((statusKey) => {
+                {articleBooleanFilterKeys.map((statusKey, index) => {
                   const isActive =
-                    !!localFilters[statusKey as keyof IGadgetFilters];
+                    !!localFilters[
+                      statusKey as unknown as keyof IArticleFilters
+                    ];
 
                   return (
                     <Button
-                      key={statusKey}
+                      key={index}
                       type="button"
                       onClick={() =>
                         setLocalFilters((prev) => ({
                           ...prev,
-                          [statusKey]: !prev[statusKey as keyof IGadgetFilters],
+                          [statusKey as string]:
+                            !prev[statusKey as keyof IArticleFilters],
                         }))
                       }
                       className={cn(
@@ -251,7 +220,7 @@ const FilterPanel = () => {
       <Limit
         limit={Number(queryObject.limit)}
         onLimitChange={(value) =>
-          dispatch(setGadgetFilterQuery({ limit: value }))
+          dispatch(setArticleFilterQuery({ limit: value }))
         }
       />
 
@@ -260,7 +229,7 @@ const FilterPanel = () => {
         variant="outline"
         size="sm"
         className="h-9"
-        onClick={() => dispatch(clearGadgetFilterQuery())}
+        onClick={() => dispatch(clearArticleFilterQuery())}
       >
         <X className="mr-2 h-4 w-4" />
         Clear

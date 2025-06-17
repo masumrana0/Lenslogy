@@ -15,6 +15,7 @@ interface PaginationControlsProps {
   totalPages: number;
   limit: number;
   total: number;
+  resourceName?: string;
   onPageChange: (page: number) => void;
 }
 
@@ -23,9 +24,9 @@ const PaginationControls = ({
   totalPages,
   limit,
   total,
+  resourceName = "Items",
   onPageChange,
 }: PaginationControlsProps) => {
-  // Generate pagination items
   const renderPaginationItems = () => {
     const items = [];
 
@@ -41,22 +42,19 @@ const PaginationControls = ({
       </PaginationItem>
     );
 
-    // Show ellipsis if needed
     if (currentPage > 3) {
       items.push(
-        <PaginationItem key="ellipsis-1">
+        <PaginationItem key="ellipsis-start">
           <PaginationEllipsis />
         </PaginationItem>
       );
     }
 
-    // Show current page and neighbors
     for (
       let i = Math.max(2, currentPage - 1);
       i <= Math.min(totalPages - 1, currentPage + 1);
       i++
     ) {
-      if (i === 1 || i === totalPages) continue;
       items.push(
         <PaginationItem key={i}>
           <PaginationLink
@@ -69,16 +67,14 @@ const PaginationControls = ({
       );
     }
 
-    // Show ellipsis if needed
     if (currentPage < totalPages - 2) {
       items.push(
-        <PaginationItem key="ellipsis-2">
+        <PaginationItem key="ellipsis-end">
           <PaginationEllipsis />
         </PaginationItem>
       );
     }
 
-    // Always show last page if there's more than one page
     if (totalPages > 1) {
       items.push(
         <PaginationItem key="last">
@@ -95,11 +91,13 @@ const PaginationControls = ({
     return items;
   };
 
+  const from = (currentPage - 1) * limit + 1;
+  const to = Math.min(currentPage * limit, total);
+
   return (
-    <div className="flex items-center justify-between ">
+    <div className="flex items-center justify-between">
       <div className="text-sm text-muted-foreground text-nowrap">
-        Showing {(currentPage - 1) * limit + 1}-
-        {Math.min(currentPage * limit, total)} of {total} articles
+        Showing {from}-{to} of {total} {resourceName}
       </div>
 
       <Pagination>

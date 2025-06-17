@@ -109,7 +109,7 @@ export const updateGadget = async (req: Request) => {
 
   const formData = await req.formData();
   const file = formData.get("imgFile") as File | null;
-  const fileList = formData.getAll("imgFiles") as File[];
+  const fileList = formData.getAll("imgFiles") as unknown as File[];
   const payloadStr = formData.get("payload") as string | null;
   const removedImagesStr = formData.get("removedImages") as string | null;
 
@@ -209,7 +209,7 @@ export const updateGadget = async (req: Request) => {
   let needsTranslation = false;
 
   translatableFields.forEach((field) => {
-    if (payload[field] && payload[field] !== existingGadget[field]) {
+    if (payload[field] && payload[field] !== existingGadget[field as keyof typeof existingGadget]) {
       fieldsToTranslate[field] = payload[field];
       needsTranslation = true;
     }

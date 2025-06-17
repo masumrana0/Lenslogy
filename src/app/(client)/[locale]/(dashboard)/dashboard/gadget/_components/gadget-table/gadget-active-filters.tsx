@@ -12,7 +12,9 @@ const ActiveFilters = () => {
     (state) => state.gadgetQuerySlice.queryObject
   );
 
-  const gadgetCash = useAppSelector((state) => state.gadgetCashingReducer);
+  const gadgetCash = useAppSelector(
+    (state) => state.gadgetCashingReducer.gadget
+  );
 
   // Destructure unused items from the rest of the query
   const {

@@ -11,3 +11,16 @@ export const objectToQuery = (obj: Record<string, any>): string => {
 
   return query ? `?${query}` : "";
 };
+
+export const queryToObject = (query: string): Record<string, any> => {
+  const result: Record<string, any> = {};
+  const queryString = query.startsWith("?") ? query.substring(1) : query;
+  if (!queryString) return result;
+  queryString.split("&").forEach((pair) => {
+    const [key, value] = pair.split("=");
+    if (key) {
+      result[decodeURIComponent(key)] = value ? decodeURIComponent(value) : "";
+    }
+  });
+  return result;
+};
