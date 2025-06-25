@@ -190,7 +190,7 @@ const ArticleForm = ({
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto overflow-auto">
       <Card>
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
