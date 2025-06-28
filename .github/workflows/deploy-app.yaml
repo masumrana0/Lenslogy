@@ -65,4 +65,25 @@ jobs:
 
       - name: 🚀 Deploy to EC2
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@ec2-13-219-217-207.compute-1.amazonaws.com "bash -lc 'cd /home/ubuntu/application/lenslogy && git pull origin main && npm install && npm run build && pm2 reload lenslogy-prod'"
+          ssh -i ~/.ssh/id_rsa ubuntu@ec2-13-219-217-207.compute-1.amazonaws.com << 'EOF'
+            # Load Node/NPM/PM2 environment
+            source ~/.bashrc || true
+            source ~/.profile || true
+
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+            # Optional debug: show paths
+            which node
+            which npm
+            which pm2
+            echo "PATH is: $PATH"
+
+            # Deploy app
+            cd /home/ubuntu/application/lenslogy
+            git pull origin main
+            npm install
+            npm run build
+            pm2 reload lenslogy-prod
+          EOF
