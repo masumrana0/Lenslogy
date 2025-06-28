@@ -6,9 +6,15 @@ jobs:
   test-code:
     runs-on: ubuntu-latest
     steps:
-      - name: Print working directory
-        run: |
-          pwd
-          ls -a
-          echo $GITHUB_WORKSPACE
-          node -v
+      - name: copying the codes
+        uses: actions/checkout@v4
+      - name: install node -js
+        uses: actions/setup-node@v4
+        with:
+          node-version: v22.9.0
+      - name: check node version
+        run: node -v
+      - name: install dependencies
+        run: npm i
+      - name: site build
+        run: npm run build
