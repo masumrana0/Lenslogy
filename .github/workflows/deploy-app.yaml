@@ -19,8 +19,15 @@ jobs:
 
       - name: install dependencies
         run: npm i
-      - name: Prisma schema Migration
-        run: npx prisma migrate dev --name init
 
-      - name: site build
-        run: npm run build
+  build-code:
+    runs-on: ubuntu-latest
+    needs: test-code
+    steps:
+      - name: code build
+        run: echo "npm run build..."
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy the site
+        run: echo " deploying..."
