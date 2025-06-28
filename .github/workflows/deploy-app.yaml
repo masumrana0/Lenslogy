@@ -9,20 +9,36 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+      EMAIL_SERVER_HOST: ${{ secrets.EMAIL_SERVER_HOST }}
+      EMAIL_SERVER_PORT: ${{ secrets.EMAIL_SERVER_PORT }}
+      EMAIL_SERVER_USER: ${{ secrets.EMAIL_SERVER_USER }}
+      EMAIL_SERVER_PASSWORD: ${{ secrets.EMAIL_SERVER_PASSWORD }}
+      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      EMAIL_SERVER_SECURE: ${{ secrets.EMAIL_SERVER_SECURE }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: 📦 Checkout code
+        uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "20.15"
+          node-version: v22.9.0
 
-      - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+      - name: 📥 Install dependencies
+        run: npm install
 
-      - name: Build Project
-        run: yarn build
+      - name: 🔄 Prisma migrate
+        run: npx prisma migrate dev --name init
+
+      - name: 🏗️ Build App
+        run: npm run build
 
   deploy:
     runs-on: ubuntu-latest
