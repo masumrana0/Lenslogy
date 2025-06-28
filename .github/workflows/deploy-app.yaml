@@ -1,4 +1,5 @@
 name: CI/CD Pipeline in Deploy AWS
+
 on:
   push:
     branches:
@@ -12,37 +13,39 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env: # Shared env vars for all steps in build job
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+      EMAIL_SERVER_HOST: ${{ secrets.EMAIL_SERVER_HOST }}
+      EMAIL_SERVER_PORT: ${{ secrets.EMAIL_SERVER_PORT }}
+      EMAIL_SERVER_USER: ${{ secrets.EMAIL_SERVER_USER }}
+      EMAIL_SERVER_PASSWORD: ${{ secrets.EMAIL_SERVER_PASSWORD }}
+      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      EMAIL_SERVER_SECURE: ${{ secrets.EMAIL_SERVER_SECURE }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
     steps:
-      - name: copying the codes
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: install node -js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: v22.9.0
-      - name: install dependencies
-        run: npm i
-      - name: migrate prisma Schema
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Migrate Prisma schema
         run: npx prisma migrate dev --name init
 
-      - name: build App
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          EMAIL_SERVER_HOST: ${{ secrets.EMAIL_SERVER_HOST }}
-          EMAIL_SERVER_PORT: ${{ secrets.EMAIL_SERVER_PORT }}
-          EMAIL_SERVER_USER: ${{ secrets.EMAIL_SERVER_USER }}
-          EMAIL_SERVER_PASSWORD: ${{ secrets.EMAIL_SERVER_PASSWORD }}
-          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-          EMAIL_SERVER_SECURE: ${{ secrets.EMAIL_SERVER_SECURE }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-
+      - name: Build application
         run: npm run build
-  Deploy:
+
+  deploy:
     runs-on: ubuntu-latest
     needs: build
 
@@ -66,5 +69,5 @@ jobs:
             git pull origin main
             npm install
             npm run build
-            pm2 reload 0
+            pm2 reload 0  # Adjust if using a different process manager or name
           EOF
