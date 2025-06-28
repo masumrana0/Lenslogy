@@ -20,7 +20,7 @@ const EditorSmallScreenView: React.FC<ISmallScreenEditorProps> = ({
   isFullscreen,
 }) => {
   return (
-    <div className={cn("jodit-editor-wrapper", className)}>
+    <div className={cn("jodit-editor-wrapper  overflow-auto", className)}>
       <style jsx global>{`
         /* Jodit Editor Styles */
         .jodit-container {

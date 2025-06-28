@@ -20,10 +20,10 @@ const EditorFullScreen: React.FC<IFullScreenEditorProps> = ({
   return (
     <>
       {/* Fullscreen Backdrop */}
-      <div className="fixed inset-0 bg-black/50 z-[9998]" />
+      <div className="fixed inset-0 bg-black/50 z-[9998] " />
 
       {/* Fullscreen Editor */}
-      <div className="fixed inset-4 z-[9999] bg-white dark:bg-gray-950 rounded-lg shadow-2xl flex flex-col">
+      <div className="fixed inset-4 z-[9999] bg-white dark:bg-gray-950 rounded-lg shadow-2xl flex flex-col overflow-auto">
         <style jsx global>{`
           /* Jodit Editor Styles - Fixed to prevent conflicts */
           .jodit-container {
