@@ -23,7 +23,9 @@ jobs:
       - name: install dependencies
         run: npm i
       - name: migrate prisma Schema
-        run : npx prisma migrate dev --name init
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma migrate dev --name init
 
       - name: build App
         env:
