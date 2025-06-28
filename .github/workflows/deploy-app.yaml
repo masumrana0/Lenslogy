@@ -22,6 +22,8 @@ jobs:
           node-version: v22.9.0
       - name: install dependencies
         run: npm i
+      - name: migrate prisma Schema
+        run : npx prisma migrate dev --name init
 
       - name: build App
         env:
