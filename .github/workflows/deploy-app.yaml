@@ -28,6 +28,7 @@ jobs:
         run: echo "npm run build..."
   deploy:
     runs-on: ubuntu-latest
+    needs: build-code
     steps:
       - name: deploy the site
         run: echo " deploying..."
