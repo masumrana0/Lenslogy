@@ -1,89 +1,81 @@
-name: CI/CD Pipeline in Deploy AWS
+name: Deploy on EC2
 
 on:
   push:
-    branches:
-      - "main"
-      - "release/**"
+    branches: ["main"]
   pull_request:
-    branches:
-      - "main"
-      - "release/**"
+    branches: ["main"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-      EMAIL_SERVER_HOST: ${{ secrets.EMAIL_SERVER_HOST }}
-      EMAIL_SERVER_PORT: ${{ secrets.EMAIL_SERVER_PORT }}
-      EMAIL_SERVER_USER: ${{ secrets.EMAIL_SERVER_USER }}
-      EMAIL_SERVER_PASSWORD: ${{ secrets.EMAIL_SERVER_PASSWORD }}
-      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-      EMAIL_SERVER_SECURE: ${{ secrets.EMAIL_SERVER_SECURE }}
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-
     steps:
-      - name: 📦 Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: 🧰 Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: v22.9.0
+          node-version: "20.15"
 
-      - name: 📥 Install dependencies
-        run: npm install
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
-      - name: 🔄 Prisma migrate
-        run: npx prisma migrate dev --name init
-
-      - name: 🏗️ Build App
-        run: npm run build
+      - name: Build Project
+        run: yarn build
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - name: 📦 Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: 🔐 Setup SSH
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.15"
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build Project
+        run: yarn build
+
+      - name: Configure SSH
         env:
-          AWS_EC2_SSH_PRIVATE_KEY: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
-          EC2_HOST: ec2-13-219-217-207.compute-1.amazonaws.com
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "$AWS_EC2_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: 🚀 Deploy to EC2
+      - name: Deploy to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@ec2-13-219-217-207.compute-1.amazonaws.com << 'EOF'
-            # Load Node/NPM/PM2 environment
-            source ~/.bashrc || true
-            source ~/.profile || true
+          # Ensure the correct app directory exists
+          ssh $EC2_USER@$EC2_HOST "mkdir -p ~/application/lenslogy"
 
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+          # Copy files to EC2 using rsync
+          rsync -avz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.github' \
+            . $EC2_USER@$EC2_HOST:~/application/lenslogy/
 
-            # Optional debug: show paths
-            which node
-            which npm
-            which pm2
-            echo "PATH is: $PATH"
+          # Install dependencies and restart app using PM2
+          ssh $EC2_USER@$EC2_HOST << 'EOF'
+            export PATH=$PATH:/run/user/1000/fnm_multishells/112424_1734077954807/bin
 
-            # Deploy app
-            cd /home/ubuntu/application/lenslogy
-            git pull origin main
-            npm install
-            npm run build
-            pm2 reload lenslogy-prod
+            cd ~/application/lenslogy
+
+            echo "📦 Installing dependencies..."
+            yarn install --frozen-lockfile
+
+            echo "🔁 Restarting app with PM2..."
+            pm2 delete nodejs-app || true
+            pm2 start dist/server.js --name nodejs-app
           EOF
